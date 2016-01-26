@@ -15,11 +15,12 @@ import renderEngine.MasterRenderer;
 import renderEngine.OBJLoader;
 import renderEngine.EntityRenderer;
 import shaders.StaticShader;
+import terrains.Terrain;
 import textures.ModelTexture;
 
 public class MainGameLoop {
 	
-	//EPISODE 12
+	//EPISODE 15
 	
 	public static void main(String[] args) {
 		DisplayManager.createDisplay();
@@ -32,8 +33,9 @@ public class MainGameLoop {
 		texture.setReflectivity(0);
 		TexturedModel texturedModel = new TexturedModel(model, texture);
 		Entity entity = new Entity(texturedModel, new Vector3f(0,0,-50),0,0,0,1);
+		Terrain terrain = new Terrain(-21,-1,loader,new ModelTexture(loader.loadTexture("grass")));
 		Camera camera = new Camera();
-		Light light = new Light(new Vector3f(0,0,-20), new Vector3f(1,1,1));
+		Light light = new Light(new Vector3f(3000,2000,2000), new Vector3f(1,1,1));
 		MasterRenderer renderer = new MasterRenderer();
 		
 		while(!Display.isCloseRequested()) {
@@ -42,6 +44,7 @@ public class MainGameLoop {
 			camera.move();
 			
 			renderer.processEntity(entity);
+			renderer.processTerrain(terrain);
 			
 			renderer.render(light, camera);
 			
