@@ -27,13 +27,17 @@ public class MainGameLoop {
 		
 		Loader loader = new Loader();
 		
-		RawModel model = OBJLoader.loadObjModel("stall", loader);
-		ModelTexture texture = new ModelTexture(loader.loadTexture("stallTexture"));
+		RawModel model = OBJLoader.loadObjModel("fern", loader);
+		ModelTexture texture = new ModelTexture(loader.loadTexture("fern"));
 		texture.setShineDamper(10);
 		texture.setReflectivity(0);
 		TexturedModel texturedModel = new TexturedModel(model, texture);
-		Entity entity = new Entity(texturedModel, new Vector3f(0,0,-50),0,0,0,1);
-		Terrain terrain = new Terrain(-21,-1,loader,new ModelTexture(loader.loadTexture("grass")));
+		Entity entity = new Entity(texturedModel, new Vector3f(0,0,-25),0,0,0,1);
+		
+		texture.setHasTransparency(true);
+		texture.setUseFakeLighting(true);
+		
+		Terrain terrain = new Terrain(0,0,loader,new ModelTexture(loader.loadTexture("grass")));
 		Camera camera = new Camera();
 		Light light = new Light(new Vector3f(3000,2000,2000), new Vector3f(1,1,1));
 		MasterRenderer renderer = new MasterRenderer();
