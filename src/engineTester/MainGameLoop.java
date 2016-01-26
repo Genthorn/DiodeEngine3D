@@ -1,22 +1,21 @@
 package engineTester;
 
+import models.ModelData;
 import models.RawModel;
 import models.TexturedModel;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 
-import entities.Camera;
-import entities.Entity;
-import entities.Light;
 import renderEngine.DisplayManager;
 import renderEngine.Loader;
 import renderEngine.MasterRenderer;
-import renderEngine.OBJLoader;
-import renderEngine.EntityRenderer;
-import shaders.StaticShader;
+import renderEngine.OBJFileLoader;
 import terrains.Terrain;
 import textures.ModelTexture;
+import entities.Camera;
+import entities.Entity;
+import entities.Light;
 
 public class MainGameLoop {
 	
@@ -27,7 +26,10 @@ public class MainGameLoop {
 		
 		Loader loader = new Loader();
 		
-		RawModel model = OBJLoader.loadObjModel("fern", loader);
+		ModelData model_data = OBJFileLoader.loadOBJ("fern");
+		RawModel model = loader.loadToVAO(model_data.getVertices(), model_data.getTextureCoords(),
+				model_data.getNormals(), model_data.getIndices());
+		
 		ModelTexture texture = new ModelTexture(loader.loadTexture("fern"));
 		texture.setShineDamper(10);
 		texture.setReflectivity(0);
