@@ -13,7 +13,7 @@ import shaders.StaticShader;
 
 public class MasterRenderer {
 	private StaticShader shader = new StaticShader();
-	private Renderer renderer = new Renderer(shader);
+	private EntityRenderer renderer = new EntityRenderer(shader);
 	
 	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
 	
