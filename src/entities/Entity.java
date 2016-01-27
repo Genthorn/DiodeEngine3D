@@ -10,6 +10,8 @@ public class Entity {
 	private float rotX, rotY, rotZ;
 	private float scale;
 	
+	protected static final float GRAVITY = -100;
+	
 	public Entity(TexturedModel model, Vector3f position, float rotX,
 			float rotY, float rotZ, float scale) {
 		super();
