@@ -2,6 +2,7 @@ package renderEngine;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -24,9 +25,13 @@ public class DisplayManager {
 		ContextAttribs attribs = new ContextAttribs(3, 2).withForwardCompatible(true).withProfileCore(true);
 
 		try {
-			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
+			//Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
+			Display.setDisplayMode(Display.getDesktopDisplayMode());
+			Display.setFullscreen(true);
 			Display.create(new PixelFormat(), attribs);
+			Display.setVSyncEnabled(true);
 			Display.setTitle(TITLE);
+			
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}
@@ -41,6 +46,11 @@ public class DisplayManager {
 		long currentFrameTime = getCurrentTime();
 		delta = (currentFrameTime - lastFrameTime) / 1000f;
 		lastFrameTime = currentFrameTime;
+		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) { 
+			Display.destroy();
+			System.exit(0);
+		}
+		
 	}
 
 	public static float getFrameTimeSeconds() {
@@ -49,6 +59,7 @@ public class DisplayManager {
 
 	public static void closeDisplay() {
 		Display.destroy();
+		System.exit(0);
 	}
 
 	private static long getCurrentTime() {

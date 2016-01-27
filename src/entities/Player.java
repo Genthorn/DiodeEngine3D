@@ -15,7 +15,8 @@ public class Player extends Entity {
 	private static final float TURN_SPEED = 160;
 	private static final float JUMP_POWER = 30;
 	
-	private float currentSpeed = 0;
+	private float currentForwardSpeed = 0;
+	private float currentStrafeSpeed = 0;
 	private float currentTurnSpeed = 0;
 	private float upwardsSpeed = 0;
 	
@@ -31,10 +32,11 @@ public class Player extends Entity {
 	public void move(Terrain terrain) {
 		checkInputs();
 		super.increaseRotation(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0);
-		float distance = currentSpeed * DisplayManager.getFrameTimeSeconds();
+		float distance = currentForwardSpeed * DisplayManager.getFrameTimeSeconds();
 		float dx = (float) (distance * Math.sin(Math.toRadians(super.getRotY())));
 		float dz = (float) (distance * Math.cos(Math.toRadians(super.getRotY())));
 		super.increasePosition(dx, 0, dz);
+		
 		upwardsSpeed += super.GRAVITY * DisplayManager.getFrameTimeSeconds();
 		super.increasePosition(0, upwardsSpeed * DisplayManager.getFrameTimeSeconds(), 0);
 		float terrainHeight = terrain.getHeightOfTerrain(super.getPosition().x, super.getPosition().z);
@@ -54,17 +56,32 @@ public class Player extends Entity {
 	}
 	
 	private void checkInputs() {
-		if(Keyboard.isKeyDown(Keyboard.KEY_W)) this.currentSpeed = RUN_SPEED;
-		else if(Keyboard.isKeyDown(Keyboard.KEY_S)) this.currentSpeed = -RUN_SPEED;
-		else this.currentSpeed = 0;
+		if(Keyboard.isKeyDown(Keyboard.KEY_W)) {
+			this.currentForwardSpeed = RUN_SPEED;
+		}else if(Keyboard.isKeyDown(Keyboard.KEY_S)) {
+			this.currentForwardSpeed = -RUN_SPEED;
+		}else{
+			this.currentForwardSpeed = 0;
+		}
 		
-		if(Keyboard.isKeyDown(Keyboard.KEY_D)) this.currentTurnSpeed = -TURN_SPEED;
-		else if(Keyboard.isKeyDown(Keyboard.KEY_A)) this.currentTurnSpeed = TURN_SPEED;
-		else this.currentTurnSpeed = 0;
-		
-		
+		//STRAFING CODE HERE
+		if(Keyboard.isKeyDown(Keyboard.KEY_D)) {
+			if(!Mouse.isButtonDown(1)) this.currentTurnSpeed = -TURN_SPEED;
+			if(Mouse.isButtonDown(1)) this.currentStrafeSpeed = -RUN_SPEED;
+		} else if(Keyboard.isKeyDown(Keyboard.KEY_A)) {
+			if(!Mouse.isButtonDown(1)) this.currentTurnSpeed = TURN_SPEED;
+			if(Mouse.isButtonDown(1)) this.currentStrafeSpeed = RUN_SPEED;
+		}else { 
+			this.currentTurnSpeed = 0;
+			this.currentStrafeSpeed = 0;
+		}
 		
 		if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)) jump();
+	}
+	
+	public boolean isMoving() {
+		if(currentForwardSpeed != 0) return true;
+		return false;
 	}
 	
 }

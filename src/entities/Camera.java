@@ -5,7 +5,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class Camera {
 
-	private float distanceFromPlayer = 50;
+	private float distanceFromPlayer = 20;
 	private float angleAroundPlayer = 0;
 
 	private Vector3f position = new Vector3f(0, 0, 0);
@@ -68,16 +68,27 @@ public class Camera {
 	}
 
 	private void calculatePitch() {
+		if (Mouse.isButtonDown(0)) {
+			float pitchChange = Mouse.getDY() * 0.28f;
+			pitch -= pitchChange;
+		}
+		
 		if (Mouse.isButtonDown(1)) {
 			float pitchChange = Mouse.getDY() * 0.28f;
 			pitch -= pitchChange;
 		}
 	}
-
+	
 	private void calculateAngleAroundPlayer() {
-		if (Mouse.isButtonDown(1)) {
+		if (Mouse.isButtonDown(0)) {
 			float angleChange = Mouse.getDX() * 0.28f;
 			angleAroundPlayer -= angleChange;
+		}
+		
+		if (Mouse.isButtonDown(1)) {
+			float angleChange = Mouse.getDX() * 0.28f;
+			player.increaseRotation(0, -angleChange, 0);
+			angleAroundPlayer = 0;
 		}
 	}
 

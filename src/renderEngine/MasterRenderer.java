@@ -15,12 +15,15 @@ import entities.Light;
 import models.TexturedModel;
 import shaders.StaticShader;
 import shaders.TerrainShader;
+import shadows.ShadowMapMasterRenderer;
+import skybox.SkyboxRenderer;
+import skybox.SkyboxShader;
 import terrains.Terrain;
 
 public class MasterRenderer {
-	private static final float FOV = 70;
-	private static final float NEAR_PLANE = 0.01f;
-	private static final float FAR_PLANE = 1000;
+	public static final float FOV = 70;
+	public static final float NEAR_PLANE = 0.01f;
+	public static final float FAR_PLANE = 1000;
 	
 	//SKYCOLOUR
 	private static final float RED = 0.5294117647f;
@@ -35,16 +38,20 @@ public class MasterRenderer {
 	private TerrainShader terrainShader = new TerrainShader();
 	private TerrainRenderer terrainRenderer;
 	
+	private SkyboxRenderer skyboxRenderer;
+	private ShadowMapMasterRenderer shadowMapRenderer;
 	
 	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
 	private List<Terrain> terrains = new ArrayList<Terrain>();
 	
-	public MasterRenderer() {
+	public MasterRenderer(Loader loader, Camera camera) {
 		enableCulling();
 		
 		createProjectionMatrix();
 		entityRenderer = new EntityRenderer(shader, projectionMatrix);
 		terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
+		skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
+		this.shadowMapRenderer = new ShadowMapMasterRenderer(camera);
 	}
 	
 	public static void enableCulling() {
@@ -54,6 +61,18 @@ public class MasterRenderer {
 	
 	public static void disableCulling() {
 		GL11.glDisable(GL11.GL_CULL_FACE);
+	}
+	
+	public void renderScene(List<Entity> entities, List<Terrain> terrains, List<Light> lights, Camera camera) {
+		for(Terrain terrain : terrains) {
+			processTerrain(terrain);
+		}
+		
+		for(Entity entity : entities) {
+			processEntity(entity);
+		}
+		
+		render(lights, camera);
 	}
 	
 	public void render(List <Light> lights, Camera camera) {
@@ -71,6 +90,8 @@ public class MasterRenderer {
 		terrainShader.loadViewMatrix(camera);
 		terrainRenderer.render(terrains);
 		terrainShader.stop();
+		
+		skyboxRenderer.render(camera, RED, GREEN, BLUE);
 		
 		terrains.clear();
 		entities.clear();
@@ -98,23 +119,36 @@ public class MasterRenderer {
 		
 	}
 	
-	private void createProjectionMatrix() {
+	private void createProjectionMatrix(){
+    	projectionMatrix = new Matrix4f();
 		float aspectRatio = (float) Display.getWidth() / (float) Display.getHeight();
-        float y_scale = (float) ((1f / Math.tan(Math.toRadians(FOV/2f))) * aspectRatio);
-        float x_scale = y_scale / aspectRatio;
-        float frustum_length = FAR_PLANE - NEAR_PLANE;
-		
-		projectionMatrix = new Matrix4f();
-        projectionMatrix.m00 = x_scale;
-        projectionMatrix.m11 = y_scale;
-        projectionMatrix.m22 = -((FAR_PLANE + NEAR_PLANE) / frustum_length);
-        projectionMatrix.m23 = -1;
-        projectionMatrix.m32 = -((2 * NEAR_PLANE * FAR_PLANE) / frustum_length);
-        projectionMatrix.m33 = 0;
+		float y_scale = (float) ((1f / Math.tan(Math.toRadians(FOV / 2f))));
+		float x_scale = y_scale / aspectRatio;
+		float frustum_length = FAR_PLANE - NEAR_PLANE;
+
+		projectionMatrix.m00 = x_scale;
+		projectionMatrix.m11 = y_scale;
+		projectionMatrix.m22 = -((FAR_PLANE + NEAR_PLANE) / frustum_length);
+		projectionMatrix.m23 = -1;
+		projectionMatrix.m32 = -((2 * NEAR_PLANE * FAR_PLANE) / frustum_length);
+		projectionMatrix.m33 = 0;
+    }
+	
+	public void renderShadowMap(List<Entity> entityList, Light sun) {
+		for(Entity entity : entityList) {
+			processEntity(entity);
+		}
+		shadowMapRenderer.render(entities, sun);
+		entities.clear();
+	}
+	
+	public int getShadowMapTexture() {
+		return shadowMapRenderer.getShadowMap();
 	}
 	
 	public void cleanUp() {
 		shader.cleanUp();
 		terrainShader.cleanUp();
+		shadowMapRenderer.cleanUp();
 	}
 }
