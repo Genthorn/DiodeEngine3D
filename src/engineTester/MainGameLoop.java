@@ -72,7 +72,7 @@ public class MainGameLoop {
 		Player player = new Player(playerTex, new Vector3f(153, 5, -274), 0, 100, 0, 0.4f);
 		
 		lamp.getTexture().setUseFakeLighting(true);
-		Light sun = new Light(new Vector3f(1000000, 1500000, -1000000), new Vector3f(1.5f, 1.5f, 1.5f));
+		Light sun = new Light(new Vector3f(1000000, 1500000, -1000000), new Vector3f(0.2f, 0.2f, 0.2f));
 		List<Light> lights = new ArrayList<Light>();
 		lights.add(sun);
 		lights.add(new Light(new Vector3f(185,10,-293), new Vector3f(2,0,0), new Vector3f(1, 0.01f, 0.002f)));

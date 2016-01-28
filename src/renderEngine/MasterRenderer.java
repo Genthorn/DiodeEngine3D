@@ -23,12 +23,12 @@ import terrains.Terrain;
 public class MasterRenderer {
 	public static final float FOV = 70;
 	public static final float NEAR_PLANE = 0.01f;
-	public static final float FAR_PLANE = 1000;
+	public static final float FAR_PLANE = 900;
 	
 	//SKYCOLOUR
-	private static final float RED = 0.5294117647f;
-	private static final float GREEN = 0.80784313725f;
-	private static final float BLUE = 0.92156862745f;
+	private static final float RED = 0.80392156862f;
+	private static final float GREEN = 0.78823529411f;
+	private static final float BLUE = 0.78823529411f;
 	
 	private Matrix4f projectionMatrix;
 	
