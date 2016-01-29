@@ -46,11 +46,6 @@ public class DisplayManager {
 		long currentFrameTime = getCurrentTime();
 		delta = (currentFrameTime - lastFrameTime) / 1000f;
 		lastFrameTime = currentFrameTime;
-		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) { 
-			Display.destroy();
-			System.exit(0);
-		}
-		
 	}
 
 	public static float getFrameTimeSeconds() {
