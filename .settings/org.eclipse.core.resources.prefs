@@ -1,4 +1,5 @@
 eclipse.preferences.version=1
+encoding//src/engineTester/MainGameLoop.java=UTF-8
 encoding//src/renderEngine/EntityRenderer.java=UTF-8
 encoding//src/renderEngine/Loader.java=UTF-8
 encoding//src/shaders/ShaderProgram.java=UTF-8
