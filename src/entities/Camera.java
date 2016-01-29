@@ -1,9 +1,15 @@
 package entities;
 
+import java.util.List;
+
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
+import terrains.Terrain;
+
 public class Camera {
+	
+	private float MIN_HEIGHT_ABOVE_TERRAIN = 2;
 
 	private float distanceFromPlayer = 20;
 	private float angleAroundPlayer = 0;
@@ -20,6 +26,7 @@ public class Camera {
 	}
 
 	public void move() {
+		//preventCameraTerrainCollision();
 		calculateZoom();
 		calculatePitch();
 		calculateAngleAroundPlayer();
@@ -27,6 +34,17 @@ public class Camera {
 		float verticalDistance = calculateVerticalDistance();
 		calculateCameraPosition(horizontalDistance, verticalDistance);
 		this.yaw = 180 - (player.getRotY() + angleAroundPlayer);
+		
+	}
+	
+	private void preventCameraTerrainCollision() {
+		float terrainHeightAtCurPos = player.getCurrentTerrain().getHeightOfTerrain(position.x, position.z);
+		if(position.y < terrainHeightAtCurPos +MIN_HEIGHT_ABOVE_TERRAIN) {
+			position.y = (terrainHeightAtCurPos + MIN_HEIGHT_ABOVE_TERRAIN);
+			//this.onGround = true;          
+		} else if (position.y > terrainHeightAtCurPos + MIN_HEIGHT_ABOVE_TERRAIN) {
+			//this.onGround = false;
+		}
 	}
 
 	public Vector3f getPosition() {
@@ -90,6 +108,10 @@ public class Camera {
 			player.increaseRotation(0, -angleChange, 0);
 			angleAroundPlayer = 0;
 		}
+	}
+	
+	public Player getPlayer() {
+		return player;
 	}
 
 }
