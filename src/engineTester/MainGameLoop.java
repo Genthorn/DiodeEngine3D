@@ -32,8 +32,13 @@ public class MainGameLoop {
 	//TO-DO//
 	/*
 	
+	Light
 	-Only update lights when they change
-	-Only use lights nearest the camera
+	
+	Entities
+		-Animations
+			Player
+				-Strafing
 	
 	
 	*/

@@ -6,6 +6,7 @@ public class Light {
 	private Vector3f position;
 	private Vector3f colour;
 	private Vector3f attenuation = new Vector3f(1,0,0);
+	private boolean hasChanged = false;
 	
 	public Light(Vector3f position, Vector3f colour) {
 		this.position = position;
@@ -20,6 +21,7 @@ public class Light {
 	
 	public void setPosition(Vector3f position) {
 		this.position = position;
+		hasChanged = true;
 	}
 
 	public Vector3f getAttenuation() {
@@ -28,6 +30,7 @@ public class Light {
 
 	public void setColour(Vector3f colour) {
 		this.colour = colour;
+		hasChanged = true;
 	}
 
 	public Vector3f getPosition() {
@@ -36,5 +39,9 @@ public class Light {
 
 	public Vector3f getColour() {
 		return colour;
+	}
+	
+	public void setHasChangedFalse() {
+		hasChanged = false;
 	}
 }

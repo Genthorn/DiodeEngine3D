@@ -12,7 +12,7 @@ import entities.Light;
 
 public class StaticShader extends ShaderProgram {
 	
-	private static final int MAX_LIGHTS = 5;
+	private static final int MAX_LIGHTS = 21;
 	
 	private static final String VERTEX_FILE = "src/shaders/vertexShader";
 	private static final String FRAGEMENT_FILE = "src/shaders/fragmentShader";
