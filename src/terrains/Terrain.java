@@ -154,6 +154,10 @@ public class Terrain {
 	public TerrainTexture getBlendMap() {
 		return blendMap;
 	}
+	
+	public static float getSIZE() {
+		return SIZE;
+	}
 
 	
 }

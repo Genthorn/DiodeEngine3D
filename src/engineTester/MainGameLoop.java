@@ -7,6 +7,7 @@ import java.util.Random;
 import models.RawModel;
 import models.TexturedModel;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -18,6 +19,7 @@ import terrains.Terrain;
 import textures.ModelTexture;
 import textures.TerrainTexture;
 import textures.TerrainTexturePack;
+import toolbox.LightComparator;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
@@ -30,7 +32,6 @@ public class MainGameLoop {
 	//TO-DO//
 	/*
 	
-	-Check which terrain player is in for terrain collision
 	-Only update lights when they change
 	-Only use lights nearest the camera
 	
@@ -67,19 +68,25 @@ public class MainGameLoop {
 
 		TexturedModel bobble = new TexturedModel(OBJLoader.loadOBJModel("lowPolyTree", loader), new ModelTexture(loader.loadTexture("lowPolyTree")));
 		TexturedModel lamp = new TexturedModel(OBJLoader.loadOBJModel("lamp", loader), new ModelTexture(loader.loadTexture("lamp")));
+		lamp.getTexture().setUseFakeLighting(true);
 		
 		TexturedModel playerTex = new TexturedModel(OBJLoader.loadOBJModel("dragon", loader), new ModelTexture(loader.loadTexture("grass")));
 		Player player = new Player(playerTex, new Vector3f(153, 5, -274), 0, 100, 0, 0.4f);
 		
-		lamp.getTexture().setUseFakeLighting(true);
-		Light sun = new Light(new Vector3f(1000000, 1500000, -1000000), new Vector3f(0.2f, 0.2f, 0.2f));
+		Light sun = new Light(new Vector3f(1000000, 1500000, -1000000), new Vector3f(1.5f, 1.5f, 1.5f));
 		List<Light> lights = new ArrayList<Light>();
 		lights.add(sun);
 		lights.add(new Light(new Vector3f(185,10,-293), new Vector3f(2,0,0), new Vector3f(1, 0.01f, 0.002f)));
 		lights.add(new Light(new Vector3f(370,17,-300), new Vector3f(0,2,2), new Vector3f(1, 0.01f, 0.002f)));
 		lights.add(new Light(new Vector3f(293,7,-305), new Vector3f(2,2,0), new Vector3f(1, 0.01f, 0.002f)));
-
-		Terrain terrain = new Terrain(0, -1, loader, texturePack,blendMap, "heightMap");
+		lights.add(new Light(new Vector3f(250,17,-305), new Vector3f(2,2,0), new Vector3f(1, 0.01f, 0.002f)));
+		lights.add(new Light(new Vector3f(250,17,-305), new Vector3f(2,2,0), new Vector3f(1, 0.01f, 0.002f)));
+	
+		List<Terrain> terrains = new ArrayList<Terrain>();
+		terrains.add(new Terrain(0, -1, loader, texturePack, blendMap, "heightMap"));
+		terrains.add(new Terrain(-1, -1, loader, texturePack, blendMap, "heightMap"));
+		terrains.add(new Terrain(-2, -1, loader, texturePack, blendMap, "heightMap"));
+		terrains.add(new Terrain(-2, -2, loader, texturePack, blendMap, "heightMap"));
 		
 		Camera camera = new Camera(player);
 		MasterRenderer renderer = new MasterRenderer(loader, camera);
@@ -90,29 +97,29 @@ public class MainGameLoop {
 			if (i % 7 == 0) {
 				float x = random.nextFloat() * 800 - 400;
 				float z = random.nextFloat() * -600;
-				float y = terrain.getHeightOfTerrain(x, z);
+				float y = terrains.get(0).getHeightOfTerrain(x, z);
 				entities.add(new Entity(fern, random.nextInt(4), new Vector3f(x, y, z), 0, random.nextFloat() * 360, 0, 0.9f));
 
 				x = random.nextFloat() * 800 - 400;
 				z = random.nextFloat() * -600;
-				y = terrain.getHeightOfTerrain(x, z);
+				y = terrains.get(0).getHeightOfTerrain(x, z);
 				entities.add(new Entity(grass, new Vector3f(x, y, z), 0, 0, 0, 1.8f));
 
 				x = random.nextFloat() * 800 - 400;
 				z = random.nextFloat() * -600;
-				y = terrain.getHeightOfTerrain(x, z);
+				y = terrains.get(0).getHeightOfTerrain(x, z);
 				entities.add(new Entity(flower, new Vector3f(x, y, z), 0, 0, 0, 2.3f));
 			}
 
 			if (i % 3 == 0) {
 				float x = random.nextFloat() * 800 - 400;
 				float z = random.nextFloat() * -600;
-				float y = terrain.getHeightOfTerrain(x, z);
+				float y = terrains.get(0).getHeightOfTerrain(x, z);
 				entities.add(new Entity(bobble, new Vector3f(x, y, z), 0, random.nextFloat() * 360, 0, random.nextFloat() * 0.1f + 0.6f));
 
 				x = random.nextFloat() * 800 - 400;
 				z = random.nextFloat() * -600;
-				y = terrain.getHeightOfTerrain(x, z);
+				y = terrains.get(0).getHeightOfTerrain(x, z);
 				entities.add(new Entity(tree, new Vector3f(x, y, z), 0, 0, 0, random.nextFloat() * 1 + 4));
 			}
 
@@ -126,20 +133,25 @@ public class MainGameLoop {
 		
 		while (!Display.isCloseRequested()) {
 			camera.move();
-			player.move(terrain);
-			
+			player.move(terrains); 
+							
 			renderer.renderShadowMap(entities, sun);
 			
-			renderer.processEntity(player);
-			renderer.processTerrain(terrain);
+			renderer.processTerrain(terrains);
 			
 			for (Entity entity: entities) {
 				renderer.processEntity(entity);
 			}
+			
+			lights.sort(new LightComparator(player));
+			
 			renderer.render(lights, camera);
 			DisplayManager.updateDisplay();
+			
+			if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) break; 
 		}
-
+		
+		System.out.println("cleanedup");
 		renderer.cleanUp();
 		loader.cleanUp();
 		DisplayManager.closeDisplay();

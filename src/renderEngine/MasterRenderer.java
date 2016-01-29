@@ -1,6 +1,7 @@
 package renderEngine;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
+import entities.Player;
 import models.TexturedModel;
 import shaders.StaticShader;
 import shaders.TerrainShader;
@@ -105,6 +107,13 @@ public class MasterRenderer {
 	
 	public void processTerrain(Terrain terrain) {
 		terrains.add(terrain);
+	}
+	
+	public void processTerrain(List<Terrain> terrain) {
+		for (Terrain currentTerrain: terrain) {
+			terrains.add(currentTerrain);
+		}
+		
 	}
 	
 	public void processEntity(Entity entity) {
