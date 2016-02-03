@@ -48,7 +48,6 @@ public class MasterRenderer {
 	
 	public MasterRenderer(Loader loader, Camera camera) {
 		enableCulling();
-		
 		createProjectionMatrix();
 		entityRenderer = new EntityRenderer(shader, projectionMatrix);
 		terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);

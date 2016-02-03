@@ -20,13 +20,15 @@ public class Camera {
 	private float roll;
 
 	private Player player;
+	
+	private boolean hasRunOnce = false;
+	private boolean onGround = false;
 
 	public Camera(Player player) {
 		this.player = player;
 	}
 
 	public void move() {
-		//preventCameraTerrainCollision();
 		calculateZoom();
 		calculatePitch();
 		calculateAngleAroundPlayer();
@@ -34,16 +36,17 @@ public class Camera {
 		float verticalDistance = calculateVerticalDistance();
 		calculateCameraPosition(horizontalDistance, verticalDistance);
 		this.yaw = 180 - (player.getRotY() + angleAroundPlayer);
-		
+		if(hasRunOnce)preventCameraTerrainCollision();
+		hasRunOnce = true;
 	}
 	
 	private void preventCameraTerrainCollision() {
 		float terrainHeightAtCurPos = player.getCurrentTerrain().getHeightOfTerrain(position.x, position.z);
-		if(position.y < terrainHeightAtCurPos +MIN_HEIGHT_ABOVE_TERRAIN) {
+		if(position.y < terrainHeightAtCurPos + MIN_HEIGHT_ABOVE_TERRAIN) {
 			position.y = (terrainHeightAtCurPos + MIN_HEIGHT_ABOVE_TERRAIN);
-			//this.onGround = true;          
+			this.onGround = true;          
 		} else if (position.y > terrainHeightAtCurPos + MIN_HEIGHT_ABOVE_TERRAIN) {
-			//this.onGround = false;
+			this.onGround = false;
 		}
 	}
 

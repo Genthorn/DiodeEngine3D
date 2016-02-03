@@ -32,13 +32,17 @@ public class MainGameLoop {
 	//TO-DO//
 	/*
 	
-	Light
-	-Only update lights when they change
-	
 	Entities
-		-Animations
-			Player
-				-Strafing
+		-Animations (All Entities)
+		-Strafing (Player Only)
+		-Don't let camera go past 180 degree yaw (Camera Only)
+		-finish Terrain Collision with camera (Camera Only)
+		
+	-Architectured system
+				
+	Optimizing
+		-Only update lights when they change
+		-Frustum Culling
 	
 	
 	*/
@@ -75,10 +79,10 @@ public class MainGameLoop {
 		TexturedModel lamp = new TexturedModel(OBJLoader.loadOBJModel("lamp", loader), new ModelTexture(loader.loadTexture("lamp")));
 		lamp.getTexture().setUseFakeLighting(true);
 		
-		TexturedModel playerTex = new TexturedModel(OBJLoader.loadOBJModel("dragon", loader), new ModelTexture(loader.loadTexture("grass")));
+		TexturedModel playerTex = new TexturedModel(OBJLoader.loadOBJModel("person", loader), new ModelTexture(loader.loadTexture("playerTexture")));
 		Player player = new Player(playerTex, new Vector3f(153, 5, -274), 0, 100, 0, 0.4f);
 		
-		Light sun = new Light(new Vector3f(1000000, 1500000, -1000000), new Vector3f(1.5f, 1.5f, 1.5f));
+		Light sun = new Light(new Vector3f(1000000, 1500000, -1000000), new Vector3f(0.7f, 0.7f, 0.7f));
 		List<Light> lights = new ArrayList<Light>();
 		lights.add(sun);
 		lights.add(new Light(new Vector3f(185,10,-293), new Vector3f(2,0,0), new Vector3f(1, 0.01f, 0.002f)));
@@ -89,9 +93,10 @@ public class MainGameLoop {
 	
 		List<Terrain> terrains = new ArrayList<Terrain>();
 		terrains.add(new Terrain(0, -1, loader, texturePack, blendMap, "heightMap"));
-		terrains.add(new Terrain(-1, -1, loader, texturePack, blendMap, "heightMap"));
-		terrains.add(new Terrain(-2, -1, loader, texturePack, blendMap, "heightMap"));
-		terrains.add(new Terrain(-2, -2, loader, texturePack, blendMap, "heightMap"));
+		terrains.add(new Terrain(0, -2, loader, texturePack, blendMap, "heightMap"));
+		terrains.add(new Terrain(0, -3, loader, texturePack, blendMap, "heightMap"));
+		terrains.add(new Terrain(0, -4, loader, texturePack, blendMap, "heightMap"));
+		
 		
 		Camera camera = new Camera(player);
 		MasterRenderer renderer = new MasterRenderer(loader, camera);

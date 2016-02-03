@@ -41,6 +41,10 @@ public class Light {
 		return colour;
 	}
 	
+	public boolean hasChanged() {
+		return hasChanged;
+	}
+	
 	public void setHasChangedFalse() {
 		hasChanged = false;
 	}

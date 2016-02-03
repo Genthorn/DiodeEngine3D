@@ -25,8 +25,8 @@ public class DisplayManager {
 		ContextAttribs attribs = new ContextAttribs(3, 2).withForwardCompatible(true).withProfileCore(true);
 
 		try {
-			//Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
-			Display.setDisplayMode(Display.getDesktopDisplayMode());
+			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
+			//Display.setDisplayMode(Display.getDesktopDisplayMode());
 			Display.setFullscreen(true);
 			Display.create(new PixelFormat(), attribs);
 			Display.setVSyncEnabled(true);

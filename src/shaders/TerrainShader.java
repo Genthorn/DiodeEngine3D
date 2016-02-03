@@ -11,7 +11,7 @@ import entities.Light;
 
 public class TerrainShader extends ShaderProgram {
 	
-	private static final int MAX_LIGHTS = 21;
+	private static final int MAX_LIGHTS = 11;
 
 	private static final String VERTEX_FILE = "src/shaders/terrainVertexShader";
 	private static final String FRAGEMENT_FILE = "src/shaders/terrainFragmentShader";

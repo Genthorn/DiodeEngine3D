@@ -72,7 +72,6 @@ public class Player extends Entity {
 							}
 							
 							curTerrain = terrain;
-
 						}
 					}
 				}
