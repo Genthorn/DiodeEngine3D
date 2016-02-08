@@ -1,6 +1,5 @@
 package engineTester;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -10,7 +9,7 @@ import models.TexturedModel;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 import renderEngine.DisplayManager;
@@ -26,8 +25,7 @@ import entities.Camera;
 import entities.Entity;
 import entities.Light;
 import entities.Player;
-import galileo.collada.ReadCollada;
-import galileo.collada.nodes.RootColladaNode;
+import guis.GUITexture;
 
 public class MainGameLoop {
 	
@@ -121,8 +119,6 @@ public class MainGameLoop {
 		terrains.add(new Terrain(-3, -3, loader, texturePack, blendMap, "heightMap"));
 		terrains.add(new Terrain(-3, -4, loader, texturePack, blendMap, "heightMap"));
 		
-		
-		
 		Camera camera = new Camera(player);
 		MasterRenderer renderer = new MasterRenderer(loader, camera);
 
@@ -166,21 +162,18 @@ public class MainGameLoop {
 		
 		entities.add(player);
 		
+		List<GUITexture> guis = new ArrayList<GUITexture>();
+		GUITexture gui = new GUITexture(loader.loadTexture("texture"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
+		guis.add(gui);
+		
 		while (!Display.isCloseRequested()) {
+			player.move(terrains);
 			camera.move();
-			player.move(terrains); 
-			
-			renderer.renderShadowMap(entities, sun);
-			
-			renderer.processTerrain(terrains);
-			
-			for (Entity entity: entities) {
-				renderer.processEntity(entity);
-			}
-			
 			lights.sort(new LightComparator(player));
 			
-			renderer.render(lights, camera);
+			renderer.renderShadowMap(entities, sun);
+			renderer.renderScene(entities, terrains, lights, camera);
+			renderer.renderGUIList(guis);
 			DisplayManager.updateDisplay();
 			
 			if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) break; 

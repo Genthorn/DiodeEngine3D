@@ -1,27 +1,27 @@
 package renderEngine;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import models.TexturedModel;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.util.vector.Matrix4f;
 
-import entities.Camera;
-import entities.Entity;
-import entities.Light;
-import entities.Player;
-import models.TexturedModel;
 import shaders.StaticShader;
 import shaders.TerrainShader;
 import shadows.ShadowMapMasterRenderer;
 import skybox.SkyboxRenderer;
-import skybox.SkyboxShader;
 import terrains.Terrain;
+import entities.Camera;
+import entities.Entity;
+import entities.Light;
+import guis.GUIRenderer;
+import guis.GUITexture;
 
 public class MasterRenderer {
 	public static final float FOV = 70;
@@ -47,13 +47,16 @@ public class MasterRenderer {
 	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
 	private List<Terrain> terrains = new ArrayList<Terrain>();
 	
+	private GUIRenderer guiRenderer;
+	
 	public MasterRenderer(Loader loader, Camera camera) {
 		enableCulling();
 		createProjectionMatrix();
 		entityRenderer = new EntityRenderer(shader, projectionMatrix);
 		terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
 		skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
-		this.shadowMapRenderer = new ShadowMapMasterRenderer(camera);
+		guiRenderer = new GUIRenderer(loader);
+		shadowMapRenderer = new ShadowMapMasterRenderer(camera);
 	}
 	
 	public static void enableCulling() {
@@ -97,6 +100,10 @@ public class MasterRenderer {
 		
 		terrains.clear();
 		entities.clear();
+	}
+	
+	public void renderGUIList(List<GUITexture> guis) {
+		guiRenderer.render(guis);
 	}
 	
 	private void prepare() {
@@ -161,5 +168,6 @@ public class MasterRenderer {
 		shader.cleanUp();
 		terrainShader.cleanUp();
 		shadowMapRenderer.cleanUp();
+		guiRenderer.cleanUp();
 	}
 }
