@@ -11,7 +11,7 @@ import renderEngine.MasterRenderer;
 
 public class ShadowBox {
 
-	private static final float OFFSET = 10;
+	private static final float OFFSET = 15;
 	private static final Vector4f UP = new Vector4f(0, 1, 0, 0);
 	private static final Vector4f FORWARD = new Vector4f(0, 0, -1, 0);
 	private static final float SHADOW_DISTANCE = 100;
