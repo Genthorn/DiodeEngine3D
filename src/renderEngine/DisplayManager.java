@@ -29,7 +29,7 @@ public class DisplayManager {
 			//Display.setDisplayMode(Display.getDesktopDisplayMode());
 			Display.setFullscreen(true);
 			Display.create(new PixelFormat(), attribs);
-			Display.setVSyncEnabled(true);
+			Display.setVSyncEnabled(false);
 			Display.setTitle(TITLE);
 			
 		} catch (LWJGLException e) {
