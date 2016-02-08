@@ -1,11 +1,7 @@
 package entities;
 
-import java.util.List;
-
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
-
-import terrains.Terrain;
 
 public class Camera {
 	
@@ -17,7 +13,7 @@ public class Camera {
 	private Vector3f position = new Vector3f(0, 0, 0);
 	private float pitch = 20;
 	private float yaw = 0;
-	private float roll;
+	private float roll = 0;
 
 	private Player player;
 	
@@ -30,13 +26,13 @@ public class Camera {
 
 	public void move() {
 		calculateZoom();
-		calculatePitch();
+		if(hasRunOnce) calculatePitch();
 		calculateAngleAroundPlayer();
 		float horizontalDistance = calculateHorizontalDistance();
 		float verticalDistance = calculateVerticalDistance();
 		calculateCameraPosition(horizontalDistance, verticalDistance);
 		this.yaw = 180 - (player.getRotY() + angleAroundPlayer);
-		if(hasRunOnce)preventCameraTerrainCollision();
+		if(hasRunOnce) preventCameraTerrainCollision();
 		hasRunOnce = true;
 	}
 	
@@ -44,10 +40,26 @@ public class Camera {
 		float terrainHeightAtCurPos = player.getCurrentTerrain().getHeightOfTerrain(position.x, position.z);
 		if(position.y < terrainHeightAtCurPos + MIN_HEIGHT_ABOVE_TERRAIN) {
 			position.y = (terrainHeightAtCurPos + MIN_HEIGHT_ABOVE_TERRAIN);
-			this.onGround = true;          
+			this.onGround = true;
 		} else if (position.y > terrainHeightAtCurPos + MIN_HEIGHT_ABOVE_TERRAIN) {
 			this.onGround = false;
 		}
+	}
+	
+	public void setPosition(Vector3f position) {
+		this.position.set(position);
+	}
+	
+	public void setPitch(float pitch) {
+		this.pitch = pitch;
+	}
+	
+	public void setYaw(float yaw) {
+		this.yaw = yaw;
+	}
+	
+	public void setRoll(float roll) {
+		this.roll = roll;
 	}
 
 	public Vector3f getPosition() {
@@ -89,15 +101,24 @@ public class Camera {
 	}
 
 	private void calculatePitch() {
+		float terrainHeightAtCurPos = 
+				player.getCurrentTerrain().getHeightOfTerrain(position.x, position.z) 
+				+ MIN_HEIGHT_ABOVE_TERRAIN;
+		
 		if (Mouse.isButtonDown(0)) {
 			float pitchChange = Mouse.getDY() * 0.28f;
-			pitch -= pitchChange;
+			//if(!onGround)
+				pitch -= pitchChange;
+			//else pitch = terrainHeightAtCurPos;
 		}
 		
 		if (Mouse.isButtonDown(1)) {
 			float pitchChange = Mouse.getDY() * 0.28f;
-			pitch -= pitchChange;
+			//if(!onGround) 
+				pitch -= pitchChange;
+			//else pitch += terrainHeightAtCurPos;
 		}
+		
 	}
 	
 	private void calculateAngleAroundPlayer() {
