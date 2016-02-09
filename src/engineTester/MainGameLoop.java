@@ -36,6 +36,7 @@ public class MainGameLoop {
 	
 	Whole Engine
 		-Architectured system
+		-Collision Detction
 	
 	Entities
 		-Animations (All Entities)
@@ -173,7 +174,7 @@ public class MainGameLoop {
 			
 			renderer.renderShadowMap(entities, sun);
 			renderer.renderScene(entities, terrains, lights, camera);
-			renderer.renderGUIList(guis);
+			//renderer.renderGUIList(guis);
 			DisplayManager.updateDisplay();
 			
 			if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) break; 
