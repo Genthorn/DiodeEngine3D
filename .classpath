@@ -10,6 +10,5 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/jars/slick-util.jar"/>
 	<classpathentry kind="lib" path="lib/jars/PNGDecoder.jar"/>
-	<classpathentry kind="lib" path="lib/jars/collada.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
