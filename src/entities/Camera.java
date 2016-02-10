@@ -19,7 +19,7 @@ public class Camera {
 	
 	private boolean hasRunOnce = false;
 	private boolean onGround = false;
-
+	
 	public Camera(Player player) {
 		this.player = player;
 	}
