@@ -13,8 +13,8 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import entities.Entity;
-import shaders.TerrainShader;
 import terrains.Terrain;
+import terrains.TerrainShader;
 import textures.ModelTexture;
 import textures.TerrainTexturePack;
 import toolbox.Maths;

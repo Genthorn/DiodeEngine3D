@@ -1,10 +1,11 @@
-package shaders;
+package terrains;
 
 import java.util.List;
 
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
+import shaders.ShaderProgram;
 import toolbox.Maths;
 import entities.Camera;
 import entities.Light;

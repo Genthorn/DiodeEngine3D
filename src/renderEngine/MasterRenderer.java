@@ -13,10 +13,10 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.util.vector.Matrix4f;
 
 import shaders.StaticShader;
-import shaders.TerrainShader;
 import shadows.ShadowMapMasterRenderer;
 import skybox.SkyboxRenderer;
 import terrains.Terrain;
+import terrains.TerrainShader;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
