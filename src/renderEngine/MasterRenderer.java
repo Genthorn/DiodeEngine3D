@@ -17,6 +17,7 @@ import shadows.ShadowMapMasterRenderer;
 import skybox.SkyboxRenderer;
 import terrains.Terrain;
 import terrains.TerrainShader;
+import terrains.World;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
@@ -78,6 +79,10 @@ public class MasterRenderer {
 		}
 		
 		render(lights, camera);
+	}
+	
+	public void renderWorld(World world, Camera camera) {
+		renderScene(world.getEntities(), world.getTerrains(), world.getLights(), camera);
 	}
 	
 	public void render(List <Light> lights, Camera camera) {
