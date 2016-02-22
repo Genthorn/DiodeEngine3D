@@ -102,4 +102,8 @@ public class ShadowMapMasterRenderer {
 		offset.scale(new Vector3f(0.5f, 0.5f, 0.5f));
 		return offset;
 	}
+	
+	public float getShadowDistance() {
+		return shadowBox.getShadowDistance();
+	}
 }

@@ -15,7 +15,7 @@ public class ShadowBox {
 	private static final Vector4f UP = new Vector4f(0, 1, 0, 0);
 	private static final Vector4f FORWARD = new Vector4f(0, 0, -1, 0);
 	private static final float SHADOW_DISTANCE = 100;
-
+	
 	private float minX, maxX;
 	private float minY, maxY;
 	private float minZ, maxZ;
@@ -84,6 +84,10 @@ public class ShadowBox {
 		Matrix4f invertedLight = new Matrix4f();
 		Matrix4f.invert(lightViewMatrix, invertedLight);
 		return new Vector3f(Matrix4f.transform(invertedLight, cen, null));
+	}
+	
+	public static float getShadowDistance() {
+		return SHADOW_DISTANCE;
 	}
 
 	protected float getWidth() {

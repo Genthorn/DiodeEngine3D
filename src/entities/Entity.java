@@ -4,15 +4,22 @@ import models.TexturedModel;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import toolbox.AABB;
+
 public class Entity {
-	private TexturedModel model;
-	private Vector3f position;
-	private float rotX, rotY, rotZ;
-	private float scale;
+	protected TexturedModel model;
+	protected Vector3f position = new Vector3f(0,0,0);
+	protected float rotX, rotY, rotZ;
+	protected float scale;
 	
 	private int textureIndex = 0;
 	
-	protected static final float GRAVITY = -100;
+	protected final float GRAVITY = -100;
+	protected final float RUN_SPEED = 32;
+	protected final float TURN_SPEED = 160;
+	protected final float JUMP_POWER = 30;
+	
+	protected AABB collisionBox;
 	
 	public Entity(TexturedModel model, Vector3f position, float rotX,
 			float rotY, float rotZ, float scale) {
@@ -22,6 +29,10 @@ public class Entity {
 		this.rotY = rotY;
 		this.rotZ = rotZ;
 		this.scale = scale;
+		
+		this.collisionBox = new AABB(this.position, 
+				new Vector3f(model.getRawModel().getSize().x, model.getRawModel().getSize().y, 
+				model.getRawModel().getSize().z));
 	}
 	
 	public Entity(TexturedModel model, int textureIndex, Vector3f position, float rotX,
@@ -33,6 +44,10 @@ public class Entity {
 		this.rotY = rotY;
 		this.rotZ = rotZ;
 		this.scale = scale;
+		
+		this.collisionBox = new AABB(this.position, 
+				new Vector3f(model.getRawModel().getSize().x, model.getRawModel().getSize().y, 
+				model.getRawModel().getSize().z));
 	}
 	
 	public float getTextureXOffset() {

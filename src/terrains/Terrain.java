@@ -3,6 +3,8 @@ package terrains;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -113,7 +115,9 @@ public class Terrain {
 				indices[pointer++] = bottomRight;
 			}
 		}
-		return loader.loadToVAO(vertices, textureCoords, normals, indices);
+		
+		List<Vector3f> verticesList = new ArrayList<Vector3f>();
+		return loader.loadToModel(vertices, textureCoords, normals, indices, new Vector3f(0,0,0), verticesList);
 	}
 	
 	private Vector3f calculateNormal(int x, int z, BufferedImage image) {

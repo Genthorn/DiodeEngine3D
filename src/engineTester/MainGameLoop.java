@@ -9,6 +9,7 @@ import models.TexturedModel;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -36,7 +37,13 @@ public class MainGameLoop {
 	
 	Whole Engine
 		-Architectured system
-		-Collision Detction
+		-Clean up loader classes
+		-Make mapSize in terrainFragmentShader and fragmentShader a uniform
+	
+	Physics
+		-Narrow Phase Collision
+		-Move collision stuff into entity so that all
+		entities have collision with eachother
 	
 	Entities
 		-Animations (All Entities)
@@ -45,8 +52,6 @@ public class MainGameLoop {
 		
 	Shadows
 		-Make them look perdy
-		-load shadowDistance in terrainVertexShader as uniform to be 
-		 set as same as in shadowBox class
 		-Shadows from all light sources
 		
 	Rendering
@@ -55,6 +60,7 @@ public class MainGameLoop {
 	Optimizing
 		-Only update lights when they change
 		-Frustum Culling
+		-Terrain LOD
 	
 	
 	*/
@@ -125,22 +131,22 @@ public class MainGameLoop {
 
 		List<Entity> entities = new ArrayList<Entity>();
 		Random random = new Random();
-		for (int i = 0; i < 500; i++) {
+		for (int i = 0; i < 800; i++) {
 			if (i % 7 == 0) {
 				float x = random.nextFloat() * 800 - 400;
 				float z = random.nextFloat() * -600;
 				float y = terrains.get(0).getHeightOfTerrain(x, z);
 				entities.add(new Entity(fern, random.nextInt(4), new Vector3f(x, y, z), 0, random.nextFloat() * 360, 0, 0.9f));
 				
-				x = random.nextFloat() * 800 - 400;
-				z = random.nextFloat() * -600;
-				y = terrains.get(0).getHeightOfTerrain(x, z);
-				entities.add(new Entity(grass, new Vector3f(x, y, z), 0, 0, 0, 1.8f));
+				//x = random.nextFloat() * 800 - 400;
+				//z = random.nextFloat() * -600;
+				//y = terrains.get(0).getHeightOfTerrain(x, z);
+				//entities.add(new Entity(grass, new Vector3f(x, y, z), 0, 0, 0, 1.8f));
 
-				x = random.nextFloat() * 800 - 400;
-				z = random.nextFloat() * -600;
-				y = terrains.get(0).getHeightOfTerrain(x, z);
-				entities.add(new Entity(flower, new Vector3f(x, y, z), 0, 0, 0, 2.3f));
+				//x = random.nextFloat() * 800 - 400;
+				//z = random.nextFloat() * -600;
+				//y = terrains.get(0).getHeightOfTerrain(x, z);
+				//entities.add(new Entity(flower, new Vector3f(x, y, z), 0, 0, 0, 2.3f));
 			}
 
 			if (i % 3 == 0) {
@@ -167,8 +173,10 @@ public class MainGameLoop {
 		GUITexture gui = new GUITexture(loader.loadTexture("texture"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
 		guis.add(gui);
 		
+		//GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+		
 		while (!Display.isCloseRequested()) {
-			player.move(terrains);
+			player.move(terrains, entities);
 			camera.move();
 			lights.sort(new LightComparator(player));
 			
@@ -180,7 +188,7 @@ public class MainGameLoop {
 			if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) break; 
 		}
 		
-		System.out.println("cleanedup");
+		System.out.println("Game closed : Cleaned up!");
 		renderer.cleanUp();
 		loader.cleanUp();
 		DisplayManager.closeDisplay();

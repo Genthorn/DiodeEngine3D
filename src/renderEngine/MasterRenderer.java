@@ -91,14 +91,14 @@ public class MasterRenderer {
 		shader.loadSkyColour(RED, GREEN, BLUE);
 		shader.loadLights(lights);
 		shader.loadViewMatrix(camera);
-		entityRenderer.render(entities);
+		entityRenderer.render(entities, shadowMapRenderer.getToShadowMapSpaceMatrix());
 		shader.stop();
 		
 		terrainShader.start();
 		terrainShader.loadSkyColour(RED, GREEN, BLUE);
 		terrainShader.loadLights(lights);
 		terrainShader.loadViewMatrix(camera);
-		terrainRenderer.render(terrains, shadowMapRenderer.getToShadowMapSpaceMatrix());
+		terrainRenderer.render(terrains, shadowMapRenderer.getToShadowMapSpaceMatrix(), shadowMapRenderer.getShadowDistance());
 		terrainShader.stop();
 		
 		skyboxRenderer.render(camera, RED, GREEN, BLUE);
