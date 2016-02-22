@@ -19,6 +19,7 @@ import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
@@ -32,21 +33,24 @@ public class Loader {
 	private List<Integer> vbos = new ArrayList<Integer>();
 	private List<Integer> textures = new ArrayList<Integer>();
 	
-	public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals, int[] indices) {
+	public RawModel loadToModel(float[] positions, float[] textureCoords, float[] normals, int[] indices, Vector3f size, List<Vector3f> vertices) {
 		int vaoID = createVAO();
 		bindIndicesBuffer(indices);
 		storeDataInAttributeList(0, 3, positions);
 		storeDataInAttributeList(1, 2, textureCoords);
 		storeDataInAttributeList(2, 3, normals);
 		unbindVAO();
-		return new RawModel(vaoID, indices.length);
+		RawModel newRawModel = new RawModel(vaoID, indices.length, size);
+		newRawModel.setSize(size);
+		newRawModel.setVertices(vertices);
+		return newRawModel;
 	}
 	
 	public RawModel loadToVAO(float[] positions, int dimensions) {
 		int vaoID = createVAO();
 		this.storeDataInAttributeList(0, dimensions, positions);
 		unbindVAO();
-		return new RawModel(vaoID, positions.length / dimensions);
+		return new RawModel(vaoID, positions.length / dimensions, new Vector3f(0,0,0));
 	}
 	
 	//Used for 2d guis
@@ -54,7 +58,7 @@ public class Loader {
 		int vaoID = createVAO();
 		this.storeDataInAttributeList(0, 2, positions);
 		unbindVAO();
-		return new RawModel(vaoID, positions.length/2);
+		return new RawModel(vaoID, positions.length/2, new Vector3f(0,0,0));
 	}
 	
 	public int loadTexture(String fileName) {
