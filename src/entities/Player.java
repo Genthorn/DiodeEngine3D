@@ -80,7 +80,6 @@ public class Player extends Entity {
 	}
 	
 	private void checkBroadPhaseCollisision(List<Entity> entities) {
-		//wSystem.out.println(possibleCollisions);
 		possibleCollisions.clear();
 		for(Entity entity : entities) {
 			if(AABB.collides(collisionBox, entity.collisionBox) && !(entity instanceof Player)) {		
@@ -88,11 +87,6 @@ public class Player extends Entity {
 			}
 		}
 	}
-	
-	//xd = x2-x1
-	//yd = y2-y1
-	//zd = z2-z1
-	//Distance = SquareRoot(xd*xd + yd*yd + zd*zd)
 	
 	private void checkNarrowPhaseCollisision() {
 //		List<Vector3f> thisVertices = this.model.getRawModel().getVertices();
@@ -103,8 +97,6 @@ public class Player extends Entity {
 //			
 //			List<Vector3f> collidedVertices = entity.model.getRawModel().getVertices();
 //			
-//			//System.out.println(collidedVertices.size());
-//			
 //			for(int thisVertexIndex = 0; thisVertexIndex < thisVertices.size(); thisVertexIndex++) { 
 //				for(int collidedVertexIndex = 0; collidedVertexIndex < collidedVertices.size(); collidedVertexIndex++) { 
 //					
@@ -112,7 +104,7 @@ public class Player extends Entity {
 //					float yd = collidedVertices.get(thisVertexIndex).y - thisVertices.get(thisVertexIndex).y;
 //					float zd = collidedVertices.get(thisVertexIndex).z - thisVertices.get(thisVertexIndex).z;
 //					float distance = (float) Math.sqrt(xd*xd + yd*yd + zd*zd);
-//					//ddSystem.out.println(thisVertexIndex + " : " + collidedVertexIndex + " : " + distance);
+//					System.out.println(thisVertexIndex + " : " + collidedVertexIndex + " : " + distance);
 //					
 //				}
 //			}

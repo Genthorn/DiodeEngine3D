@@ -51,7 +51,6 @@ public class MainGameLoop {
 		-Don't let camera go past 180 degree yaw (Camera Only)
 		
 	Shadows
-		-Make them look perdy
 		-Shadows from all light sources
 		
 	Rendering
@@ -131,13 +130,17 @@ public class MainGameLoop {
 
 		List<Entity> entities = new ArrayList<Entity>();
 		Random random = new Random();
-		for (int i = 0; i < 800; i++) {
+		
+		
+		
+		System.out.println("OpenGL Version: " + GL11.glGetString(GL11.GL_VERSION));
+		
+		for (int i = 0; i < 400; i++) {
 			if (i % 7 == 0) {
 				float x = random.nextFloat() * 800 - 400;
 				float z = random.nextFloat() * -600;
 				float y = terrains.get(0).getHeightOfTerrain(x, z);
 				entities.add(new Entity(fern, random.nextInt(4), new Vector3f(x, y, z), 0, random.nextFloat() * 360, 0, 0.9f));
-				
 				//x = random.nextFloat() * 800 - 400;
 				//z = random.nextFloat() * -600;
 				//y = terrains.get(0).getHeightOfTerrain(x, z);
@@ -170,7 +173,7 @@ public class MainGameLoop {
 		entities.add(player);
 		
 		List<GUITexture> guis = new ArrayList<GUITexture>();
-		GUITexture gui = new GUITexture(loader.loadTexture("texture"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
+		GUITexture gui = new GUITexture(loader.loadTexture("harold"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
 		guis.add(gui);
 		
 		//GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
