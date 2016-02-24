@@ -5,6 +5,7 @@ import java.util.List;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 
 import toolbox.Maths;
 import entities.Camera;
@@ -31,6 +32,7 @@ public class StaticShader extends ShaderProgram {
 	private int location_offset;
 	private int location_toShadowMapSpace;
 	private int location_shadowMap;
+	private int location_plane;
 	
 	public StaticShader() {
 		super(VERTEX_FILE, FRAGEMENT_FILE);
@@ -52,6 +54,7 @@ public class StaticShader extends ShaderProgram {
 		location_skyColour = super.getUniformLocation("skyColour");
 		location_numberOfRows = super.getUniformLocation("numberOfRows");
 		location_offset = super.getUniformLocation("offset");
+		location_plane = super.getUniformLocation("plane");
 		
 		location_lightColour = new int[MAX_LIGHTS];
 		location_lightPosition = new int[MAX_LIGHTS];
@@ -67,6 +70,10 @@ public class StaticShader extends ShaderProgram {
 		}
 	}
 	
+	public void loadClipPlane(Vector4f plane) {
+		super.loadVector4f(location_plane, plane);
+	}
+	
 	public void connectTextureUnits() {
 		super.loadInt(location_shadowMap, 5);
 	}
@@ -80,11 +87,11 @@ public class StaticShader extends ShaderProgram {
 	}
 	
 	public void loadOffset(float x, float y) {
-		super.load2DVector(location_offset, new Vector2f(x, y));
+		super.loadVector2f(location_offset, new Vector2f(x, y));
 	}
 	
 	public void loadSkyColour(float r, float g, float b) {
-		super.loadVector(location_skyColour, new Vector3f(r,g,b));
+		super.loadVector3f(location_skyColour, new Vector3f(r,g,b));
 	}
 	
 	public void loadFakeLightingVariable(boolean useFake) {
@@ -103,14 +110,14 @@ public class StaticShader extends ShaderProgram {
 	public void loadLights(List<Light> lights) { 
 		for(int i = 0; i < MAX_LIGHTS; i++) {
 			if(i < lights.size()) {
-				super.loadVector(location_lightPosition[i], lights.get(i).getPosition());
-				super.loadVector(location_lightColour[i], lights.get(i).getColour());
-				super.loadVector(location_attenuation[i], lights.get(i).getAttenuation());
+				super.loadVector3f(location_lightPosition[i], lights.get(i).getPosition());
+				super.loadVector3f(location_lightColour[i], lights.get(i).getColour());
+				super.loadVector3f(location_attenuation[i], lights.get(i).getAttenuation());
 					
 			}else{
-				super.loadVector(location_lightPosition[i], new Vector3f(0, 0, 0));
-				super.loadVector(location_lightColour[i], new Vector3f(0, 0, 0));
-				super.loadVector(location_attenuation[i], new Vector3f(1, 0, 0));
+				super.loadVector3f(location_lightPosition[i], new Vector3f(0, 0, 0));
+				super.loadVector3f(location_lightColour[i], new Vector3f(0, 0, 0));
+				super.loadVector3f(location_attenuation[i], new Vector3f(1, 0, 0));
 			}
 		}
 	}

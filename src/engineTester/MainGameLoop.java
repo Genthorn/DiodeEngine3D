@@ -10,8 +10,10 @@ import models.TexturedModel;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 
 import renderEngine.DisplayManager;
 import renderEngine.Loader;
@@ -22,6 +24,10 @@ import textures.ModelTexture;
 import textures.TerrainTexture;
 import textures.TerrainTexturePack;
 import toolbox.LightComparator;
+import water.WaterFrameBuffers;
+import water.WaterRenderer;
+import water.WaterShader;
+import water.WaterTile;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
@@ -34,12 +40,13 @@ public class MainGameLoop {
 	
 	//TO-DO//
 	/*
+	 
 	
 	Whole Engine
 		-Architectured system
 		-Clean up loader classes
 		-Make mapSize in terrainFragmentShader and fragmentShader a uniform
-	
+		-Make far and near in waterFragment uniform
 	Physics
 		-Narrow Phase Collision
 		-Move collision stuff into entity so that all
@@ -131,7 +138,12 @@ public class MainGameLoop {
 		List<Entity> entities = new ArrayList<Entity>();
 		Random random = new Random();
 		
-		
+		WaterFrameBuffers fbos = new WaterFrameBuffers();
+		WaterShader waterShader = new WaterShader();
+		WaterRenderer waterRenderer = new WaterRenderer(loader, waterShader, renderer.getProjectionMatrix(), fbos);
+		List<WaterTile> waters = new ArrayList<WaterTile>();
+		WaterTile water = new WaterTile(75,-75,0);
+		waters.add(water);
 		
 		System.out.println("OpenGL Version: " + GL11.glGetString(GL11.GL_VERSION));
 		
@@ -173,8 +185,10 @@ public class MainGameLoop {
 		entities.add(player);
 		
 		List<GUITexture> guis = new ArrayList<GUITexture>();
-		GUITexture gui = new GUITexture(loader.loadTexture("harold"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
-		guis.add(gui);
+		//GUITexture gui1 = new GUITexture(fbos.getRefractionTexture(), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
+		//GUITexture gui2 = new GUITexture(fbos.getReflectionTexture(), new Vector2f(-0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
+		//guis.add(gui1);
+		//guis.add(gui2);
 		
 		//GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
 		
@@ -183,17 +197,36 @@ public class MainGameLoop {
 			camera.move();
 			lights.sort(new LightComparator(player));
 			
+			GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
+			
+			fbos.bindReflectionFrameBuffer();
+			float distance = 2 * (camera.getPosition().y - water.getHeight());
+			camera.getPosition().y -= distance;
+			camera.invertPitch();
+			renderer.renderScene(entities, terrains, lights, camera, new Vector4f(0, 1, 0, -water.getHeight()+1f));
+			camera.getPosition().y += distance;
+			camera.invertPitch();
+			
+			fbos.bindRefractionFrameBuffer();
+			renderer.renderScene(entities, terrains, lights, camera, new Vector4f(0, -1, 0, water.getHeight()));
+			
+			GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
+			fbos.unbindCurrentFrameBuffer();
+			
+			renderer.renderScene(entities, terrains, lights, camera, new Vector4f(0, 1, 0, 10000000));
+			waterRenderer.render(waters, camera, sun);
 			renderer.renderShadowMap(entities, sun);
-			renderer.renderScene(entities, terrains, lights, camera);
-			//renderer.renderGUIList(guis);
+			renderer.renderGUIList(guis);
 			DisplayManager.updateDisplay();
 			
 			if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) break; 
 		}
 		
 		System.out.println("Game closed : Cleaned up!");
+		waterShader.cleanUp();
 		renderer.cleanUp();
 		loader.cleanUp();
+		fbos.cleanUp();
 		DisplayManager.closeDisplay();
 
 	}

@@ -46,7 +46,7 @@ public class SkyboxShader extends ShaderProgram {
     }
     
     public void loadFogColour(float r, float g, float b) {
-    	super.loadVector(location_fogColour, new Vector3f(r, g, b));
+    	super.loadVector3f(location_fogColour, new Vector3f(r, g, b));
     }
  
     @Override

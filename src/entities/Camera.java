@@ -46,6 +46,10 @@ public class Camera {
 		}
 	}
 	
+	public void invertPitch() {
+		this.pitch = -pitch;
+	}
+	
 	public void setPosition(Vector3f position) {
 		this.position.set(position);
 	}
