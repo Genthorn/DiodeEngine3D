@@ -26,10 +26,6 @@ import guis.GUIRenderer;
 import guis.GUITexture;
 
 public class MasterRenderer {
-	public static final float FOV = 70;
-	public static final float NEAR_PLANE = 0.01f;
-	public static final float FAR_PLANE = 900;
-	
 	//SKYCOLOUR
 	private static final float RED = 0.80392156862f;
 	private static final float GREEN = 0.78823529411f;
@@ -51,9 +47,12 @@ public class MasterRenderer {
 	
 	private GUIRenderer guiRenderer;
 	
+	private Camera camera;
+	
 	public MasterRenderer(Loader loader, Camera camera) {
 		enableCulling();
 		createProjectionMatrix();
+		this.camera = camera;
 		entityRenderer = new EntityRenderer(shader, projectionMatrix);
 		terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
 		skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
@@ -85,6 +84,7 @@ public class MasterRenderer {
 	public void render(List <Light> lights, Camera camera, Vector4f clipPlane) {
 		prepare();
 		shader.start();
+		shader.loadMapSize(shadowMapRenderer.getShadowMapSize());
 		shader.loadClipPlane(clipPlane);
 		shader.loadSkyColour(RED, GREEN, BLUE);
 		shader.loadLights(lights);
@@ -93,6 +93,7 @@ public class MasterRenderer {
 		shader.stop();
 		
 		terrainShader.start();
+		terrainShader.loadMapSize(shadowMapRenderer.getShadowMapSize());
 		terrainShader.loadClipPlane(clipPlane);
 		terrainShader.loadSkyColour(RED, GREEN, BLUE);
 		terrainShader.loadLights(lights);
@@ -144,15 +145,15 @@ public class MasterRenderer {
 	private void createProjectionMatrix(){
     	projectionMatrix = new Matrix4f();
 		float aspectRatio = (float) Display.getWidth() / (float) Display.getHeight();
-		float y_scale = (float) ((1f / Math.tan(Math.toRadians(FOV / 2f))));
+		float y_scale = (float) ((1f / Math.tan(Math.toRadians(camera.FOV / 2f))));
 		float x_scale = y_scale / aspectRatio;
-		float frustum_length = FAR_PLANE - NEAR_PLANE;
+		float frustum_length = camera.FAR_PLANE - camera.NEAR_PLANE;
 
 		projectionMatrix.m00 = x_scale;
 		projectionMatrix.m11 = y_scale;
-		projectionMatrix.m22 = -((FAR_PLANE + NEAR_PLANE) / frustum_length);
+		projectionMatrix.m22 = -((camera.FAR_PLANE + camera.NEAR_PLANE) / frustum_length);
 		projectionMatrix.m23 = -1;
-		projectionMatrix.m32 = -((2 * NEAR_PLANE * FAR_PLANE) / frustum_length);
+		projectionMatrix.m32 = -((2 * camera.NEAR_PLANE * camera.FAR_PLANE) / frustum_length);
 		projectionMatrix.m33 = 0;
     }
 	

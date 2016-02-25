@@ -9,8 +9,8 @@ import entities.Light;
 
 public class WaterShader extends ShaderProgram {
 
-	private final static String VERTEX_FILE = "water/waterVertex.txt";
-	private final static String FRAGMENT_FILE = "water/waterFragment.txt";
+	private final static String VERTEX_FILE = "water/waterVertexShader.txt";
+	private final static String FRAGMENT_FILE = "water/waterFragmentShader.txt";
 
 	private int location_modelMatrix;
 	private int location_viewMatrix;
@@ -24,6 +24,8 @@ public class WaterShader extends ShaderProgram {
 	private int location_lightPosition;
 	private int location_lightColour;
 	private int location_depthMap;
+	private int location_near;
+	private int location_far;
 
 	public WaterShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -48,6 +50,8 @@ public class WaterShader extends ShaderProgram {
 		location_lightPosition = super.getUniformLocation("lightPosition");
 		location_lightColour = super.getUniformLocation("lightColour");
 		location_depthMap = super.getUniformLocation("depthMap");
+		location_near = super.getUniformLocation("near");
+		location_far = super.getUniformLocation("far");
 	}
 	
 	public void connectTextureUnits() {
@@ -56,6 +60,11 @@ public class WaterShader extends ShaderProgram {
 		super.loadInt(location_dudvMap, 2);
 		super.loadInt(location_normalMap, 3);
 		super.loadInt(location_depthMap, 4);
+	}
+	
+	public void loadNearAndFar(float near, float far) {
+		super.loadFloat(location_near, near);
+		super.loadFloat(location_far, far);
 	}
 	
 	public void loadLight(Light sun) {

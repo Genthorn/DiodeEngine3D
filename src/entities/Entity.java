@@ -14,7 +14,7 @@ public class Entity {
 	
 	private int textureIndex = 0;
 	
-	protected final float GRAVITY = -100;
+	public static final float GRAVITY = -100;
 	protected final float RUN_SPEED = 32;
 	protected final float TURN_SPEED = 160;
 	protected final float JUMP_POWER = 30;

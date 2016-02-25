@@ -5,6 +5,10 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class Camera {
 	
+	public static final float FOV = 70;
+	public static final float NEAR_PLANE = 0.01f;
+	public static final float FAR_PLANE = 900.0f;
+	
 	private float MIN_HEIGHT_ABOVE_TERRAIN = 2;
 
 	private float distanceFromPlayer = 20;

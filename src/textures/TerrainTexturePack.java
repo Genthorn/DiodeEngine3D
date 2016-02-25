@@ -1,5 +1,7 @@
 package textures;
 
+import renderEngine.Loader;
+
 public class TerrainTexturePack {
 	
 	private TerrainTexture backgroundTexture;
@@ -7,12 +9,12 @@ public class TerrainTexturePack {
 	private TerrainTexture gTexture;
 	private TerrainTexture bTexture;
 	
-	public TerrainTexturePack(TerrainTexture backgroundTexture, TerrainTexture rTexture, 
-			TerrainTexture gTexture, TerrainTexture bTexture) {
-		this.backgroundTexture = backgroundTexture;
-		this.rTexture = rTexture;
-		this.gTexture = gTexture;
-		this.bTexture = bTexture;
+	public TerrainTexturePack(Loader loader, String backgroundTexture, String rTexture, String gTexture, 
+			String bTexture) {
+		this.backgroundTexture = new TerrainTexture(loader.loadTexture(backgroundTexture));
+		this.rTexture = new TerrainTexture(loader.loadTexture(rTexture));
+		this.gTexture = new TerrainTexture(loader.loadTexture(gTexture));
+		this.bTexture = new TerrainTexture(loader.loadTexture(bTexture));
 	}
 
 	public TerrainTexture getBackgroundTexture() {

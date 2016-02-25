@@ -20,13 +20,13 @@ public class ShadowBox {
 	private float minY, maxY;
 	private float minZ, maxZ;
 	private Matrix4f lightViewMatrix;
-	private Camera cam;
+	private Camera camera;
 
 	private float farHeight, farWidth, nearHeight, nearWidth;
 
 	protected ShadowBox(Matrix4f lightViewMatrix, Camera camera) {
 		this.lightViewMatrix = lightViewMatrix;
-		this.cam = camera;
+		this.camera = camera;
 		calculateWidthsAndHeights();
 	}
 
@@ -37,9 +37,9 @@ public class ShadowBox {
 		Vector3f toFar = new Vector3f(forwardVector);
 		toFar.scale(SHADOW_DISTANCE);
 		Vector3f toNear = new Vector3f(forwardVector);
-		toNear.scale(MasterRenderer.NEAR_PLANE);
-		Vector3f centerNear = Vector3f.add(toNear, cam.getPosition(), null);
-		Vector3f centerFar = Vector3f.add(toFar, cam.getPosition(), null);
+		toNear.scale(camera.NEAR_PLANE);
+		Vector3f centerNear = Vector3f.add(toNear, camera.getPosition(), null);
+		Vector3f centerFar = Vector3f.add(toFar, camera.getPosition(), null);
 
 		Vector4f[] points = calculateFrustumVertices(rotation, forwardVector, centerNear,
 				centerFar);
@@ -139,15 +139,15 @@ public class ShadowBox {
 
 	private Matrix4f calculateCameraRotationMatrix() {
 		Matrix4f rotation = new Matrix4f();
-		rotation.rotate((float) Math.toRadians(-cam.getYaw()), new Vector3f(0, 1, 0));
-		rotation.rotate((float) Math.toRadians(-cam.getPitch()), new Vector3f(1, 0, 0));
+		rotation.rotate((float) Math.toRadians(-camera.getYaw()), new Vector3f(0, 1, 0));
+		rotation.rotate((float) Math.toRadians(-camera.getPitch()), new Vector3f(1, 0, 0));
 		return rotation;
 	}
 
 	private void calculateWidthsAndHeights() {
-		farWidth = (float) (SHADOW_DISTANCE * Math.tan(Math.toRadians(MasterRenderer.FOV)));
-		nearWidth = (float) (MasterRenderer.NEAR_PLANE
-				* Math.tan(Math.toRadians(MasterRenderer.FOV)));
+		farWidth = (float) (SHADOW_DISTANCE * Math.tan(Math.toRadians(camera.FOV)));
+		nearWidth = (float) (camera.NEAR_PLANE
+				* Math.tan(Math.toRadians(camera.FOV)));
 		farHeight = farWidth / getAspectRatio();
 		nearHeight = nearWidth / getAspectRatio();
 	}

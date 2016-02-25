@@ -33,6 +33,7 @@ public class StaticShader extends ShaderProgram {
 	private int location_toShadowMapSpace;
 	private int location_shadowMap;
 	private int location_plane;
+	private int location_shadowMapSize;
 	
 	public StaticShader() {
 		super(VERTEX_FILE, FRAGEMENT_FILE);
@@ -55,6 +56,7 @@ public class StaticShader extends ShaderProgram {
 		location_numberOfRows = super.getUniformLocation("numberOfRows");
 		location_offset = super.getUniformLocation("offset");
 		location_plane = super.getUniformLocation("plane");
+		location_shadowMapSize = super.getUniformLocation("shadowMapSize");
 		
 		location_lightColour = new int[MAX_LIGHTS];
 		location_lightPosition = new int[MAX_LIGHTS];
@@ -68,6 +70,10 @@ public class StaticShader extends ShaderProgram {
 			location_lightColour[i] = super.getUniformLocation("lightColour["+i+"]");
 			location_attenuation[i] = super.getUniformLocation("attenuation["+i+"]");
 		}
+	}
+	
+	public void loadMapSize(float mapSize) {
+		super.loadFloat(location_shadowMapSize, mapSize);
 	}
 	
 	public void loadClipPlane(Vector4f plane) {

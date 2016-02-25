@@ -24,17 +24,16 @@ public class WaterRenderer {
 	private static final float WAVE_SPEED = 0.03f;
 	
 	private RawModel quad;
-	private WaterShader shader;
 	private WaterFrameBuffers fbos;
+	private WaterShader shader = new WaterShader();
 	
 	private float moveFactor = 0;
 	
 	private int dudvTexture;
 	private int normalTexture;
 
-	public WaterRenderer(Loader loader, WaterShader shader, Matrix4f projectionMatrix,
+	public WaterRenderer(Loader loader, Matrix4f projectionMatrix,
 			WaterFrameBuffers fbos) {
-		this.shader = shader;
 		this.fbos = fbos;
 		dudvTexture = loader.loadTexture(DUDV_MAP);
 		normalTexture = loader.loadTexture(NORMAL_MAP);
@@ -60,6 +59,7 @@ public class WaterRenderer {
 	private void prepareRender(Camera camera, Light sun){
 		shader.start();
 		shader.loadLight(sun);
+		shader.loadNearAndFar(camera.NEAR_PLANE, camera.FAR_PLANE);
 		shader.loadViewMatrix(camera);
 		moveFactor += WAVE_SPEED * DisplayManager.getFrameTimeSeconds();
 		moveFactor %= 1;
@@ -92,6 +92,10 @@ public class WaterRenderer {
 		// Just x and z vectex positions here, y is set to 0 in v.shader
 		float[] vertices = { -1, -1, -1, 1, 1, -1, 1, -1, -1, 1, 1, 1 };
 		quad = loader.loadToVAO(vertices, 2);
+	}
+	
+	public void cleanUp() {
+		shader.cleanUp();
 	}
 
 }

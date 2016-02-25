@@ -103,6 +103,10 @@ public class ShadowMapMasterRenderer {
 		return offset;
 	}
 	
+	public int getShadowMapSize() {
+		return SHADOW_MAP_SIZE;
+	}
+	
 	public float getShadowDistance() {
 		return shadowBox.getShadowDistance();
 	}
