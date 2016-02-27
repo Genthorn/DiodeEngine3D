@@ -2,13 +2,7 @@
 /entities/
 /guis/
 /models/
-/objConverter/
-/renderEngine/
-/shaders/
-/shadows/
-/terrains/
-/water/
-/skybox/
 /net/
-/textures/
+/objConverter/
 /particles/
+/renderEngine/

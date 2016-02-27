@@ -48,14 +48,17 @@ public class WaterFrameBuffers {
     }
  
     public void bindReflectionFrameBuffer() {//call before rendering to this FBO
+    	GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
         bindFrameBuffer(reflectionFrameBuffer,REFLECTION_WIDTH,REFLECTION_HEIGHT);
     }
      
     public void bindRefractionFrameBuffer() {//call before rendering to this FBO
+    	GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
         bindFrameBuffer(refractionFrameBuffer,REFRACTION_WIDTH,REFRACTION_HEIGHT);
     }
      
     public void unbindCurrentFrameBuffer() {//call to switch to default frame buffer
+    	GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
         GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
     }

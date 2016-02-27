@@ -33,6 +33,15 @@ public class Particle {
 		ParticleMaster.addParticle(this);
 	}
 	
+	protected boolean update() {
+		velocity.y += Entity.GRAVITY * gravityEffect * DisplayManager.getFrameTimeSeconds();
+		Vector3f change = new Vector3f(velocity);
+		change.scale(DisplayManager.getFrameTimeSeconds());
+		Vector3f.add(change, position, position);
+		elapsedTime += DisplayManager.getFrameTimeSeconds();
+		return elapsedTime < lifeLength;
+	}
+	
 	public ParticleTexture getTexture() {
 		return texture;
 	}
@@ -49,13 +58,5 @@ public class Particle {
 		return scale;
 	}
 	
-	protected boolean update() {
-		velocity.y += Entity.GRAVITY * gravityEffect * DisplayManager.getFrameTimeSeconds();
-		Vector3f change = new Vector3f(velocity);
-		change.scale(DisplayManager.getFrameTimeSeconds());
-		Vector3f.add(change, position, position);
-		elapsedTime += DisplayManager.getFrameTimeSeconds();
-		return elapsedTime < lifeLength;
-	}
 	
 }

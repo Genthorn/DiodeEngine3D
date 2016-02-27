@@ -2,6 +2,7 @@ package engineTester;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import models.TexturedModel;
 
@@ -57,7 +58,19 @@ public class MainGameLoop {
 		
 		TerrainTexturePack texturePack = new TerrainTexturePack(loader, "grass", "mud", "flowers", "path");
 		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
-		terrains.add(new Terrain(0, -1, loader, texturePack, blendMap, "heightMap"));
+		Terrain terrain = new Terrain(0, -1, loader, texturePack, blendMap, "heightMap");
+		terrains.add(terrain);
+		
+		Random random = new Random();
+		TexturedModel model = new TexturedModel(OBJLoader.loadOBJModel("stall", loader), new ModelTexture(loader.loadTexture("stallTexture")));
+		for(int i = 0; i < 400; i++) {
+			
+			float x = random.nextFloat() * 800 - 400;
+			float z = random.nextFloat() * -600;
+			float y = terrain.getHeightOfTerrain(x, z);
+			
+			entities.add(new Entity(model, new Vector3f(x,y,z), 0, random.nextFloat() * 360, 0, 1));
+		}
 		
 		Light sun = new Light(new Vector3f(1000000, 1500000, -1000000), new Vector3f(0.7f, 0.7f, 0.7f));
 		lights.add(sun);
@@ -65,10 +78,10 @@ public class MainGameLoop {
 		WaterTile water = new WaterTile(75,-75,0);
 		waters.add(water);
 		
-		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particleStar"), 1);
-		ParticleSystem system = new ParticleSystem(particleTexture, 50, 10, 0.3f, 4, 1);
+		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("snow"), 1);
+		ParticleSystem system = new ParticleSystem(particleTexture, 700, 10, 0.3f, 7, 0.4f);
 		system.randomizeRotation();
-		system.setDirection(new Vector3f(0, 1, 0), 0.1f);
+		system.setDirection(new Vector3f(10, 1, 0), 1.1f);
 		system.setLifeError(0.1f);
 		system.setSpeedError(0.4f);
 		system.setScaleError(0.8f);
@@ -78,12 +91,11 @@ public class MainGameLoop {
 			camera.move();
 			lights.sort(new LightComparator(player));
 			
-			system.generateParticles(player.getPosition());
+			//system.generateParticles(new Vector3f(player.getPosition().x, player.getPosition().y + 40, player.getPosition().z));
 			
 			ParticleMaster.update();
 			
-			GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
-			
+			//WATER RENDERING SCENE STUFF//
 			fbos.bindReflectionFrameBuffer();
 			float distance = 2 * (camera.getPosition().y - water.getHeight());
 			camera.getPosition().y -= distance;
@@ -95,15 +107,16 @@ public class MainGameLoop {
 			fbos.bindRefractionFrameBuffer();
 			renderer.renderScene(entities, terrains, lights, camera, new Vector4f(0, -1, 0, water.getHeight()));
 			
-			GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 			fbos.unbindCurrentFrameBuffer();
+			////////////////////////////////
 			
+			//RENDER EVERYTHING ELSE//
 			renderer.renderScene(entities, terrains, lights, camera, new Vector4f(0, 1, 0, 10000000));
 			waterRenderer.render(waters, camera, sun);
 			renderer.renderShadowMap(entities, sun);
-			
 			//renderer.renderGUIList(guis);
 			ParticleMaster.renderParticles(camera);
+			//////////////////////////
 			
 			DisplayManager.updateDisplay();
 		}
