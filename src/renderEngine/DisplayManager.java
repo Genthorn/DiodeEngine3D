@@ -12,7 +12,7 @@ import org.lwjgl.opengl.PixelFormat;
 public class DisplayManager {
 
 	private static final int WIDTH = 1280;
-	private static final int HEIGHT = 720;
+	private static final int HEIGHT = WIDTH / 16 * 9;
 	private static final int FPS_CAP = 120;
 
 	private static final String TITLE = "3D Game Engine";
@@ -22,14 +22,14 @@ public class DisplayManager {
 
 	public static void createDisplay() {
 
-		ContextAttribs attribs = new ContextAttribs(3, 2).withForwardCompatible(true).withProfileCore(true);
+		ContextAttribs attribs = new ContextAttribs(4, 3).withForwardCompatible(true).withProfileCore(true);
 
 		try {
 			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
 			//Display.setDisplayMode(Display.getDesktopDisplayMode());
-			Display.setFullscreen(true);
-			Display.create(new PixelFormat(), attribs);
-			Display.setVSyncEnabled(false);
+			//Display.setFullscreen(true);
+			Display.create(new PixelFormat(1/10,0,0,1/10), attribs);
+			Display.setVSyncEnabled(true);
 			Display.setTitle(TITLE);
 			
 		} catch (LWJGLException e) {
