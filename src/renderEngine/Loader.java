@@ -33,16 +33,14 @@ public class Loader {
 	private List<Integer> vbos = new ArrayList<Integer>();
 	private List<Integer> textures = new ArrayList<Integer>();
 	
-	public RawModel loadToModel(float[] positions, float[] textureCoords, float[] normals, int[] indices, Vector3f size, List<Vector3f> vertices) {
+	public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals, int[] indices) {
 		int vaoID = createVAO();
 		bindIndicesBuffer(indices);
 		storeDataInAttributeList(0, 3, positions);
 		storeDataInAttributeList(1, 2, textureCoords);
 		storeDataInAttributeList(2, 3, normals);
 		unbindVAO();
-		RawModel newRawModel = new RawModel(vaoID, indices.length, size);
-		newRawModel.setSize(size);
-		newRawModel.setVertices(vertices);
+		RawModel newRawModel = new RawModel(vaoID, indices.length);
 		return newRawModel;
 	}
 	
@@ -50,7 +48,7 @@ public class Loader {
 		int vaoID = createVAO();
 		this.storeDataInAttributeList(0, dimensions, positions);
 		unbindVAO();
-		return new RawModel(vaoID, positions.length / dimensions, new Vector3f(0,0,0));
+		return new RawModel(vaoID, positions.length / dimensions);
 	}
 	
 	//Used for 2d guis
@@ -58,7 +56,7 @@ public class Loader {
 		int vaoID = createVAO();
 		this.storeDataInAttributeList(0, 2, positions);
 		unbindVAO();
-		return new RawModel(vaoID, positions.length/2, new Vector3f(0,0,0));
+		return new RawModel(vaoID, positions.length/2);
 	}
 	
 	public int loadTexture(String fileName) {

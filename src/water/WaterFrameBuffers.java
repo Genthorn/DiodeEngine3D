@@ -19,8 +19,8 @@ import org.lwjgl.opengl.GL42;
  
 public class WaterFrameBuffers {
  
-    protected static final int REFLECTION_WIDTH = 320;
-    private static final int REFLECTION_HEIGHT = 180;
+    protected static final int REFLECTION_WIDTH = 1280;
+    private static final int REFLECTION_HEIGHT = 720;
      
     protected static final int REFRACTION_WIDTH = 1280;
     private static final int REFRACTION_HEIGHT = 720;

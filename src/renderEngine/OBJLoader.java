@@ -28,15 +28,11 @@ public class OBJLoader {
 		List<Vector2f> textures = new ArrayList<Vector2f>();
 		List<Vector3f> normals = new ArrayList<Vector3f>();
 		List<Integer> indices = new ArrayList<Integer>();
-		float[] verticesArray = null;
 		float[] normalsArray = null;
 		float[] textureArray = null;
-		int[] indicesArray = null;
-		
-		float largestX = 0;
-		float largestY = 0;
-		float largestZ = 0;
-		
+		float[] verticesArray;
+		int[] indicesArray;
+
 		try {
 			while(true) {
 				line = reader.readLine();
@@ -44,10 +40,6 @@ public class OBJLoader {
 				if(line.startsWith("v ")) {
 					Vector3f vertex = new Vector3f(Float.parseFloat(currentLine[1]), 
 							Float.parseFloat(currentLine[2]), Float.parseFloat(currentLine[3]));
-					
-					if(Float.parseFloat(currentLine[1]) > largestX) largestX = Float.parseFloat(currentLine[1]);
-					if(Float.parseFloat(currentLine[2]) > largestY) largestY = Float.parseFloat(currentLine[2]);
-					if(Float.parseFloat(currentLine[3]) > largestZ) largestZ = Float.parseFloat(currentLine[3]);
 					
 					vertices.add(vertex);
 				} else if (line.startsWith("vt ")) {
@@ -100,9 +92,8 @@ public class OBJLoader {
 		for(int i=0; i < indices.size();i++) {
 			indicesArray[i] = indices.get(i);
 		}
-		
-		return loader.loadToModel(verticesArray, textureArray, normalsArray, indicesArray, 
-				new Vector3f(largestX,largestY,largestZ), vertices);
+
+		return loader.loadToVAO(verticesArray, textureArray, normalsArray, indicesArray);
 	}
 	
 	private static void processVertex(String[] vertexData, List<Integer> indices, 

@@ -13,7 +13,6 @@ import org.lwjgl.util.vector.Vector3f;
 
 import models.RawModel;
 import renderEngine.Loader;
-import textures.ModelTexture;
 import textures.TerrainTexture;
 import textures.TerrainTexturePack;
 import toolbox.Maths;
@@ -117,7 +116,7 @@ public class Terrain {
 		}
 		
 		List<Vector3f> verticesList = new ArrayList<Vector3f>();
-		return loader.loadToModel(vertices, textureCoords, normals, indices, new Vector3f(0,0,0), verticesList);
+		return loader.loadToVAO(vertices, textureCoords, normals, indices, new Vector3f(0,0,0), verticesList);
 	}
 	
 	private Vector3f calculateNormal(int x, int z, BufferedImage image) {

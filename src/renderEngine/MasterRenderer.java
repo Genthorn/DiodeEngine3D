@@ -7,6 +7,7 @@ import java.util.Map;
 
 import models.TexturedModel;
 
+import normalMappingRenderer.NormalMappingRenderer;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -27,9 +28,9 @@ import guis.GUITexture;
 
 public class MasterRenderer {
 	//SKYCOLOUR
-	private static final float RED = 0.80392156862f;
-	private static final float GREEN = 0.78823529411f;
-	private static final float BLUE = 0.78823529411f;
+	public static final float RED = 0.80392156862f;
+	public static final float GREEN = 0.78823529411f;
+	public static final float BLUE = 0.78823529411f;
 	
 	private Matrix4f projectionMatrix;
 	
@@ -38,11 +39,14 @@ public class MasterRenderer {
 	
 	private TerrainShader terrainShader = new TerrainShader();
 	private TerrainRenderer terrainRenderer;
+
+	private NormalMappingRenderer normalMappingRenderer;
 	
 	private SkyboxRenderer skyboxRenderer;
 	private ShadowMapMasterRenderer shadowMapRenderer;
 	
 	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
+	private Map<TexturedModel, List<Entity>> normalmapEntities = new HashMap<TexturedModel, List<Entity>>();
 	private List<Terrain> terrains = new ArrayList<Terrain>();
 	
 	private GUIRenderer guiRenderer;
@@ -58,6 +62,7 @@ public class MasterRenderer {
 		skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
 		guiRenderer = new GUIRenderer(loader);
 		shadowMapRenderer = new ShadowMapMasterRenderer(camera);
+		normalMappingRenderer = new NormalMappingRenderer(projectionMatrix);
 	}
 	
 	public static void enableCulling() {
@@ -69,13 +74,17 @@ public class MasterRenderer {
 		GL11.glDisable(GL11.GL_CULL_FACE);
 	}
 	
-	public void renderScene(List<Entity> entities, List<Terrain> terrains, List<Light> lights, Camera camera, Vector4f clipPlane) {
+	public void renderScene(List<Entity> entities, List<Entity> normalMapEntities, List<Terrain> terrains, List<Light> lights, Camera camera, Vector4f clipPlane) {
 		for(Terrain terrain : terrains) {
 			processTerrain(terrain);
 		}
 		
 		for(Entity entity : entities) {
 			processEntity(entity);
+		}
+
+		for(Entity entity : normalMapEntities) {
+			processNormalMapEntity(entity);
 		}
 		
 		render(lights, camera, clipPlane);
@@ -91,7 +100,7 @@ public class MasterRenderer {
 		shader.loadViewMatrix(camera);
 		entityRenderer.render(entities, shadowMapRenderer.getToShadowMapSpaceMatrix());
 		shader.stop();
-		
+		normalMappingRenderer.render(normalmapEntities, clipPlane, lights, camera);
 		terrainShader.start();
 		terrainShader.loadMapSize(shadowMapRenderer.getShadowMapSize());
 		terrainShader.loadClipPlane(clipPlane);
@@ -105,6 +114,7 @@ public class MasterRenderer {
 		
 		terrains.clear();
 		entities.clear();
+		normalmapEntities.clear();
 	}
 	
 	public void renderGUIList(List<GUITexture> guis) {
@@ -141,6 +151,18 @@ public class MasterRenderer {
 		}
 		
 	}
+
+	public void processNormalMapEntity(Entity entity) {
+		TexturedModel entityModel = entity.getModel();
+		List<Entity> batch = normalmapEntities.get(entityModel);
+		if(batch != null) batch.add(entity);
+		else {
+			List<Entity> newBatch = new ArrayList<Entity>();
+			newBatch.add(entity);
+			normalmapEntities.put(entityModel, newBatch);
+		}
+
+	}
 	
 	private void createProjectionMatrix(){
     	projectionMatrix = new Matrix4f();
@@ -164,7 +186,7 @@ public class MasterRenderer {
 		shadowMapRenderer.render(entities, sun);
 		entities.clear();
 	}
-	
+
 	public int getShadowMapTexture() {
 		return shadowMapRenderer.getShadowMap();
 	}
@@ -178,5 +200,6 @@ public class MasterRenderer {
 		terrainShader.cleanUp();
 		shadowMapRenderer.cleanUp();
 		guiRenderer.cleanUp();
+		normalMappingRenderer.cleanUp();
 	}
 }
