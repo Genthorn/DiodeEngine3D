@@ -9,7 +9,7 @@ public class Test {
         AudioMaster.setListenerData();
 
         int buffer = AudioMaster.loadSound("audio/music.wav");
-        Source source = new Source();
+        AudioSource source = new AudioSource();
 
         char c = ' ';
         while(c != 'q') {
