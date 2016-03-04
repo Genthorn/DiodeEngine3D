@@ -36,7 +36,7 @@ public class Camera {
 		float verticalDistance = calculateVerticalDistance();
 		calculateCameraPosition(horizontalDistance, verticalDistance);
 		this.yaw = 180 - (player.getRotY() + angleAroundPlayer);
-		if(hasRunOnce) preventCameraTerrainCollision();
+		//if(hasRunOnce) preventCameraTerrainCollision();
 		hasRunOnce = true;
 	}
 	
