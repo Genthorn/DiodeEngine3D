@@ -1,10 +1,9 @@
 package entities;
 
+import audio.AudioSource;
 import models.TexturedModel;
 
 import org.lwjgl.util.vector.Vector3f;
-
-import toolbox.AABB;
 
 public class Entity {
 	protected TexturedModel model;
@@ -19,8 +18,6 @@ public class Entity {
 	protected final float TURN_SPEED = 160;
 	protected final float JUMP_POWER = 30;
 	
-	protected AABB collisionBox;
-	
 	public Entity(TexturedModel model, Vector3f position, float rotX,
 			float rotY, float rotZ, float scale) {
 		this.model = model;
@@ -29,10 +26,7 @@ public class Entity {
 		this.rotY = rotY;
 		this.rotZ = rotZ;
 		this.scale = scale;
-		
-		this.collisionBox = new AABB(this.position, 
-				new Vector3f(model.getRawModel().getSize().x, model.getRawModel().getSize().y, 
-				model.getRawModel().getSize().z));
+
 	}
 	
 	public Entity(TexturedModel model, int textureIndex, Vector3f position, float rotX,
@@ -44,11 +38,7 @@ public class Entity {
 		this.rotY = rotY;
 		this.rotZ = rotZ;
 		this.scale = scale;
-		
-		this.collisionBox = new AABB(this.position, 
-				new Vector3f(model.getRawModel().getSize().x, model.getRawModel().getSize().y, 
-				model.getRawModel().getSize().z));
-	}
+}
 	
 	public float getTextureXOffset() {
 		int column = textureIndex%model.getTexture().getNumberOfRows();

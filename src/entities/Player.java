@@ -11,7 +11,6 @@ import org.lwjgl.util.vector.Vector3f;
 
 import renderEngine.DisplayManager;
 import terrains.Terrain;
-import toolbox.AABB;
 
 public class Player extends Entity {
 
@@ -78,39 +77,6 @@ public class Player extends Entity {
 			}
 		}
 	}
-	
-	private void checkBroadPhaseCollisision(List<Entity> entities) {
-		possibleCollisions.clear();
-		for(Entity entity : entities) {
-			if(AABB.collides(collisionBox, entity.collisionBox) && !(entity instanceof Player)) {		
-				possibleCollisions.add(entity);
-			}
-		}
-	}
-	
-	private void checkNarrowPhaseCollisision() {
-//		List<Vector3f> thisVertices = this.model.getRawModel().getVertices();
-//		
-//		for(Entity entity : possibleCollisions) {
-//			List<Vector3f> closestVertex = new ArrayList<Vector3f>();
-//			List<Vector3f> closestCollidedVertex = new ArrayList<Vector3f>();
-//			
-//			List<Vector3f> collidedVertices = entity.model.getRawModel().getVertices();
-//			
-//			for(int thisVertexIndex = 0; thisVertexIndex < thisVertices.size(); thisVertexIndex++) { 
-//				for(int collidedVertexIndex = 0; collidedVertexIndex < collidedVertices.size(); collidedVertexIndex++) { 
-//					
-//					float xd = collidedVertices.get(thisVertexIndex).x - thisVertices.get(thisVertexIndex).x;
-//					float yd = collidedVertices.get(thisVertexIndex).y - thisVertices.get(thisVertexIndex).y;
-//					float zd = collidedVertices.get(thisVertexIndex).z - thisVertices.get(thisVertexIndex).z;
-//					float distance = (float) Math.sqrt(xd*xd + yd*yd + zd*zd);
-//					System.out.println(thisVertexIndex + " : " + collidedVertexIndex + " : " + distance);
-//					
-//				}
-//			}
-//			
-//		}
-	}
 
 	private void jump() {
 		if (!isInAir) {
@@ -146,9 +112,6 @@ public class Player extends Entity {
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE))
 			jump();
-		
-		checkBroadPhaseCollisision(entities);
-		checkNarrowPhaseCollisision();
 	}
 
 	public boolean isMoving() {
