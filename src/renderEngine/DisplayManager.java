@@ -3,11 +3,7 @@ package renderEngine;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.ContextAttribs;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.PixelFormat;
+import org.lwjgl.opengl.*;
 
 public class DisplayManager {
 
@@ -15,22 +11,25 @@ public class DisplayManager {
 	private static final int HEIGHT = WIDTH / 16 * 9;
 	private static final int FPS_CAP = 120;
 
-	private static final String TITLE = "3D Game Engine";
+	private static final String TITLE = "Diode Engine";
 
 	private static long lastFrameTime;
 	private static float delta;
 
-	public static void createDisplay() {
+	public static void createDisplay(String title) {
 
-		ContextAttribs attribs = new ContextAttribs(4, 3).withForwardCompatible(true).withProfileCore(true);
+		ContextAttribs attribs = new ContextAttribs(3, 3)
+				.withForwardCompatible(true)
+				.withProfileCore(true);
 
 		try {
 			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
 			//Display.setDisplayMode(Display.getDesktopDisplayMode());
 			//Display.setFullscreen(true);
-			Display.create(new PixelFormat(1/10,0,0,1/10), attribs);
-			Display.setVSyncEnabled(true);
-			Display.setTitle(TITLE);
+			Display.create(new PixelFormat().withSamples(8), attribs);
+			GL11.glEnable(GL13.GL_MULTISAMPLE);
+			if(title == null) Display.setTitle(TITLE);
+			else Display.setTitle(title);
 			
 		} catch (LWJGLException e) {
 			e.printStackTrace();

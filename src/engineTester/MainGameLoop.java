@@ -2,11 +2,11 @@ package engineTester;
 
 import OBJLoader.OBJLoader;
 import engineTester.entities.Lamp;
-import entities.Camera;
-import entities.Entity;
-import entities.Light;
-import entities.Player;
+import entities.*;
 import models.TexturedModel;
+import net.GameClient;
+import net.GameServer;
+import net.packets.Packet00Login;
 import normalMapOBJLoader.NormalMappedOBJLoader;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
@@ -62,17 +62,28 @@ public class MainGameLoop {
 			-Anti-Aliasing
 			-Order ParticleLists
 	*/
-	
-	public static void main(String[] args) {
-		DisplayManager.createDisplay();
 
-		//LIST OF GAME OBJECTS//
-		List<Terrain> terrains = new ArrayList<Terrain>();
-		List<Light> lights = new ArrayList<Light>();
-		List<Entity> entities = new ArrayList<Entity>();
-		List<Entity> normalMappedEntities = new ArrayList<Entity>();
-		List<WaterTile> waters = new ArrayList<WaterTile>();
-		////////////////////////
+	//LIST OF GAME OBJECTS//
+	private static List<Terrain> terrains = new ArrayList<Terrain>();
+	private static List<Light> lights = new ArrayList<Light>();
+	private static List<Entity> entities = new ArrayList<Entity>();
+	private static List<Entity> normalMappedEntities = new ArrayList<Entity>();
+	private static List<WaterTile> waters = new ArrayList<WaterTile>();
+	////////////////////////
+
+	// MainGameLoop loop = this;
+	//private static GameServer server = new GameServer();
+	//private static GameClient client = new GameClient(loop, "localhost");
+
+	public static void main(String[] args) {
+		DisplayManager.createDisplay("Diode Engine");
+
+		//SERVER CLIENT CREATION//
+		//server.start();
+		//client.start();
+		//Packet00Login loginPacket = new Packet00Login("ted");
+		//loginPacket.writeData(client);
+		//////////////////////////
 
 		//LOADER//
 		Loader loader = new Loader();
@@ -80,7 +91,7 @@ public class MainGameLoop {
 
 		//PLAYER STUFF//
 		TexturedModel playerTex = new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("person")), new ModelTexture(loader.loadTexture("playerTexture")));
-		Player player = new Player(playerTex, new Vector3f(153, 5, -274), 0, 100, 0, 0.4f);
+		PlayerMP player = new PlayerMP(playerTex, new Vector3f(153, 5, -274), 0, 100, 0, 0.4f, "ted", null, -1);
 		entities.add(player);
 		////////////////
 
