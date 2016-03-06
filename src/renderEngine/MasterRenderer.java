@@ -7,7 +7,7 @@ import java.util.Map;
 
 import models.TexturedModel;
 
-import normalMappingRenderer.NormalMappingRenderer;
+import normalMapRenderer.NormalMappingRenderer;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -72,6 +72,10 @@ public class MasterRenderer {
 	
 	public static void disableCulling() {
 		GL11.glDisable(GL11.GL_CULL_FACE);
+	}
+
+	public void renderWorld(World world, Camera camera, Vector4f clipPlane) {
+		renderScene(world.getEntities(), world.getNormalMappedEntities(), world.getTerrains(), world.getLights(), camera, clipPlane);
 	}
 	
 	public void renderScene(List<Entity> entities, List<Entity> normalMapEntities, List<Terrain> terrains, List<Light> lights, Camera camera, Vector4f clipPlane) {

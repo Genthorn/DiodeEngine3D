@@ -9,6 +9,7 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import OBJLoader.ModelData;
 import models.RawModel;
 
 import org.lwjgl.BufferUtils;
@@ -19,7 +20,6 @@ import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
@@ -39,6 +39,31 @@ public class Loader {
 		storeDataInAttributeList(0, 3, positions);
 		storeDataInAttributeList(1, 2, textureCoords);
 		storeDataInAttributeList(2, 3, normals);
+		unbindVAO();
+		RawModel newRawModel = new RawModel(vaoID, indices.length);
+		return newRawModel;
+	}
+
+	public RawModel loadToVAO(ModelData data) {
+		int vaoID = createVAO();
+		bindIndicesBuffer(data.getIndices());
+		storeDataInAttributeList(0, 3, data.getVertices());
+		storeDataInAttributeList(1, 2, data.getTextureCoords());
+		storeDataInAttributeList(2, 3, data.getNormals());
+		unbindVAO();
+		RawModel newRawModel = new RawModel(vaoID, data.getIndices().length);
+		return newRawModel;
+	}
+
+
+	public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals, int[] indices,
+	    					  float[] tangents) {
+		int vaoID = createVAO();
+		bindIndicesBuffer(indices);
+		storeDataInAttributeList(0, 3, positions);
+		storeDataInAttributeList(1, 2, textureCoords);
+		storeDataInAttributeList(2, 3, normals);
+		storeDataInAttributeList(3, 3, tangents);
 		unbindVAO();
 		RawModel newRawModel = new RawModel(vaoID, indices.length);
 		return newRawModel;

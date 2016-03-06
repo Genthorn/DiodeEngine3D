@@ -14,19 +14,12 @@ public class World {
 	private List<Terrain> terrains = new ArrayList<Terrain>();
 	private List<Light> lights = new ArrayList<Light>();
 	private List<Entity> entities = new ArrayList<Entity>();
+	private List<Entity> normalMappedEntities = new ArrayList<Entity>();
 	private List<WaterTile> waters = new ArrayList<WaterTile>();
 	
 	private String worldFilePath = "";
 	
-	private Loader loader;
-	
-	TerrainTexturePack texturePack;
-	TerrainTexture blendMap;
-	
-	public World(Loader loader) {
-		texturePack = new TerrainTexturePack(loader, "grass", "mud", "flowers", "path");
-		blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
-		terrains.add(new Terrain(0, -1, loader, texturePack, blendMap, "heightMap"));
+	public World() {
 	}
 	
 	public World(String worldFile) {
@@ -35,12 +28,20 @@ public class World {
 	}
 	
 	private void loadFileWorld() {
-		//Parser
+
+	}
+
+	public void add(List<Terrain> terrains, List<Entity> entities, List<Entity> normalMappedEntities, List<Light> lights, List<WaterTile> waters) {
+		this.entities = entities;
+		this.normalMappedEntities = normalMappedEntities;
+		this.lights = lights;
+		this.waters = waters;
+		this.terrains = terrains;
 	}
 	
-	public List<Entity> getEntities() {
-		return entities;
-	}
+	public List<Entity> getEntities() { return entities; }
+
+	public List<Entity> getNormalMappedEntities() { return normalMappedEntities; }
 
 	public List<Light> getLights() {
 		return lights;
@@ -49,5 +50,8 @@ public class World {
 	public List<Terrain> getTerrains() {
 		return terrains;
 	}
+
+	public List<WaterTile> getWaters() { return waters; }
+
 
 }

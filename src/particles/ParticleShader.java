@@ -7,8 +7,8 @@ import shaders.ShaderProgram;
 
 public class ParticleShader extends ShaderProgram {
 
-	private static final String VERTEX_FILE = "particles/particleVShader.txt";
-	private static final String FRAGMENT_FILE = "particles/particleFShader.txt";
+	private static final String VERTEX_FILE = "particles/particleVertexShader.txt";
+	private static final String FRAGMENT_FILE = "particles/particleFragmentShader.txt";
 
 	private int location_modelViewMatrix;
 	private int location_projectionMatrix;

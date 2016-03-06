@@ -116,7 +116,7 @@ public class Terrain {
 		}
 		
 		List<Vector3f> verticesList = new ArrayList<Vector3f>();
-		return loader.loadToVAO(vertices, textureCoords, normals, indices, new Vector3f(0,0,0), verticesList);
+		return loader.loadToVAO(vertices, textureCoords, normals, indices);
 	}
 	
 	private Vector3f calculateNormal(int x, int z, BufferedImage image) {

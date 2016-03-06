@@ -1,10 +1,10 @@
 package engineTester.entities;
 
+import OBJLoader.OBJLoader;
 import entities.Entity;
 import models.TexturedModel;
 import org.lwjgl.util.vector.Vector3f;
 import renderEngine.Loader;
-import renderEngine.OBJLoader;
 import textures.ModelTexture;
 import entities.Light;
 
@@ -13,7 +13,7 @@ public class Lamp extends Entity {
     private Light light;
 
     public Lamp(Loader loader, Vector3f position, float scale) {
-        super(new TexturedModel(OBJLoader.loadOBJModel("lamp", loader), new ModelTexture(loader.loadTexture("lamp"))), position, 1, 1, 1, scale);
+        super(new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("lamp")), new ModelTexture(loader.loadTexture("lamp"))), position, 1, 1, 1, scale);
         this.model.getTexture().setUseFakeLighting(true);
         this.model.getTexture().setHasTransparency(true);
 

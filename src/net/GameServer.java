@@ -7,12 +7,12 @@ import java.net.InetAddress;
 
 import engineTester.MainGameLoop;
 
-public class GameServer {
+public class GameServer extends Thread {
 	private DatagramSocket socket;
 	private MainGameLoop game;
 	
-	public GameServer(MainGameLoop game) {
-		this.game = game;
+	public GameServer() {//MainGameLoop game) {
+		//this.game = game;
 		try {
 			this.socket = new DatagramSocket(1331);
 		} catch (Exception e) {

@@ -13,8 +13,8 @@ public class GameClient extends Thread {
 	private DatagramSocket socket;
 	private MainGameLoop game;
 	
-	public GameClient(MainGameLoop game, String ipAddress) {
-		this.game = game;
+	public GameClient(String ipAddress) {
+		//this.game = game;
 		try {
 			this.socket = new DatagramSocket();
 			this.ipAddress = InetAddress.getByName(ipAddress);
