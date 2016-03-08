@@ -13,7 +13,7 @@ import entities.Light;
 public class World {
 	private List<Terrain> terrains = new ArrayList<Terrain>();
 	private List<Light> lights = new ArrayList<Light>();
-	private List<Entity> entities = new ArrayList<Entity>();
+	private static List<Entity> entities = new ArrayList<Entity>();
 	private List<Entity> normalMappedEntities = new ArrayList<Entity>();
 	private List<WaterTile> waters = new ArrayList<WaterTile>();
 	
@@ -31,6 +31,22 @@ public class World {
 
 	}
 
+	public void addEntity(Entity entity) {
+		this.entities.add(entity);
+	}
+
+	public void addNormalMappedEntity(Entity entity) {
+		this.normalMappedEntities.add(entity);
+	}
+
+	public void addLight(Light light) {
+		this.lights.add(light);
+	}
+
+	public void addWater(WaterTile tile) {
+		this.waters.add(tile);
+	}
+
 	public void add(List<Terrain> terrains, List<Entity> entities, List<Entity> normalMappedEntities, List<Light> lights, List<WaterTile> waters) {
 		this.entities = entities;
 		this.normalMappedEntities = normalMappedEntities;
@@ -39,7 +55,7 @@ public class World {
 		this.terrains = terrains;
 	}
 	
-	public List<Entity> getEntities() { return entities; }
+	public static List<Entity> getEntities() { return entities; }
 
 	public List<Entity> getNormalMappedEntities() { return normalMappedEntities; }
 

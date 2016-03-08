@@ -67,7 +67,7 @@ public class GameServer extends Thread {
 
 	}
 
-	private void addConnection(PlayerMP player, Packet00Login packet) {
+	public void addConnection(PlayerMP player, Packet00Login packet) {
 		boolean alreadyConnected = false;
 		for(PlayerMP p : this.connectedPlayers) {
 			if(player.getUsername().equalsIgnoreCase(player.getUsername())) {

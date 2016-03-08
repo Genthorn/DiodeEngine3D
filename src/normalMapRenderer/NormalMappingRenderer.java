@@ -87,7 +87,6 @@ public class NormalMappingRenderer {
 
 	private void prepare(Vector4f clipPlane, List<Light> lights, Camera camera) {
 		shader.loadClipPlane(clipPlane);
-		//need to be public variables in MasterRenderer
 		shader.loadSkyColour(MasterRenderer.RED, MasterRenderer.GREEN, MasterRenderer.BLUE);
 		Matrix4f viewMatrix = Maths.createViewMatrix(camera);
 		

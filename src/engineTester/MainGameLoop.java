@@ -19,6 +19,7 @@ import renderEngine.DisplayManager;
 import renderEngine.Loader;
 import renderEngine.MasterRenderer;
 import terrains.Terrain;
+import terrains.World;
 import textures.ModelTexture;
 import textures.TerrainTexture;
 import textures.TerrainTexturePack;
@@ -28,6 +29,7 @@ import water.WaterFrameBuffers;
 import water.WaterRenderer;
 import water.WaterTile;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -37,6 +39,7 @@ public class MainGameLoop {
 	/*
 		BUGS
 			-Lamps cast shadows on themselves
+			-Distant objects have shadows on them
 		FIXES
 			BUG: Water flickers in distance
 				FIX: FIND A WAY TO INCREASE AND DECREASE CLIPPING PLANE
@@ -55,39 +58,39 @@ public class MainGameLoop {
 
 	/*
 		To-Do (In order of importance)
-			-Narrow-Phase Collision Detection
+			-JBullet Physics
 			-Colour picking
 			-Audio
 			-Optimizations
-			-Anti-Aliasing
+			-Water edges improvements
 			-Order ParticleLists
 	*/
-
-	//LIST OF GAME OBJECTS//
-	private static List<Terrain> terrains = new ArrayList<Terrain>();
-	private static List<Light> lights = new ArrayList<Light>();
-	private static List<Entity> entities = new ArrayList<Entity>();
-	private static List<Entity> normalMappedEntities = new ArrayList<Entity>();
-	private static List<WaterTile> waters = new ArrayList<WaterTile>();
-	////////////////////////
-
-	// MainGameLoop loop = this;
-	//private static GameServer server = new GameServer();
-	//private static GameClient client = new GameClient(loop, "localhost");
 
 	public static void main(String[] args) {
 		DisplayManager.createDisplay("Diode Engine");
 
-		//SERVER CLIENT CREATION//
-		//server.start();
-		//client.start();
-		//Packet00Login loginPacket = new Packet00Login("ted");
-		//loginPacket.writeData(client);
-		//////////////////////////
+		//LIST OF GAME OBJECTS//
+		List<Terrain> terrains = new ArrayList<Terrain>();
+		List<Light> lights = new ArrayList<Light>();
+		List<Entity> entities = new ArrayList<Entity>();
+		List<Entity> normalMappedEntities = new ArrayList<Entity>();
+		List<WaterTile> waters = new ArrayList<WaterTile>();
+		////////////////////////
 
 		//LOADER//
 		Loader loader = new Loader();
 		//////////
+
+		World world = new World();
+
+		//SERVER CLIENT CREATION//
+		GameServer server = new GameServer();
+		GameClient client = new GameClient(world, loader, "localhost");
+		//server.start();
+		//client.start();
+		Packet00Login loginPacket = new Packet00Login("ted1");
+		loginPacket.writeData(client);
+		//////////////////////////
 
 		//PLAYER STUFF//
 		TexturedModel playerTex = new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("person")), new ModelTexture(loader.loadTexture("playerTexture")));
@@ -166,7 +169,10 @@ public class MainGameLoop {
 		normalMappedEntities.add(new Entity(barrel, new Vector3f(75,10,-75f), 0, 0, 0, 1f));
 		////////////////////////
 
+		world.add(terrains, entities, normalMappedEntities, lights, waters);
+
 		while (!Display.isCloseRequested() && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
+			world.add(terrains, entities, normalMappedEntities, lights, waters);
 			player.move(terrains, entities);
 			camera.move();
 			lights.sort(new LightComparator(player));
@@ -181,19 +187,19 @@ public class MainGameLoop {
 			float distance = 2 * (camera.getPosition().y - water.getHeight());
 			camera.getPosition().y -= distance;
 			camera.invertPitch();
-			renderer.renderScene(entities, normalMappedEntities, terrains, lights, camera, new Vector4f(0, 1, 0, -water.getHeight()+1.2f));
+			renderer.renderWorld(world, camera, new Vector4f(0, 1, 0, -water.getHeight()+1.2f));
 			camera.getPosition().y += distance;
 			camera.invertPitch();
 			
 			fbos.bindRefractionFrameBuffer();
-			renderer.renderScene(entities, normalMappedEntities, terrains, lights, camera, new Vector4f(0, -1, 0, water.getHeight()));
+			renderer.renderWorld(world, camera, new Vector4f(0, -1, 0, water.getHeight()));
 			
 			fbos.unbindCurrentFrameBuffer();
 			////////////////////////////////
 			
 			//RENDER EVERYTHING ELSE//
 			renderer.renderShadowMap(entities, sun);
-			renderer.renderScene(entities, normalMappedEntities, terrains, lights, camera, new Vector4f(0, 1, 0, 10000000));
+			renderer.renderWorld(world, camera, new Vector4f(0, 1, 0, 10000000));
 			waterRenderer.render(waters, camera, sun);
 			//renderer.renderGUIList(guis);
 			ParticleMaster.renderParticles(camera);

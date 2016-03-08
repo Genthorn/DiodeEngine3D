@@ -1,32 +1,35 @@
 package net;
 
+import entities.PlayerMP;
+import models.TexturedModel;
+import net.packets.Packet;
+import net.packets.Packet00Login;
+import org.lwjgl.util.vector.Vector3f;
+import renderEngine.Loader;
+import terrains.World;
+import textures.ModelTexture;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.List;
-
-import engineTester.MainGameLoop;
-import entities.Player;
-import entities.PlayerMP;
-import net.packets.Packet;
-import net.packets.Packet00Login;
-import sun.applet.Main;
 
 public class GameClient extends Thread {
 
 	private InetAddress ipAddress;
 	private DatagramSocket socket;
 
-	MainGameLoop mainGameLoop;
+	World world = null;
 
-	public GameClient(MainGameLoop game, String ipAddress) {
+	Loader loader = null;
+
+	public GameClient(World world, Loader loader, String ipAddress) {
 		try {
+			this.world = world;
+			this.loader = loader;
 			this.socket = new DatagramSocket();
 			this.ipAddress = InetAddress.getByName(ipAddress);
-			this.mainGameLoop = game;
 		} catch (SocketException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
@@ -62,9 +65,9 @@ public class GameClient extends Thread {
 				packet = new Packet00Login(data);
 				System.out.println("["+address.getHostAddress()+ " : " + port +"]" + ((Packet00Login)packet).getUsername() + " has Joined The Game");
 
-				PlayerMP player = new PlayerMP(null, null, 0, 0, 0,
-						0, ((Packet00Login)packet).getUsername(), address, port);
-				//mainGameLoop.
+				PlayerMP player = new PlayerMP(null,
+						new Vector3f(153, 5, -274),  0, 100, 0, 0.4f, ((Packet00Login)packet).getUsername(), address, port);
+				world.addEntity(player);
 				break;
 			case DISCONNECT:
 				break;

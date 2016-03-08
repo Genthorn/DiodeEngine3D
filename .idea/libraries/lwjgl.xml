@@ -5,6 +5,8 @@
       <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl_util.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/jars/PNGDecoder.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/jars/slick-util.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/vecmath.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/jbullet.jar!/" />
     </CLASSES>
     <JAVADOC />
     <NATIVE>

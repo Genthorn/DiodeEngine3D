@@ -26,7 +26,7 @@ public class DisplayManager {
 			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
 			//Display.setDisplayMode(Display.getDesktopDisplayMode());
 			//Display.setFullscreen(true);
-			Display.create(new PixelFormat().withSamples(8), attribs);
+			Display.create(new PixelFormat().withSamples(8).withDepthBits(24), attribs);
 			GL11.glEnable(GL13.GL_MULTISAMPLE);
 			if(title == null) Display.setTitle(TITLE);
 			else Display.setTitle(title);
