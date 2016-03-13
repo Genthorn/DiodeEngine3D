@@ -10,6 +10,8 @@ import net.packets.Packet00Login;
 import normalMapOBJLoader.NormalMappedOBJLoader;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 import particles.ParticleMaster;
@@ -39,7 +41,10 @@ public class MainGameLoop {
 	/*
 		BUGS
 			-Lamps cast shadows on themselves
-			-Distant objects have shadows on them
+			-Distant objects have full shadows on them
+			-Normal mapped entities rendered half way into the ground, looks like it's their model
+			 but the rock doesnt always stick to the ground
+
 		FIXES
 			BUG: Water flickers in distance
 				FIX: FIND A WAY TO INCREASE AND DECREASE CLIPPING PLANE
@@ -58,7 +63,7 @@ public class MainGameLoop {
 
 	/*
 		To-Do (In order of importance)
-			-JBullet Physics
+			-Collision Detection
 			-Colour picking
 			-Audio
 			-Optimizations
@@ -114,31 +119,20 @@ public class MainGameLoop {
 		//TERRAIN STUFF//
 		TerrainTexturePack texturePack = new TerrainTexturePack(loader, "snow", "snow", "snow", "mud");
 		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
-		Terrain terrain = new Terrain(0, -1, loader, texturePack, blendMap, "heightMap");
-		terrains.add(terrain);
+
+		terrains.add(new Terrain(0, -1, loader, texturePack, blendMap, "heightMap"));
+
+
 		/////////////////
 
 		//LAMP//
-		Lamp lamp = new Lamp(loader, new Vector3f(player.getPosition().x, terrain.getHeightOfTerrain(player.getPosition().x, player.getPosition().z), player.getPosition().z), 1);
+		Lamp lamp = new Lamp(loader, new Vector3f(player.getPosition().x, terrains.get(0).getHeightOfTerrain(player.getPosition().x, player.getPosition().z), player.getPosition().z), 1);
 		entities.add(lamp);
 		lights.add(lamp.getLight());
 		////////
 
-		//RANDOM GENERATE WORLD ENTITIES//
-		Random random = new Random();
-		TexturedModel model = new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("tree")), new ModelTexture(loader.loadTexture("tree")));
-		for(int i = 0; i < 200; i++) {
-			
-			float x = random.nextFloat() * 800 - 400;
-			float z = random.nextFloat() * -600;
-			float y = terrain.getHeightOfTerrain(x, z);
-			
-			entities.add(new Entity(model, new Vector3f(x,y,z), 0, random.nextFloat() * 360, 0, 10));
-		}
-		//////////////////////////////////
-
 		//SUN//
-		Light sun = new Light(new Vector3f(1000000, 1500000, -1000000), new Vector3f(0.7f, 0.7f, 0.7f));
+		Light sun = new Light(new Vector3f(20000,40000,20000), new Vector3f(0.7f, 0.7f, 0.7f));
 		lights.add(sun);
 		///////
 
@@ -148,8 +142,8 @@ public class MainGameLoop {
 		//////////////
 
 		//PARTICLES//
-		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particleAtlas"), 4);
-		ParticleSystem system = new ParticleSystem(particleTexture, 700, 10, 1f, 7, 0.4f);
+		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particleStar"), 1);
+		ParticleSystem system = new ParticleSystem(particleTexture, 30, 10, 1f, 7, 1f);
 		system.randomizeRotation();
 		system.setDirection(new Vector3f(10, 1, 0), 1.5f);
 		system.setLifeError(0.1f);
@@ -158,16 +152,50 @@ public class MainGameLoop {
 		/////////////
 
 		//MOUSE PICKER//
-		MousePicker picker = new MousePicker(camera, renderer.getProjectionMatrix(), terrain);
+		MousePicker picker = new MousePicker(camera, renderer.getProjectionMatrix(), terrains.get(0));
 		////////////////
 
 		//NORMAL MAPPED BARREL//
-		TexturedModel barrel = new TexturedModel(NormalMappedOBJLoader.loadOBJ("barrel", loader), new ModelTexture(loader.loadTexture("barrel")));
-		barrel.getTexture().setShineDamper(10);
-		barrel.getTexture().setReflectivity(0.5f);
-		barrel.getTexture().setNormalMap(loader.loadTexture("barrelNormal"));
-		normalMappedEntities.add(new Entity(barrel, new Vector3f(75,10,-75f), 0, 0, 0, 1f));
+		TexturedModel barrelModel = new TexturedModel(NormalMappedOBJLoader.loadOBJ("barrel", loader), new ModelTexture(loader.loadTexture("barrel")));
+		barrelModel.getTexture().setShineDamper(10);
+		barrelModel.getTexture().setReflectivity(0.5f);
+		barrelModel.getTexture().setNormalMap(loader.loadTexture("barrelNormal"));
+		Entity barrel = new Entity(barrelModel, new Vector3f(1,1,1), 0, 0, 0, 1f);
+		normalMappedEntities.add(barrel);
 		////////////////////////
+
+		//NORMAL MAPPED ROCK//
+		TexturedModel boulderModel = new TexturedModel(NormalMappedOBJLoader.loadOBJ("boulder", loader),
+				new ModelTexture(loader.loadTexture("boulder")));
+		boulderModel.getTexture().setShineDamper(10);
+		boulderModel.getTexture().setReflectivity(0.5f);
+		boulderModel.getTexture().setNormalMap(loader.loadTexture("boulderNormal"));
+		Entity boulder = new Entity(boulderModel, new Vector3f(1,1,1), 0, 0, 0, 1f);
+		normalMappedEntities.add(boulder);
+		////////////////////////
+
+		//NORMAL MAPPED CRATE//
+		TexturedModel crateModel = new TexturedModel(NormalMappedOBJLoader.loadOBJ("crate", loader),
+				new ModelTexture(loader.loadTexture("crate")));
+		crateModel.getTexture().setShineDamper(10);
+		crateModel.getTexture().setReflectivity(0.5f);
+		crateModel.getTexture().setNormalMap(loader.loadTexture("crateNormal"));
+		Entity crate = new Entity(crateModel, new Vector3f(1,1,1), 0, 0, 0, 0.05f);
+		////////////////////////
+
+		//RANDOM GENERATE WORLD ENTITIES//
+		Random random = new Random();
+		TexturedModel model = new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("tree")), new ModelTexture(loader.loadTexture("tree")));
+		for(int i = 0; i < 10; i++) {
+
+			float x = random.nextFloat() * 800 - 400;
+			float z = random.nextFloat() * -600;
+			float y = terrains.get(0).getHeightOfTerrain(x, z);
+
+			entities.add(new Entity(model, new Vector3f(x,y,z), 0, 0, 0, 1f));
+
+		}
+		//////////////////////////////////
 
 		world.add(terrains, entities, normalMappedEntities, lights, waters);
 
@@ -178,7 +206,13 @@ public class MainGameLoop {
 			lights.sort(new LightComparator(player));
 			picker.update();
 
-			//system.generateParticles(new Vector3f(player.getPosition().x, player.getPosition().y + 40, player.getPosition().z));
+			//if(picker.getCurrentTerrainPoint() != null) crate.setPosition(picker.getCurrentTerrainPoint());
+
+			for(Entity e : normalMappedEntities) {
+				if(e.getModel() == crateModel) System.out.println(e.getPosition().y);
+			}
+
+			//system.generateParticles(new Vector3f(player.getPosition().x, player.getPosition().y, player.getPosition().z));
 
 			ParticleMaster.update(camera);
 			

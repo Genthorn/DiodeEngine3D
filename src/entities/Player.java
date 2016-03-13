@@ -9,6 +9,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
+import physicsEngine.AABB;
 import renderEngine.DisplayManager;
 import terrains.Terrain;
 
@@ -32,6 +33,9 @@ public class Player extends Entity {
 	}
 
 	public void move(List<Terrain> terrains, List<Entity> entities) {
+
+		checkCollision(entities);
+
 		for (Terrain terrain : terrains) {
 			if (terrain.getX() <= getPosition().x) {
 				if (terrain.getX() + Terrain.getSIZE() > getPosition().x) {
@@ -75,6 +79,16 @@ public class Player extends Entity {
 					}
 				}
 			}
+		}
+	}
+
+	private void checkCollision(List<Entity> entities) {
+		for(Entity e : entities) {
+//			if(AABB.isColliding(collisionBox, e.collisionBox)) {
+//				System.out.println("oui");
+//			} else {
+//				System.out.println("non");
+//			}
 		}
 	}
 

@@ -34,7 +34,7 @@ public class Loader {
 		storeDataInAttributeList(1, 2, textureCoords);
 		storeDataInAttributeList(2, 3, normals);
 		unbindVAO();
-		RawModel newRawModel = new RawModel(vaoID, indices.length);
+		RawModel newRawModel = new RawModel(vaoID, indices.length, new ModelData(positions, textureCoords, normals, indices, 0));
 		return newRawModel;
 	}
 
@@ -45,7 +45,7 @@ public class Loader {
 		storeDataInAttributeList(1, 2, data.getTextureCoords());
 		storeDataInAttributeList(2, 3, data.getNormals());
 		unbindVAO();
-		RawModel newRawModel = new RawModel(vaoID, data.getIndices().length);
+		RawModel newRawModel = new RawModel(vaoID, data.getIndices().length, data);
 		return newRawModel;
 	}
 
@@ -58,7 +58,7 @@ public class Loader {
 		storeDataInAttributeList(2, 3, normals);
 		storeDataInAttributeList(3, 3, tangents);
 		unbindVAO();
-		RawModel newRawModel = new RawModel(vaoID, indices.length);
+		RawModel newRawModel = new RawModel(vaoID, indices.length, new ModelData(positions, textureCoords, normals, indices, 0));
 		return newRawModel;
 	}
 	
@@ -66,7 +66,7 @@ public class Loader {
 		int vaoID = createVAO();
 		this.storeDataInAttributeList(0, dimensions, positions);
 		unbindVAO();
-		return new RawModel(vaoID, positions.length / dimensions);
+		return new RawModel(vaoID, positions.length / dimensions, new ModelData(positions, null, null, null, 0));
 	}
 	
 	//Used for 2d guis
@@ -74,7 +74,7 @@ public class Loader {
 		int vaoID = createVAO();
 		this.storeDataInAttributeList(0, 2, positions);
 		unbindVAO();
-		return new RawModel(vaoID, positions.length/2);
+		return new RawModel(vaoID, positions.length/2, new ModelData(positions, null, null, null, 0));
 	}
 	
 	public int loadTexture(String fileName) {

@@ -1,5 +1,9 @@
 package OBJLoader;
 
+import org.lwjgl.util.vector.Vector3f;
+
+import java.util.List;
+
 public class ModelData {
 
 	private float[] vertices;
@@ -15,6 +19,8 @@ public class ModelData {
 		this.normals = normals;
 		this.indices = indices;
 		this.furthestPoint = furthestPoint;
+
+		System.out.println(vertices);
 	}
 
 	public float[] getVertices() {

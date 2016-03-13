@@ -4,6 +4,7 @@ import audio.AudioSource;
 import models.TexturedModel;
 
 import org.lwjgl.util.vector.Vector3f;
+import physicsEngine.AABB;
 
 public class Entity {
 	protected TexturedModel model;
@@ -17,6 +18,8 @@ public class Entity {
 	protected final float RUN_SPEED = 32;
 	protected final float TURN_SPEED = 160;
 	protected final float JUMP_POWER = 30;
+
+	protected AABB collisionBox;
 	
 	public Entity(TexturedModel model, Vector3f position, float rotX,
 			float rotY, float rotZ, float scale) {
@@ -26,7 +29,7 @@ public class Entity {
 		this.rotY = rotY;
 		this.rotZ = rotZ;
 		this.scale = scale;
-
+		collisionBox = new AABB(model.getRawModel().getModelData(), position);
 	}
 	
 	public Entity(TexturedModel model, int textureIndex, Vector3f position, float rotX,
@@ -38,6 +41,7 @@ public class Entity {
 		this.rotY = rotY;
 		this.rotZ = rotZ;
 		this.scale = scale;
+		collisionBox = new AABB(model.getRawModel().getModelData(), position);
 }
 	
 	public float getTextureXOffset() {
