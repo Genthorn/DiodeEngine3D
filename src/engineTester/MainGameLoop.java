@@ -212,7 +212,7 @@ public class MainGameLoop {
 				if(e.getModel() == crateModel) System.out.println(e.getPosition().y);
 			}
 
-			//system.generateParticles(new Vector3f(player.getPosition().x, player.getPosition().y, player.getPosition().z));
+			system.generateParticles(new Vector3f(player.getPosition().x, player.getPosition().y, player.getPosition().z));
 
 			ParticleMaster.update(camera);
 			
