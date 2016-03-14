@@ -25,6 +25,7 @@ import entities.Entity;
 import entities.Light;
 import guis.GUIRenderer;
 import guis.GUITexture;
+import toolbox.ViewFrustum;
 
 public class MasterRenderer {
 	//SKYCOLOUR
@@ -33,6 +34,8 @@ public class MasterRenderer {
 	public static final float BLUE = 0.78823529411f;
 	
 	private Matrix4f projectionMatrix;
+
+	public ViewFrustum viewFrustum;
 	
 	private StaticShader shader = new StaticShader();
 	private EntityRenderer entityRenderer;
@@ -63,10 +66,13 @@ public class MasterRenderer {
 		guiRenderer = new GUIRenderer(loader);
 		shadowMapRenderer = new ShadowMapMasterRenderer(camera);
 		normalMappingRenderer = new NormalMappingRenderer(projectionMatrix);
+		viewFrustum = new ViewFrustum(camera);
 	}
 	
 	public static void enableCulling() {
 		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glCullFace(GL11.GL_BACK_RIGHT);
+		GL11.glCullFace(GL11.GL_BACK_LEFT);
 		GL11.glCullFace(GL11.GL_BACK);
 	}
 	
@@ -82,10 +88,39 @@ public class MasterRenderer {
 		for(Terrain terrain : terrains) {
 			processTerrain(terrain);
 		}
-		
+
+		int numberOfEntitiesRendered = 0;
+
 		for(Entity entity : entities) {
-			processEntity(entity);
+			if(entity.getPosition().x > viewFrustum.getMinPositions().x) {
+				if(entity.getPosition().x > viewFrustum.getMinPositions().x) {
+					if(entity.getPosition().y > viewFrustum.getMinPositions().y) {
+						if(entity.getPosition().y > viewFrustum.getMinPositions().y) {
+							if(entity.getPosition().z > viewFrustum.getMinPositions().z) {
+								if(entity.getPosition().z > viewFrustum.getMinPositions().z) {
+									if(entity.getPosition().x < viewFrustum.getMaxPositions().x) {
+										if(entity.getPosition().x < viewFrustum.getMaxPositions().x) {
+											if(entity.getPosition().y < viewFrustum.getMaxPositions().y) {
+												if(entity.getPosition().y < viewFrustum.getMaxPositions().y) {
+													if(entity.getPosition().z < viewFrustum.getMaxPositions().z) {
+														if(entity.getPosition().z < viewFrustum.getMaxPositions().z) {
+															processEntity(entity);
+															numberOfEntitiesRendered++;
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 		}
+
+		System.out.println("Number of rendered entities: " + numberOfEntitiesRendered);
 
 		for(Entity entity : normalMapEntities) {
 			processNormalMapEntity(entity);
@@ -95,6 +130,8 @@ public class MasterRenderer {
 	}
 	
 	public void render(List <Light> lights, Camera camera, Vector4f clipPlane) {
+		viewFrustum.update();
+
 		prepare();
 		shader.start();
 		shader.loadMapSize(shadowMapRenderer.getShadowMapSize());
@@ -113,9 +150,8 @@ public class MasterRenderer {
 		terrainShader.loadViewMatrix(camera);
 		terrainRenderer.render(terrains, shadowMapRenderer.getToShadowMapSpaceMatrix(), shadowMapRenderer.getShadowDistance());
 		terrainShader.stop();
-		
 		skyboxRenderer.render(camera, RED, GREEN, BLUE);
-		
+
 		terrains.clear();
 		entities.clear();
 		normalmapEntities.clear();

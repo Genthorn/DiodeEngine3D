@@ -19,8 +19,6 @@ public class ModelData {
 		this.normals = normals;
 		this.indices = indices;
 		this.furthestPoint = furthestPoint;
-
-		System.out.println(vertices);
 	}
 
 	public float[] getVertices() {

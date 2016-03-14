@@ -31,8 +31,8 @@ public class AudioMaster {
         return buffer;
     }
 
-    public static void setListenerData() {
-        AL10.alListener3f(AL10.AL_POSITION, 0, 0, 0);
+    public static void setListenerData(float x, float y, float z) {
+        AL10.alListener3f(AL10.AL_POSITION, x, y, z);
         AL10.alListener3f(AL10.AL_VELOCITY, 0, 0, 0);
 
     }

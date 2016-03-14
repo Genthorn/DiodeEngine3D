@@ -121,8 +121,6 @@ public class MainGameLoop {
 		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
 
 		terrains.add(new Terrain(0, -1, loader, texturePack, blendMap, "heightMap"));
-
-
 		/////////////////
 
 		//LAMP//
@@ -186,13 +184,13 @@ public class MainGameLoop {
 		//RANDOM GENERATE WORLD ENTITIES//
 		Random random = new Random();
 		TexturedModel model = new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("tree")), new ModelTexture(loader.loadTexture("tree")));
-		for(int i = 0; i < 10; i++) {
+		for(int i = 0; i < 500; i++) {
 
 			float x = random.nextFloat() * 800 - 400;
 			float z = random.nextFloat() * -600;
 			float y = terrains.get(0).getHeightOfTerrain(x, z);
 
-			entities.add(new Entity(model, new Vector3f(x,y,z), 0, 0, 0, 1f));
+			entities.add(new Entity(model, new Vector3f(x,y,z), 0, 0, 0, 5f));
 
 		}
 		//////////////////////////////////
@@ -212,29 +210,27 @@ public class MainGameLoop {
 				if(e.getModel() == crateModel) System.out.println(e.getPosition().y);
 			}
 
-			system.generateParticles(new Vector3f(player.getPosition().x, player.getPosition().y, player.getPosition().z));
-
 			ParticleMaster.update(camera);
 			
 			//WATER RENDERING SCENE STUFF//
-			fbos.bindReflectionFrameBuffer();
-			float distance = 2 * (camera.getPosition().y - water.getHeight());
-			camera.getPosition().y -= distance;
-			camera.invertPitch();
-			renderer.renderWorld(world, camera, new Vector4f(0, 1, 0, -water.getHeight()+1.2f));
-			camera.getPosition().y += distance;
-			camera.invertPitch();
-			
-			fbos.bindRefractionFrameBuffer();
-			renderer.renderWorld(world, camera, new Vector4f(0, -1, 0, water.getHeight()));
-			
-			fbos.unbindCurrentFrameBuffer();
+//			fbos.bindReflectionFrameBuffer();
+//			float distance = 2 * (camera.getPosition().y - water.getHeight());
+//			camera.getPosition().y -= distance;
+//			camera.invertPitch();
+//			renderer.renderWorld(world, camera, new Vector4f(0, 1, 0, -water.getHeight()+1.2f));
+//			camera.getPosition().y += distance;
+//			camera.invertPitch();
+//
+//			fbos.bindRefractionFrameBuffer();
+//			renderer.renderWorld(world, camera, new Vector4f(0, -1, 0, water.getHeight()));
+//
+//			fbos.unbindCurrentFrameBuffer();
 			////////////////////////////////
 			
 			//RENDER EVERYTHING ELSE//
 			renderer.renderShadowMap(entities, sun);
 			renderer.renderWorld(world, camera, new Vector4f(0, 1, 0, 10000000));
-			waterRenderer.render(waters, camera, sun);
+			//waterRenderer.render(waters, camera, sun);
 			//renderer.renderGUIList(guis);
 			ParticleMaster.renderParticles(camera);
 			//////////////////////////

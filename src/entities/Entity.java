@@ -1,10 +1,9 @@
 package entities;
 
-import audio.AudioSource;
 import models.TexturedModel;
 
 import org.lwjgl.util.vector.Vector3f;
-import physicsEngine.AABB;
+import toolbox.AABB;
 
 public class Entity {
 	protected TexturedModel model;

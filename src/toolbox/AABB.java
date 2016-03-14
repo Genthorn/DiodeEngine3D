@@ -1,4 +1,4 @@
-package physicsEngine;
+package toolbox;
 
 import OBJLoader.ModelData;
 import org.lwjgl.util.vector.Vector3f;
