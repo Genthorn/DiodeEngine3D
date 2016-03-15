@@ -103,8 +103,7 @@ public class ViewFrustum {
     }
 
     private Vector4f calculateFrustumCorner(Vector3f startPoint, Vector3f direction, float width) {
-        Vector3f point = Vector3f.add(startPoint,
-                new Vector3f(direction.x * width, direction.y * width, direction.z * width), null);
+        Vector3f point = Vector3f.add(startPoint, new Vector3f(direction.x * width, direction.y * width, direction.z * width), null);
         Vector4f point4f = new Vector4f(point.x, point.y, point.z, 1f);
         Matrix4f.transform(viewMatrix, point4f, point4f);
         return point4f;
