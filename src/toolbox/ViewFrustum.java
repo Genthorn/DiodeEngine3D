@@ -2,6 +2,7 @@ package toolbox;
 
 import entities.Camera;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector;
 import org.lwjgl.util.vector.Vector3f;
@@ -32,6 +33,7 @@ public class ViewFrustum {
     public void update() {
         Matrix4f rotation = calculateCameraRotationMatrix();
         Vector3f forwardVector = new Vector3f(Matrix4f.transform(rotation, FORWARD, null));
+        Vector3f upVector = new Vector3f(Matrix4f.transform(rotation, UP, null));
 
         Vector3f toFar = new Vector3f(forwardVector);
         toFar.scale(camera.FAR_PLANE);
@@ -42,6 +44,9 @@ public class ViewFrustum {
 
         Vector4f[] points = calculateFrustumVertices(rotation, forwardVector, centerNear,
                 centerFar);
+
+        //Vector4f[] points = calculateFrustumVertices(rotation, forwardVector, toNear,
+                //toFar);
 
         boolean first = true;
         for (Vector4f point : points) {
@@ -89,6 +94,7 @@ public class ViewFrustum {
                 upVector.y * nearHeight, upVector.z * nearHeight), null);
         Vector3f nearBottom = Vector3f.add(centerNear, new Vector3f(downVector.x * nearHeight,
                 downVector.y * nearHeight, downVector.z * nearHeight), null);
+
         Vector4f[] points = new Vector4f[8];
         points[0] = calculateFrustumCorner(farTop, rightVector, farWidth);
         points[1] = calculateFrustumCorner(farTop, leftVector, farWidth);
@@ -105,7 +111,7 @@ public class ViewFrustum {
     private Vector4f calculateFrustumCorner(Vector3f startPoint, Vector3f direction, float width) {
         Vector3f point = Vector3f.add(startPoint, new Vector3f(direction.x * width, direction.y * width, direction.z * width), null);
         Vector4f point4f = new Vector4f(point.x, point.y, point.z, 1f);
-        Matrix4f.transform(viewMatrix, point4f, point4f);
+        //Matrix4f.transform(viewMatrix, point4f, point4f);
         return point4f;
     }
 
