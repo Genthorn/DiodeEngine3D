@@ -184,14 +184,14 @@ public class MainGameLoop {
 
 		//RANDOM GENERATE WORLD ENTITIES//
 		Random random = new Random();
-		TexturedModel model = new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("tree")), new ModelTexture(loader.loadTexture("tree")));
+		TexturedModel model = new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("lamp")), new ModelTexture(loader.loadTexture("tree")));
 		for(int i = 0; i < 500; i++) {
 
 			float x = random.nextFloat() * 800 - 400;
 			float z = random.nextFloat() * -600;
 			float y = terrains.get(0).getHeightOfTerrain(x, z);
 
-			entities.add(new Entity(model, new Vector3f(x,y,z), 0, 0, 0, 5f));
+			entities.add(new Entity(model, new Vector3f(x,y,z), 0, 0, 0, 1f));
 
 		}
 		//////////////////////////////////

@@ -14,7 +14,7 @@ public class Plane {
     }
 
     public void set (Vector4f point1, Vector4f point2, Vector4f point3) {
-        normal = Maths.crossProduct(point1, point2, point3);
+        normal = Maths.calculatePlaneNormals(point1, point2, point3);
         distance = -Maths.dotProduct(new Vector3f(point1.x, point1.y, point1.z), normal);
     }
 

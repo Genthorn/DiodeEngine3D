@@ -94,9 +94,9 @@ public class ViewFrustum {
         planes[0].set(planePoints[4], planePoints[5], planePoints[7]); // front plane
         planes[1].set(planePoints[1], planePoints[0], planePoints[2]); // back plane
         planes[2].set(planePoints[4], planePoints[5], planePoints[1]); // top plane
-        planes[3].set(planePoints[7], planePoints[6], planePoints[2]); // bottom plane
+        planes[3].set(planePoints[6], planePoints[7], planePoints[3]); // bottom plane
         planes[4].set(planePoints[5], planePoints[1], planePoints[3]); // left plane
-        planes[5].set(planePoints[2], planePoints[6], planePoints[4]); // right plane
+        planes[5].set(planePoints[0], planePoints[4], planePoints[6]); // right plane
 
         for(int i = 0; i < planes.length; i++) {
             System.out.println("Plane " + i + ": " + planes[i].getNormal());
@@ -151,6 +151,7 @@ public class ViewFrustum {
         Matrix4f rotation = new Matrix4f();
         rotation.rotate((float) Math.toRadians(-camera.getYaw()), new Vector3f(0, 1, 0));
         rotation.rotate((float) Math.toRadians(-camera.getPitch()), new Vector3f(1, 0, 0));
+        //rotation.setIdentity();
         return rotation;
     }
 
@@ -162,11 +163,6 @@ public class ViewFrustum {
         nearHeight = nearWidth / getAspectRatio();
     }
 
-    //NOTE TO SELF
-        //THE X COMPONENT IN THE NORMAL IS NOT EVEN CLOSE TO CORRECT AS
-        //AS IT IS 6.5852482E-6 at times but 0.002102564 at other times
-
-
     public boolean isSphereInside(Sphere sphere) {
         if(sphere != null) {
             for (int i = 0; i < planes.length; i++) {
@@ -175,6 +171,7 @@ public class ViewFrustum {
                 }
             }
         }
+
         return true;
     }
 

@@ -73,23 +73,21 @@ public class Maths {
 	}
 
 	public static Vector3f calculatePlaneNormals(Vector4f point0, Vector4f point1, Vector4f point2) {
+		Vector3f crossProduct = new Vector3f();
 		Vector3f v0 = new Vector3f();
 		Vector3f v1 = new Vector3f();
 
-		v0.x = point0.x;
-		v0.y = point0.y;
-		v0.z = point0.z;
-		v0.x = point1.x - v0.x;
-		v0.x = point1.y - v0.y;
-		v0.x = point1.z - v0.z;
+		v0.x = point0.x - point1.x;
+		v0.y = point0.y - point1.y;
+		v0.z = point0.z - point1.z;
 
-		v1.x = point1.x;
-		v1.y = point1.y;
-		v1.z = point1.z;
-		v1.x = point1.x - v1.x;
-		v1.x = point1.y - v1.y;
-		v1.x = point1.z - v1.z;
-		Vector3f crossProduct = new Vector3f();
+		v1.x = point2.x - point1.x;
+		v1.y = point2.y - point1.y;
+		v1.z = point2.z - point1.z;
+
+		v0.normalise(v0);
+		v1.normalise(v1);
+
 		Vector3f.cross(v0, v1, crossProduct);
 
 		return crossProduct;
