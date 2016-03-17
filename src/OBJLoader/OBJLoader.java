@@ -29,6 +29,7 @@ public class OBJLoader {
 		List<Vector2f> textures = new ArrayList<Vector2f>();
 		List<Vector3f> normals = new ArrayList<Vector3f>();
 		List<Integer> indices = new ArrayList<Integer>();
+
 		try {
 			while (true) {
 				line = reader.readLine();
@@ -75,6 +76,9 @@ public class OBJLoader {
 		float[] normalsArray = new float[vertices.size() * 3];
 		float furthest = convertDataToArrays(vertices, textures, normals, verticesArray,
 				texturesArray, normalsArray);
+
+		System.out.println(objFile + ": " + furthest);
+
 		int[] indicesArray = convertIndicesListToArray(indices);
 		ModelData data = new ModelData(verticesArray, texturesArray, normalsArray, indicesArray,
 				furthest);

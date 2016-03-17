@@ -91,12 +91,16 @@ public class ViewFrustum {
      }
 
     private void calculatePlanes(Vector4f planePoints[]) {
-        planes[0].set(planePoints[1], planePoints[0], planePoints[2]);
-        planes[1].set(planePoints[4], planePoints[5], planePoints[7]);
-        planes[2].set(planePoints[0], planePoints[4], planePoints[6]);
-        planes[3].set(planePoints[7], planePoints[6], planePoints[2]);
-        planes[4].set(planePoints[5], planePoints[1], planePoints[3]);
-        planes[5].set(planePoints[4], planePoints[0], planePoints[1]);
+        planes[0].set(planePoints[4], planePoints[5], planePoints[7]); // front plane
+        planes[1].set(planePoints[1], planePoints[0], planePoints[2]); // back plane
+        planes[2].set(planePoints[4], planePoints[5], planePoints[1]); // top plane
+        planes[3].set(planePoints[7], planePoints[6], planePoints[2]); // bottom plane
+        planes[4].set(planePoints[5], planePoints[1], planePoints[3]); // left plane
+        planes[5].set(planePoints[2], planePoints[6], planePoints[4]); // right plane
+
+        for(int i = 0; i < planes.length; i++) {
+            System.out.println("Plane " + i + ": " + planes[i].getNormal());
+        }
     }
 
     private Vector4f[] calculateFrustumVertices(Matrix4f rotation, Vector3f forwardVector,
@@ -115,14 +119,14 @@ public class ViewFrustum {
                 downVector.y * nearHeight, downVector.z * nearHeight), null);
 
         Vector4f[] points = new Vector4f[8];
-        points[0] = calculateFrustumCorner(farTop, rightVector, farWidth);
-        points[1] = calculateFrustumCorner(farTop, leftVector, farWidth);
-        points[2] = calculateFrustumCorner(farBottom, rightVector, farWidth);
-        points[3] = calculateFrustumCorner(farBottom, leftVector, farWidth);
-        points[4] = calculateFrustumCorner(nearTop, rightVector, nearWidth);
-        points[5] = calculateFrustumCorner(nearTop, leftVector, nearWidth);
-        points[6] = calculateFrustumCorner(nearBottom, rightVector, nearWidth);
-        points[7] = calculateFrustumCorner(nearBottom, leftVector, nearWidth);
+        points[0] = calculateFrustumCorner(farTop, rightVector, farWidth);      // Far Top Right
+        points[1] = calculateFrustumCorner(farTop, leftVector, farWidth);       // Far Top Left
+        points[2] = calculateFrustumCorner(farBottom, rightVector, farWidth);   // Far Bottom Right
+        points[3] = calculateFrustumCorner(farBottom, leftVector, farWidth);    // Far Bottom Left
+        points[4] = calculateFrustumCorner(nearTop, rightVector, nearWidth);    // Near Top Right
+        points[5] = calculateFrustumCorner(nearTop, leftVector, nearWidth);     // Near Top Left
+        points[6] = calculateFrustumCorner(nearBottom, rightVector, nearWidth); // Near Bottom Right
+        points[7] = calculateFrustumCorner(nearBottom, leftVector, nearWidth);  // Near Bottom Left
 
         return points;
     }
@@ -165,14 +169,26 @@ public class ViewFrustum {
 
     public boolean isSphereInside(Sphere sphere) {
         if(sphere != null) {
-            for (int i = 0; i < 6; i++) {
-                System.out.println(planes[i].getNormal());
+            for (int i = 0; i < planes.length; i++) {
                 if ((planes[i].getNormal().x * sphere.getCenter().x + planes[i].getNormal().y * sphere.getCenter().y + planes[i].getNormal().z * sphere.getCenter().z) < (-sphere.getRadius() - planes[i].getDistance())) {
-                    return true;
+                    return false;
                 }
             }
         }
-        return false;
+        return true;
+    }
+
+    public boolean isPointInside(Vector3f pos) {
+        return isPointInside(pos.x, pos.y, pos.z);
+    }
+
+    public boolean isPointInside(float x, float y, float z) {
+        for (int i = 0; i < planes.length; i++) {
+            boolean result = planes[i].testPoint(x, y, z);
+            if (result == false) return false;
+        }
+
+        return true;
     }
 
     private float getAspectRatio() {

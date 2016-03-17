@@ -18,6 +18,17 @@ public class Plane {
         distance = -Maths.dotProduct(new Vector3f(point1.x, point1.y, point1.z), normal);
     }
 
+    public boolean testPoint (float x, float y, float z) {
+        float dist = Maths.dotProduct(normal, new Vector3f(x, y, z)) + distance;
+
+        if (dist == 0)
+            return true;
+        else if (dist < 0)
+            return true;
+        else
+            return false;
+    }
+
     public float getDistance() {
         return distance;
     }

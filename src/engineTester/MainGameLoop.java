@@ -205,9 +205,6 @@ public class MainGameLoop {
 			lights.sort(new LightComparator(player));
 			picker.update();
 
-			Vector3f normal = Maths.crossProduct(new Vector4f(12, 34, 32, 1), new Vector4f(67, 12, 34, 1), new Vector4f(45, 23, 12, 1));
-			System.out.println(normal);
-
 			//if(picker.getCurrentTerrainPoint() != null) crate.setPosition(picker.getCurrentTerrainPoint());
 
 			for(Entity e : normalMappedEntities) {

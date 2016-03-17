@@ -54,7 +54,7 @@ public class Maths {
 		normal.y = point1.y;
 		normal.z = point1.z;
 
-		normal.x = normal.x - point2.x;
+		normal.x = point1.x - point2.x;
 		normal.y = point1.y - point2.y;
 		normal.z = point1.z - point2.z;
 
@@ -67,11 +67,30 @@ public class Maths {
 		normal.y = normal.z * toCrossProduct.x - normal.x * toCrossProduct.z;
 		normal.z = normal.x * toCrossProduct.y - normal.y * toCrossProduct.x;
 
-		normal.normalise(toCrossProduct);
-
-		System.out.println("Normal step 4: " + toCrossProduct);
+		normal.normalise(normal);
 
 		return toCrossProduct;
+	}
+
+	public static void calculatePlaneNormals(Vector4f point0, Vector4f point1, Vector4f point2) {
+		Vector3f v0 = new Vector3f();
+		Vector3f v1 = new Vector3f();
+
+		v0.x = point0.x;
+		v0.y = point0.y;
+		v0.z = point0.z;
+		v0.x = point1.x - v0.x;
+		v0.x = point1.y - v0.y;
+		v0.x = point1.z - v0.z;
+
+		v1.x = point1.x;
+		v1.y = point1.y;
+		v1.z = point1.z;
+		v1.x = point1.x - v1.x;
+		v1.x = point1.y - v1.y;
+		v1.x = point1.z - v1.z;
+
+
 	}
 
 	public static float dotProduct(Vector3f vector1, Vector3f vector2) {

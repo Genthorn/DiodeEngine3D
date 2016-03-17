@@ -95,17 +95,21 @@ public class MasterRenderer {
 
 		for(Entity entity : entities) {
 			if(viewFrustum.isSphereInside(entity.getBoundingSphere())) {
+			//if(viewFrustum.isPointInside(entity.getPosition())) {
 				processEntity(entity);
 				numberOfEntitiesRendered++;
 				numberOfNonNormalMapped++;
+			//}
 			}
 		}
 
 		for(Entity entity : normalMapEntities) {
 			if(viewFrustum.isSphereInside(entity.getBoundingSphere())) {
+			//if(viewFrustum.isPointInside(entity.getPosition())) {
 				processNormalMapEntity(entity);
 				numberOfEntitiesRendered++;
 				numberOfNormalMapped++;
+			//}
 			}
 		}
 		
