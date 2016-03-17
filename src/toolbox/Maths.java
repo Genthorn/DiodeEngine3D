@@ -72,7 +72,7 @@ public class Maths {
 		return toCrossProduct;
 	}
 
-	public static void calculatePlaneNormals(Vector4f point0, Vector4f point1, Vector4f point2) {
+	public static Vector3f calculatePlaneNormals(Vector4f point0, Vector4f point1, Vector4f point2) {
 		Vector3f v0 = new Vector3f();
 		Vector3f v1 = new Vector3f();
 
@@ -89,8 +89,10 @@ public class Maths {
 		v1.x = point1.x - v1.x;
 		v1.x = point1.y - v1.y;
 		v1.x = point1.z - v1.z;
+		Vector3f crossProduct = new Vector3f();
+		Vector3f.cross(v0, v1, crossProduct);
 
-
+		return crossProduct;
 	}
 
 	public static float dotProduct(Vector3f vector1, Vector3f vector2) {
