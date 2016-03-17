@@ -26,6 +26,7 @@ import textures.ModelTexture;
 import textures.TerrainTexture;
 import textures.TerrainTexturePack;
 import toolbox.LightComparator;
+import toolbox.Maths;
 import toolbox.MousePicker;
 import water.WaterFrameBuffers;
 import water.WaterRenderer;
@@ -204,6 +205,9 @@ public class MainGameLoop {
 			lights.sort(new LightComparator(player));
 			picker.update();
 
+			Vector3f normal = Maths.crossProduct(new Vector4f(12, 34, 32, 1), new Vector4f(67, 12, 34, 1), new Vector4f(45, 23, 12, 1));
+			System.out.println(normal);
+
 			//if(picker.getCurrentTerrainPoint() != null) crate.setPosition(picker.getCurrentTerrainPoint());
 
 			for(Entity e : normalMappedEntities) {
@@ -234,7 +238,7 @@ public class MainGameLoop {
 			//renderer.renderGUIList(guis);
 			ParticleMaster.renderParticles(camera);
 			//////////////////////////
-			
+
 			DisplayManager.updateDisplay();
 		}
 		

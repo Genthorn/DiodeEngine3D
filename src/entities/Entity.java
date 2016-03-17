@@ -1,9 +1,11 @@
 package entities;
 
+import OBJLoader.ModelData;
 import models.TexturedModel;
 
 import org.lwjgl.util.vector.Vector3f;
 import toolbox.AABB;
+import toolbox.Sphere;
 
 public class Entity {
 	protected TexturedModel model;
@@ -18,7 +20,8 @@ public class Entity {
 	protected final float TURN_SPEED = 160;
 	protected final float JUMP_POWER = 30;
 
-	protected AABB collisionBox;
+	protected AABB boundingBox;
+	protected Sphere boundingSphere;
 	
 	public Entity(TexturedModel model, Vector3f position, float rotX,
 			float rotY, float rotZ, float scale) {
@@ -28,7 +31,11 @@ public class Entity {
 		this.rotY = rotY;
 		this.rotZ = rotZ;
 		this.scale = scale;
-		collisionBox = new AABB(model.getRawModel().getModelData(), position);
+		ModelData data = model.getRawModel().getModelData();
+		boundingBox = new AABB(data, position);
+		boundingSphere = new Sphere(new Vector3f(position.getX(),
+				position.getY() + (data.getFurthestPoint() / 2), position.z),
+				data.getFurthestPoint());
 	}
 	
 	public Entity(TexturedModel model, int textureIndex, Vector3f position, float rotX,
@@ -40,7 +47,11 @@ public class Entity {
 		this.rotY = rotY;
 		this.rotZ = rotZ;
 		this.scale = scale;
-		collisionBox = new AABB(model.getRawModel().getModelData(), position);
+		ModelData data = model.getRawModel().getModelData();
+		boundingBox = new AABB(data, position);
+		boundingSphere = new Sphere(new Vector3f(position.getX(),
+				position.getY() + (data.getFurthestPoint() / 2), position.z),
+				data.getFurthestPoint());
 }
 	
 	public float getTextureXOffset() {
@@ -72,6 +83,8 @@ public class Entity {
 	public Vector3f getPosition() {
 		return position;
 	}
+
+	public Sphere getBoundingSphere() { return boundingSphere; }
 
 	public float getRotX() {
 		return rotX;

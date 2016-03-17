@@ -5,6 +5,7 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 import entities.Camera;
+import org.lwjgl.util.vector.Vector4f;
 
 public class Maths {
 	public static float barryCentric(Vector3f p1, Vector3f p2, Vector3f p3, Vector2f pos) {
@@ -14,7 +15,7 @@ public class Maths {
 		float l3 = 1.0f - l1 - l2;
 		return l1 * p1.y + l2 * p2.y + l3 * p3.y;
 	}
-	
+
 	public static Matrix4f createTransformationMatrix(Vector2f translation, Vector2f scale) {
 		Matrix4f matrix = new Matrix4f();
 		matrix.setIdentity();
@@ -44,5 +45,36 @@ public class Maths {
 		Vector3f negativeCameraPos = new Vector3f(-cameraPos.x, -cameraPos.y, -cameraPos.z);
 		Matrix4f.translate(negativeCameraPos, viewMatrix, viewMatrix);
 		return viewMatrix;
+	}
+
+	public static Vector3f crossProduct(Vector4f point1, Vector4f point2, Vector4f point3) {
+		Vector3f normal = new Vector3f();
+
+		normal.x = point1.x;
+		normal.y = point1.y;
+		normal.z = point1.z;
+
+		normal.x = normal.x - point2.x;
+		normal.y = point1.y - point2.y;
+		normal.z = point1.z - point2.z;
+
+		Vector3f toCrossProduct = new Vector3f();
+		toCrossProduct.x = point2.x-point3.x;
+		toCrossProduct.y = point2.y-point3.y;
+		toCrossProduct.z = point2.z-point3.z;
+
+		normal.x = normal.y * toCrossProduct.z - normal.z * toCrossProduct.y;
+		normal.y = normal.z * toCrossProduct.x - normal.x * toCrossProduct.z;
+		normal.z = normal.x * toCrossProduct.y - normal.y * toCrossProduct.x;
+
+		normal.normalise(toCrossProduct);
+
+		System.out.println("Normal step 4: " + toCrossProduct);
+
+		return toCrossProduct;
+	}
+
+	public static float dotProduct(Vector3f vector1, Vector3f vector2) {
+		return vector1.x * vector2.x + vector1.y * vector2.y + vector1.z * vector2.z;
 	}
 }

@@ -24,10 +24,21 @@ public class ViewFrustum {
 
     private float farHeight, farWidth, nearHeight, nearWidth;
 
+    private Plane[] planes;
+
     public ViewFrustum(Camera camera) {
         this.camera = camera;
+        setupPlanes();
         viewMatrix = Maths.createViewMatrix(camera);
         calculateWidthsAndHeights();
+    }
+
+    private void setupPlanes() {
+        planes = new Plane[6];
+
+        for(int i = 0; i < planes.length; i++) {
+            planes[i] = new Plane(new Vector4f(0,0,0,0), new Vector4f(0,0,0,0), new Vector4f(0,0,0,0));
+        }
     }
 
     public void update() {
@@ -45,8 +56,7 @@ public class ViewFrustum {
         Vector4f[] points = calculateFrustumVertices(rotation, forwardVector, centerNear,
                 centerFar);
 
-        //Vector4f[] points = calculateFrustumVertices(rotation, forwardVector, toNear,
-                //toFar);
+        calculatePlanes(points);
 
         boolean first = true;
         for (Vector4f point : points) {
@@ -80,6 +90,15 @@ public class ViewFrustum {
 
      }
 
+    private void calculatePlanes(Vector4f planePoints[]) {
+        planes[0].set(planePoints[1], planePoints[0], planePoints[2]);
+        planes[1].set(planePoints[4], planePoints[5], planePoints[7]);
+        planes[2].set(planePoints[0], planePoints[4], planePoints[6]);
+        planes[3].set(planePoints[7], planePoints[6], planePoints[2]);
+        planes[4].set(planePoints[5], planePoints[1], planePoints[3]);
+        planes[5].set(planePoints[4], planePoints[0], planePoints[1]);
+    }
+
     private Vector4f[] calculateFrustumVertices(Matrix4f rotation, Vector3f forwardVector,
                                                 Vector3f centerNear, Vector3f centerFar) {
         Vector3f upVector = new Vector3f(Matrix4f.transform(rotation, UP, null));
@@ -111,7 +130,6 @@ public class ViewFrustum {
     private Vector4f calculateFrustumCorner(Vector3f startPoint, Vector3f direction, float width) {
         Vector3f point = Vector3f.add(startPoint, new Vector3f(direction.x * width, direction.y * width, direction.z * width), null);
         Vector4f point4f = new Vector4f(point.x, point.y, point.z, 1f);
-        //Matrix4f.transform(viewMatrix, point4f, point4f);
         return point4f;
     }
 
@@ -138,6 +156,23 @@ public class ViewFrustum {
                 * Math.tan(Math.toRadians(camera.FOV)));
         farHeight = farWidth / getAspectRatio();
         nearHeight = nearWidth / getAspectRatio();
+    }
+
+    //NOTE TO SELF
+        //THE X COMPONENT IN THE NORMAL IS NOT EVEN CLOSE TO CORRECT AS
+        //AS IT IS 6.5852482E-6 at times but 0.002102564 at other times
+
+
+    public boolean isSphereInside(Sphere sphere) {
+        if(sphere != null) {
+            for (int i = 0; i < 6; i++) {
+                System.out.println(planes[i].getNormal());
+                if ((planes[i].getNormal().x * sphere.getCenter().x + planes[i].getNormal().y * sphere.getCenter().y + planes[i].getNormal().z * sphere.getCenter().z) < (-sphere.getRadius() - planes[i].getDistance())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private float getAspectRatio() {

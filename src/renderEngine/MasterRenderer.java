@@ -90,43 +90,30 @@ public class MasterRenderer {
 		}
 
 		int numberOfEntitiesRendered = 0;
+		int numberOfNonNormalMapped = 0;
+		int numberOfNormalMapped = 0;
 
 		for(Entity entity : entities) {
-			if(entity.getPosition().x > viewFrustum.getMinPositions().x) {
-				if(entity.getPosition().x > viewFrustum.getMinPositions().x) {
-					if(entity.getPosition().y > viewFrustum.getMinPositions().y) {
-						if(entity.getPosition().y > viewFrustum.getMinPositions().y) {
-							if(entity.getPosition().z > viewFrustum.getMinPositions().z) {
-								if(entity.getPosition().z > viewFrustum.getMinPositions().z) {
-									if(entity.getPosition().x < viewFrustum.getMaxPositions().x) {
-										if(entity.getPosition().x < viewFrustum.getMaxPositions().x) {
-											if(entity.getPosition().y < viewFrustum.getMaxPositions().y) {
-												if(entity.getPosition().y < viewFrustum.getMaxPositions().y) {
-													if(entity.getPosition().z < viewFrustum.getMaxPositions().z) {
-														if(entity.getPosition().z < viewFrustum.getMaxPositions().z) {
-															processEntity(entity);
-															numberOfEntitiesRendered++;
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
+			if(viewFrustum.isSphereInside(entity.getBoundingSphere())) {
+				processEntity(entity);
+				numberOfEntitiesRendered++;
+				numberOfNonNormalMapped++;
 			}
 		}
 
-		System.out.println("Number of rendered entities: " + numberOfEntitiesRendered);
-
 		for(Entity entity : normalMapEntities) {
-			processNormalMapEntity(entity);
+			if(viewFrustum.isSphereInside(entity.getBoundingSphere())) {
+				processNormalMapEntity(entity);
+				numberOfEntitiesRendered++;
+				numberOfNormalMapped++;
+			}
 		}
 		
 		render(lights, camera, clipPlane);
+		System.out.println("Number of rendered entities: " + numberOfEntitiesRendered +
+				", Not Normal Mapped: " + numberOfNonNormalMapped
+				+ ", Normal Mapped: " + numberOfNormalMapped);
+
 	}
 	
 	public void render(List <Light> lights, Camera camera, Vector4f clipPlane) {
