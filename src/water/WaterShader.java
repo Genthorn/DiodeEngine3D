@@ -81,7 +81,7 @@ public class WaterShader extends ShaderProgram {
 	}
 	
 	public void loadViewMatrix(Camera camera){
-		Matrix4f viewMatrix = Maths.createViewMatrix(camera);
+		Matrix4f viewMatrix = camera.viewMatrix;
 		loadMatrix(location_viewMatrix, viewMatrix);
 		super.loadVector3f(location_cameraPosition, camera.getPosition());
 	}

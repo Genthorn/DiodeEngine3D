@@ -31,7 +31,7 @@ public class ShadowBox {
 	}
 
 	protected void update() {
-		Matrix4f rotation = calculateCameraRotationMatrix();
+		Matrix4f rotation = camera.rotation;
 		Vector3f forwardVector = new Vector3f(Matrix4f.transform(rotation, FORWARD, null));
 
 		Vector3f toFar = new Vector3f(forwardVector);
@@ -135,13 +135,6 @@ public class ShadowBox {
 		Vector4f point4f = new Vector4f(point.x, point.y, point.z, 1f);
 		Matrix4f.transform(lightViewMatrix, point4f, point4f);
 		return point4f;
-	}
-
-	private Matrix4f calculateCameraRotationMatrix() {
-		Matrix4f rotation = new Matrix4f();
-		rotation.rotate((float) Math.toRadians(-camera.getYaw()), new Vector3f(0, 1, 0));
-		rotation.rotate((float) Math.toRadians(-camera.getPitch()), new Vector3f(1, 0, 0));
-		return rotation;
 	}
 
 	private void calculateWidthsAndHeights() {

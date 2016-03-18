@@ -100,7 +100,7 @@ public class MainGameLoop {
 
 		//PLAYER STUFF//
 		TexturedModel playerTex = new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("person")), new ModelTexture(loader.loadTexture("playerTexture")));
-		PlayerMP player = new PlayerMP(playerTex, new Vector3f(153, 5, -274), 0, 100, 0, 0.4f, "ted", null, -1);
+		PlayerMP player = new PlayerMP(playerTex, new Vector3f(0, 0, 0), 0, 100, 0, 0.4f, "ted", null, -1);
 		entities.add(player);
 		////////////////
 
@@ -126,7 +126,7 @@ public class MainGameLoop {
 
 		//LAMP//
 		Lamp lamp = new Lamp(loader, new Vector3f(player.getPosition().x, terrains.get(0).getHeightOfTerrain(player.getPosition().x, player.getPosition().z), player.getPosition().z), 1);
-		entities.add(lamp);
+		//entities.add(lamp);
 		lights.add(lamp.getLight());
 		////////
 
@@ -154,54 +154,55 @@ public class MainGameLoop {
 		MousePicker picker = new MousePicker(camera, renderer.getProjectionMatrix(), terrains.get(0));
 		////////////////
 
-		//NORMAL MAPPED BARREL//
-		TexturedModel barrelModel = new TexturedModel(NormalMappedOBJLoader.loadOBJ("barrel", loader), new ModelTexture(loader.loadTexture("barrel")));
-		barrelModel.getTexture().setShineDamper(10);
-		barrelModel.getTexture().setReflectivity(0.5f);
-		barrelModel.getTexture().setNormalMap(loader.loadTexture("barrelNormal"));
-		Entity barrel = new Entity(barrelModel, new Vector3f(1,1,1), 0, 0, 0, 1f);
-		normalMappedEntities.add(barrel);
-		////////////////////////
-
-		//NORMAL MAPPED ROCK//
-		TexturedModel boulderModel = new TexturedModel(NormalMappedOBJLoader.loadOBJ("boulder", loader),
-				new ModelTexture(loader.loadTexture("boulder")));
-		boulderModel.getTexture().setShineDamper(10);
-		boulderModel.getTexture().setReflectivity(0.5f);
-		boulderModel.getTexture().setNormalMap(loader.loadTexture("boulderNormal"));
-		Entity boulder = new Entity(boulderModel, new Vector3f(1,1,1), 0, 0, 0, 1f);
-		normalMappedEntities.add(boulder);
-		////////////////////////
-
-		//NORMAL MAPPED CRATE//
+//		//NORMAL MAPPED BARREL//
+//		TexturedModel barrelModel = new TexturedModel(NormalMappedOBJLoader.loadOBJ("barrel", loader), new ModelTexture(loader.loadTexture("barrel")));
+//		barrelModel.getTexture().setShineDamper(10);
+//		barrelModel.getTexture().setReflectivity(0.5f);
+//		barrelModel.getTexture().setNormalMap(loader.loadTexture("barrelNormal"));
+//		Entity barrel = new Entity(barrelModel, new Vector3f(1,1,1), 0, 0, 0, 1f);
+//		normalMappedEntities.add(barrel);
+//		////////////////////////
+//
+//		//NORMAL MAPPED ROCK//
+//		TexturedModel boulderModel = new TexturedModel(NormalMappedOBJLoader.loadOBJ("boulder", loader),
+//				new ModelTexture(loader.loadTexture("boulder")));
+//		boulderModel.getTexture().setShineDamper(10);
+//		boulderModel.getTexture().setReflectivity(0.5f);
+//		boulderModel.getTexture().setNormalMap(loader.loadTexture("boulderNormal"));
+//		Entity boulder = new Entity(boulderModel, new Vector3f(1,1,1), 0, 0, 0, 1f);
+//		normalMappedEntities.add(boulder);
+//		////////////////////////
+//
+//		//NORMAL MAPPED CRATE//
 		TexturedModel crateModel = new TexturedModel(NormalMappedOBJLoader.loadOBJ("crate", loader),
 				new ModelTexture(loader.loadTexture("crate")));
-		crateModel.getTexture().setShineDamper(10);
-		crateModel.getTexture().setReflectivity(0.5f);
-		crateModel.getTexture().setNormalMap(loader.loadTexture("crateNormal"));
-		Entity crate = new Entity(crateModel, new Vector3f(1,1,1), 0, 0, 0, 0.05f);
-		////////////////////////
-
-		//RANDOM GENERATE WORLD ENTITIES//
-		Random random = new Random();
+//		crateModel.getTexture().setShineDamper(10);
+//		crateModel.getTexture().setReflectivity(0.5f);
+//		crateModel.getTexture().setNormalMap(loader.loadTexture("crateNormal"));
+//		Entity crate = new Entity(crateModel, new Vector3f(1,1,1), 0, 0, 0, 0.05f);
+//		////////////////////////
+//
+//		//RANDOM GENERATE WORLD ENTITIES//
+//		Random random = new Random();
 		TexturedModel model = new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("lamp")), new ModelTexture(loader.loadTexture("tree")));
-		for(int i = 0; i < 500; i++) {
-
-			float x = random.nextFloat() * 800 - 400;
-			float z = random.nextFloat() * -600;
-			float y = terrains.get(0).getHeightOfTerrain(x, z);
-
-			entities.add(new Entity(model, new Vector3f(x,y,z), 0, 0, 0, 1f));
-
-		}
-		//////////////////////////////////
+//		for(int i = 0; i < 500; i++) {
+//
+//			float x = random.nextFloat() * 800 - 400;
+//			float z = random.nextFloat() * -600;
+//			float y = terrains.get(0).getHeightOfTerrain(x, z);
+//
+			entities.add(new Entity(model, new Vector3f(0,0,-100), 0, 0, 0, 1f));
+//
+//		}
+//		//////////////////////////////////
 
 		world.add(terrains, entities, normalMappedEntities, lights, waters);
 
 		while (!Display.isCloseRequested() && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
 			world.add(terrains, entities, normalMappedEntities, lights, waters);
-			player.move(terrains, entities);
+			//player.move(terrains, entities);
 			camera.move();
+			
 			lights.sort(new LightComparator(player));
 			picker.update();
 
@@ -225,7 +226,7 @@ public class MainGameLoop {
 //			fbos.bindRefractionFrameBuffer();
 //			renderer.renderWorld(world, camera, new Vector4f(0, -1, 0, water.getHeight()));
 //
-//			fbos.unbindCurrentFrameBuffer();
+			fbos.unbindCurrentFrameBuffer();
 			////////////////////////////////
 			
 			//RENDER EVERYTHING ELSE//

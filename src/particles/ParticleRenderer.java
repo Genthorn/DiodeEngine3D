@@ -32,7 +32,7 @@ public class ParticleRenderer {
 	}
 	
 	protected void render(Map<ParticleTexture, List<Particle>> particles, Camera camera){
-		Matrix4f viewMatrix = Maths.createViewMatrix(camera);
+		Matrix4f viewMatrix = camera.viewMatrix;
 		prepare();
 		
 		for(ParticleTexture texture : particles.keySet()) {

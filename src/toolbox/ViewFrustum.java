@@ -29,7 +29,7 @@ public class ViewFrustum {
     public ViewFrustum(Camera camera) {
         this.camera = camera;
         setupPlanes();
-        viewMatrix = Maths.createViewMatrix(camera);
+        viewMatrix = camera.viewMatrix;
         calculateWidthsAndHeights();
     }
 
@@ -42,69 +42,37 @@ public class ViewFrustum {
     }
 
     public void update() {
-        Matrix4f rotation = calculateCameraRotationMatrix();
-        Vector3f forwardVector = new Vector3f(Matrix4f.transform(rotation, FORWARD, null));
-        Vector3f upVector = new Vector3f(Matrix4f.transform(rotation, UP, null));
-
-        Vector3f toFar = new Vector3f(forwardVector);
-        toFar.scale(camera.FAR_PLANE);
-        Vector3f toNear = new Vector3f(forwardVector);
-        toNear.scale(camera.NEAR_PLANE);
-        Vector3f centerNear = Vector3f.add(toNear, camera.getPosition(), null);
-        Vector3f centerFar = Vector3f.add(toFar, camera.getPosition(), null);
-
-        Vector4f[] points = calculateFrustumVertices(rotation, forwardVector, centerNear,
-                centerFar);
+        Matrix4f rotation = camera.rotation;
+        //Vector3f forwardVector = new Vector3f(Matrix4f.transform(rotation, FORWARD, null));
+        //Vector3f upVector = new Vector3f(Matrix4f.transform(rotation, UP, null));
+        Vector4f[] points = calculateFrustumVertices(rotation);
+        //Vector4f[] points = calculateFrustumVertices(rotation, forwardVector, toNear, toFar);
 
         calculatePlanes(points);
-
-        boolean first = true;
-        for (Vector4f point : points) {
-            if (first) {
-                minX = point.x;
-                maxX = point.x;
-                minY = point.y;
-                maxY = point.y;
-                minZ = point.z;
-                maxZ = point.z;
-                first = false;
-                continue;
-            }
-            if (point.x > maxX) {
-                maxX = point.x;
-            } else if (point.x < minX) {
-                minX = point.x;
-            }
-            if (point.y > maxY) {
-                maxY = point.y;
-            } else if (point.y < minY) {
-                minY = point.y;
-            }
-            if (point.z > maxZ) {
-                maxZ = point.z;
-            } else if (point.z < minZ) {
-                minZ = point.z;
-            }
-        }
-        maxZ -= OFFSET;
-
      }
 
     private void calculatePlanes(Vector4f planePoints[]) {
         planes[0].set(planePoints[4], planePoints[5], planePoints[7]); // front plane
-        planes[1].set(planePoints[1], planePoints[0], planePoints[2]); // back plane
-        planes[2].set(planePoints[4], planePoints[5], planePoints[1]); // top plane
-        planes[3].set(planePoints[6], planePoints[7], planePoints[3]); // bottom plane
-        planes[4].set(planePoints[5], planePoints[1], planePoints[3]); // left plane
-        planes[5].set(planePoints[0], planePoints[4], planePoints[6]); // right plane
+        planes[1].set(planePoints[0], planePoints[4], planePoints[6]); // right plane
+        planes[2].set(planePoints[1], planePoints[0], planePoints[2]); // back plane
+        planes[3].set(planePoints[5], planePoints[1], planePoints[3]); // left plane
+        planes[4].set(planePoints[0], planePoints[1], planePoints[5]); // top plane
+        planes[5].set(planePoints[6], planePoints[7], planePoints[3]); // bottom plane
 
 //        for(int i = 0; i < planes.length; i++) {
 //            System.out.println("Plane " + i + ": " + planes[i].getNormal());
 //        }
     }
 
-    private Vector4f[] calculateFrustumVertices(Matrix4f rotation, Vector3f forwardVector,
-                                                Vector3f centerNear, Vector3f centerFar) {
+    private Vector4f[] calculateFrustumVertices(Matrix4f rotation) {
+    	Vector3f forwardVector = new Vector3f(Matrix4f.transform(rotation, FORWARD, null));
+    	Vector3f toFar = new Vector3f(forwardVector);
+        toFar.scale(camera.FAR_PLANE);
+    	Vector3f toNear = new Vector3f(forwardVector);        
+        toNear.scale(camera.NEAR_PLANE);
+        Vector3f centerNear = Vector3f.add(toNear, camera.getPosition(), null);
+        Vector3f centerFar = Vector3f.add(toFar, camera.getPosition(), null);
+    	
         Vector3f upVector = new Vector3f(Matrix4f.transform(rotation, UP, null));
         Vector3f rightVector = Vector3f.cross(forwardVector, upVector, null);
         Vector3f downVector = new Vector3f(-upVector.x, -upVector.y, -upVector.z);
@@ -147,20 +115,19 @@ public class ViewFrustum {
         return new Vector3f(Matrix4f.transform(invertedLight, cen, null));
     }
 
-    private Matrix4f calculateCameraRotationMatrix() {
-        Matrix4f rotation = new Matrix4f();
-       // rotation.rotate((float) Math.toRadians(-camera.getYaw()), new Vector3f(0, 1, 0));
-        //rotation.rotate((float) Math.toRadians(-camera.getPitch()), new Vector3f(1, 0, 0));
-        rotation.setIdentity();
-        return rotation;
-    }
+//    private Matrix4f calculateCameraRotationMatrix() {
+//        Matrix4f rotation = new Matrix4f();
+//        rotation.rotate((float) Math.toRadians(-camera.getYaw()), new Vector3f(0, 1, 0));
+//        rotation.rotate((float) Math.toRadians(-camera.getPitch()), new Vector3f(1, 0, 0));
+//        rotation.setIdentity();
+//        return rotation;
+//    }
 
     private void calculateWidthsAndHeights() {
-        farWidth = (float) (camera.FAR_PLANE * Math.tan(Math.toRadians(camera.FOV)));
-        nearWidth = (float) (camera.NEAR_PLANE
-                * Math.tan(Math.toRadians(camera.FOV)));
-        farHeight = farWidth / getAspectRatio();
-        nearHeight = nearWidth / getAspectRatio();
+    	farHeight = 2.0f * (float)(camera.FAR_PLANE * Math.tan(Math.toRadians(camera.FOV / 2)));
+    	nearHeight = 2.0f * (float)(camera.NEAR_PLANE * Math.tan(Math.toRadians(camera.FOV / 2)));
+    	farWidth = farHeight / getAspectRatio();
+    	nearWidth = nearHeight / getAspectRatio();
     }
 
     public boolean isSphereInside(Sphere sphere) {
@@ -169,33 +136,36 @@ public class ViewFrustum {
                                                   sphere.getCenter().y - planes[i].getPoints()[0].y,
                                                   sphere.getCenter().z - planes[i].getPoints()[0].z);
 
-            float dot = Maths.dotProduct(planeToSphere, planes[i].getNormal());
+            float distance = Maths.dotProduct(planeToSphere, planes[i].getNormal());
 
-            float distance = dot + sphere.getRadius();
+            if (distance < 0)
+                distance += sphere.getRadius();
 
             if(distance < 0) {
+            	System.out.println(i + ": failed");
                 return false;
             }
 
-            System.out.println("Plane " + i + ": " + (Maths.dotProduct(planeToSphere, planes[i].getNormal()) + sphere.getRadius()));
+            System.out.print(i + ": " + distance + "   ");
 
         }
+        System.out.println(" ");
 
         return true;
     }
 
-    public boolean isPointInside(Vector3f pos) {
-        return isPointInside(pos.x, pos.y, pos.z);
-    }
-
-    public boolean isPointInside(float x, float y, float z) {
-        for (int i = 0; i < 6; i++) {
-            boolean result = planes[i].testPoint(x, y, z);
-            if (result == false) return false;
-        }
-
-        return true;
-    }
+//    public boolean isPointInside(Vector3f pos) {
+//        return isPointInside(pos.x, pos.y, pos.z);
+//    }
+//
+//    public boolean isPointInside(float x, float y, float z) {
+//        for (int i = 0; i < 6; i++) {
+//            boolean result = planes[i].testPoint(x, y, z);
+//            if (result == false) return false;
+//        }
+//
+//        return true;
+//    }
 
     private float getAspectRatio() {
         return (float) Display.getWidth() / (float) Display.getHeight();

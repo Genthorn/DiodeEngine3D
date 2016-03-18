@@ -35,8 +35,6 @@ public class MasterRenderer {
 	
 	private Matrix4f projectionMatrix;
 
-	public ViewFrustum viewFrustum;
-	
 	private StaticShader shader = new StaticShader();
 	private EntityRenderer entityRenderer;
 	
@@ -66,7 +64,6 @@ public class MasterRenderer {
 		guiRenderer = new GUIRenderer(loader);
 		shadowMapRenderer = new ShadowMapMasterRenderer(camera);
 		normalMappingRenderer = new NormalMappingRenderer(projectionMatrix);
-		viewFrustum = new ViewFrustum(camera);
 	}
 	
 	public static void enableCulling() {
@@ -94,7 +91,7 @@ public class MasterRenderer {
 		int numberOfNormalMapped = 0;
 
 		for(Entity entity : entities) {
-			if(viewFrustum.isSphereInside(entity.getBoundingSphere())) {
+			if(camera.viewFrustum.isSphereInside(entity.getBoundingSphere())) {
 			//if(viewFrustum.isPointInside(entity.getPosition())) {
 				processEntity(entity);
 				numberOfEntitiesRendered++;
@@ -104,7 +101,7 @@ public class MasterRenderer {
 		}
 
 		for(Entity entity : normalMapEntities) {
-			if(viewFrustum.isSphereInside(entity.getBoundingSphere())) {
+			if(camera.viewFrustum.isSphereInside(entity.getBoundingSphere())) {
 			//if(viewFrustum.isPointInside(entity.getPosition())) {
 				processNormalMapEntity(entity);
 				numberOfEntitiesRendered++;
@@ -121,8 +118,6 @@ public class MasterRenderer {
 	}
 	
 	public void render(List <Light> lights, Camera camera, Vector4f clipPlane) {
-		viewFrustum.update();
-
 		prepare();
 		shader.start();
 		shader.loadMapSize(shadowMapRenderer.getShadowMapSize());
@@ -198,16 +193,23 @@ public class MasterRenderer {
 	private void createProjectionMatrix(){
     	projectionMatrix = new Matrix4f();
 		float aspectRatio = (float) Display.getWidth() / (float) Display.getHeight();
-		float y_scale = (float) ((1f / Math.tan(Math.toRadians(camera.FOV / 2f))));
-		float x_scale = y_scale / aspectRatio;
+		float nearHeight = (float) ((1f / Math.tan(Math.toRadians(camera.FOV / 2f))));
+		//float nearWidth = nearHeight / aspectRatio;
 		float frustum_length = camera.FAR_PLANE - camera.NEAR_PLANE;
 
-		projectionMatrix.m00 = x_scale;
-		projectionMatrix.m11 = y_scale;
-		projectionMatrix.m22 = -((camera.FAR_PLANE + camera.NEAR_PLANE) / frustum_length);
+		projectionMatrix.m00 = nearHeight / aspectRatio;
+		projectionMatrix.m11 = nearHeight;
+		projectionMatrix.m22 = -camera.FAR_PLANE / frustum_length;
 		projectionMatrix.m23 = -1;
-		projectionMatrix.m32 = -((2 * camera.NEAR_PLANE * camera.FAR_PLANE) / frustum_length);
+		projectionMatrix.m32 = (-camera.NEAR_PLANE * camera.FAR_PLANE) / frustum_length;
 		projectionMatrix.m33 = 0;
+
+//		projectionMatrix.m00 = nearHeight / aspectRatio;
+//		projectionMatrix.m11 = nearHeight;
+//		projectionMatrix.m22 = -((camera.FAR_PLANE + camera.NEAR_PLANE) / frustum_length);
+//		projectionMatrix.m23 = -1;
+//		projectionMatrix.m32 = -((2 * camera.NEAR_PLANE * camera.FAR_PLANE) / frustum_length);
+//		projectionMatrix.m33 = 0;
     }
 	
 	public void renderShadowMap(List<Entity> entityList, Light sun) {

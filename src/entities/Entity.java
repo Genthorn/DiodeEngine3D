@@ -34,8 +34,8 @@ public class Entity {
 		ModelData data = model.getRawModel().getModelData();
 		boundingBox = new AABB(data, position);
 		boundingSphere = new Sphere(new Vector3f(position.getX(),
-				position.getY() + (data.getFurthestPoint() / 2), position.z),
-				data.getFurthestPoint());
+				position.getY(), position.z),
+				data.getFurthestPoint());		
 	}
 	
 	public Entity(TexturedModel model, int textureIndex, Vector3f position, float rotX,

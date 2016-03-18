@@ -27,7 +27,7 @@ public class MousePicker {
     public MousePicker(Camera cam, Matrix4f projection, Terrain terrain) {
         camera = cam;
         projectionMatrix = projection;
-        viewMatrix = Maths.createViewMatrix(camera);
+        viewMatrix = camera.viewMatrix;
         this.terrain = terrain;
     }
 
@@ -40,7 +40,7 @@ public class MousePicker {
     }
 
     public void update() {
-        viewMatrix = Maths.createViewMatrix(camera);
+        viewMatrix = camera.viewMatrix;
         currentRay = calculateMouseRay();
         if (intersectionInRange(0, RAY_RANGE, currentRay)) {
             currentTerrainPoint = binarySearch(0, 0, RAY_RANGE, currentRay);
