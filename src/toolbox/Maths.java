@@ -47,32 +47,7 @@ public class Maths {
 		return viewMatrix;
 	}
 
-	public static Vector3f crossProduct(Vector4f point1, Vector4f point2, Vector4f point3) {
-		Vector3f normal = new Vector3f();
-
-		normal.x = point1.x;
-		normal.y = point1.y;
-		normal.z = point1.z;
-
-		normal.x = point1.x - point2.x;
-		normal.y = point1.y - point2.y;
-		normal.z = point1.z - point2.z;
-
-		Vector3f toCrossProduct = new Vector3f();
-		toCrossProduct.x = point2.x-point3.x;
-		toCrossProduct.y = point2.y-point3.y;
-		toCrossProduct.z = point2.z-point3.z;
-
-		normal.x = normal.y * toCrossProduct.z - normal.z * toCrossProduct.y;
-		normal.y = normal.z * toCrossProduct.x - normal.x * toCrossProduct.z;
-		normal.z = normal.x * toCrossProduct.y - normal.y * toCrossProduct.x;
-
-		normal.normalise(normal);
-
-		return toCrossProduct;
-	}
-
-	public static Vector3f calculatePlaneNormals(Vector4f point0, Vector4f point1, Vector4f point2) {
+	public static Vector3f calculateNormal(Vector4f point0, Vector4f point1, Vector4f point2) {
 		Vector3f crossProduct = new Vector3f();
 		Vector3f v0 = new Vector3f();
 		Vector3f v1 = new Vector3f();

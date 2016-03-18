@@ -114,9 +114,9 @@ public class MasterRenderer {
 		}
 		
 		render(lights, camera, clipPlane);
-		System.out.println("Number of rendered entities: " + numberOfEntitiesRendered +
-				", Not Normal Mapped: " + numberOfNonNormalMapped
-				+ ", Normal Mapped: " + numberOfNormalMapped);
+//		System.out.println("Number of rendered entities: " + numberOfEntitiesRendered +
+//				", Not Normal Mapped: " + numberOfNonNormalMapped
+//				+ ", Normal Mapped: " + numberOfNormalMapped);
 
 	}
 	

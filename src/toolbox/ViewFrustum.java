@@ -98,9 +98,9 @@ public class ViewFrustum {
         planes[4].set(planePoints[5], planePoints[1], planePoints[3]); // left plane
         planes[5].set(planePoints[0], planePoints[4], planePoints[6]); // right plane
 
-        for(int i = 0; i < planes.length; i++) {
-            System.out.println("Plane " + i + ": " + planes[i].getNormal());
-        }
+//        for(int i = 0; i < planes.length; i++) {
+//            System.out.println("Plane " + i + ": " + planes[i].getNormal());
+//        }
     }
 
     private Vector4f[] calculateFrustumVertices(Matrix4f rotation, Vector3f forwardVector,
@@ -149,9 +149,9 @@ public class ViewFrustum {
 
     private Matrix4f calculateCameraRotationMatrix() {
         Matrix4f rotation = new Matrix4f();
-        rotation.rotate((float) Math.toRadians(-camera.getYaw()), new Vector3f(0, 1, 0));
-        rotation.rotate((float) Math.toRadians(-camera.getPitch()), new Vector3f(1, 0, 0));
-        //rotation.setIdentity();
+       // rotation.rotate((float) Math.toRadians(-camera.getYaw()), new Vector3f(0, 1, 0));
+        //rotation.rotate((float) Math.toRadians(-camera.getPitch()), new Vector3f(1, 0, 0));
+        rotation.setIdentity();
         return rotation;
     }
 
@@ -164,12 +164,21 @@ public class ViewFrustum {
     }
 
     public boolean isSphereInside(Sphere sphere) {
-        if(sphere != null) {
-            for (int i = 0; i < planes.length; i++) {
-                if ((planes[i].getNormal().x * sphere.getCenter().x + planes[i].getNormal().y * sphere.getCenter().y + planes[i].getNormal().z * sphere.getCenter().z) < (-sphere.getRadius() - planes[i].getDistance())) {
-                    return false;
-                }
+        for(int i = 0; i < planes.length; i++) {
+            Vector3f planeToSphere = new Vector3f(sphere.getCenter().x - planes[i].getPoints()[0].x,
+                                                  sphere.getCenter().y - planes[i].getPoints()[0].y,
+                                                  sphere.getCenter().z - planes[i].getPoints()[0].z);
+
+            float dot = Maths.dotProduct(planeToSphere, planes[i].getNormal());
+
+            float distance = dot + sphere.getRadius();
+
+            if(distance < 0) {
+                return false;
             }
+
+            System.out.println("Plane " + i + ": " + (Maths.dotProduct(planeToSphere, planes[i].getNormal()) + sphere.getRadius()));
+
         }
 
         return true;
@@ -180,7 +189,7 @@ public class ViewFrustum {
     }
 
     public boolean isPointInside(float x, float y, float z) {
-        for (int i = 0; i < planes.length; i++) {
+        for (int i = 0; i < 6; i++) {
             boolean result = planes[i].testPoint(x, y, z);
             if (result == false) return false;
         }
