@@ -72,11 +72,8 @@ public class ViewFrustum
 			// distance -= planes[i].D;
 			// if (distance < 0)
 			{
-				System.out.println(i + ": failed");
 				return false;
 			}
-			// System.out.print(i + ": " + distance + " ");
-			System.out.print(i + ": pass" + "   ");
 		}
 		System.out.println(" ");
 		return true;

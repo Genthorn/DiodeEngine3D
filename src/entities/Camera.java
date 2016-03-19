@@ -75,18 +75,6 @@ public class Camera
 		hasRunOnce = true;
 	}
 
-	// private void preventCameraTerrainCollision()
-	// {
-	// float terrainHeightAtCurPos =
-	// player.getCurrentTerrain().getHeightOfTerrain(position.x, position.z);
-	// if (position.y < terrainHeightAtCurPos + MIN_HEIGHT_ABOVE_TERRAIN)
-	// {
-	// position.y = (terrainHeightAtCurPos + MIN_HEIGHT_ABOVE_TERRAIN);
-	// }
-	// else if (position.y > terrainHeightAtCurPos + MIN_HEIGHT_ABOVE_TERRAIN)
-	// {
-	// }
-	// }
 	public void invertPitch()
 	{
 		this.pitch = -pitch;
@@ -103,9 +91,7 @@ public class Camera
 	{
 		this.yaw = yaw;
 	}
-	public void setRoll(float roll)
-	{
-	}
+
 	private void calculateZoom()
 	{
 		float zoomLevel = Mouse.getDWheel() * 0.1f;

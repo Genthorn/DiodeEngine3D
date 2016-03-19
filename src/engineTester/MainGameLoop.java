@@ -30,6 +30,7 @@ import water.WaterTile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class MainGameLoop {
 
@@ -94,7 +95,7 @@ public class MainGameLoop {
 
 		//PLAYER STUFF//
 		TexturedModel playerTex = new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("person")), new ModelTexture(loader.loadTexture("playerTexture")));
-		PlayerMP player = new PlayerMP(playerTex, new Vector3f(0, 0, 0), 0, 0, 0, 0.4f, "ted", null, -1);
+		PlayerMP player = new PlayerMP(playerTex, new Vector3f(15.282322f, 0.15686035f, -15.762215f), 0, 0, 0, 0.4f, "ted", null, -1);
 		entities.add(player);
 		////////////////
 
@@ -177,28 +178,30 @@ public class MainGameLoop {
 //		////////////////////////
 //
 //		//RANDOM GENERATE WORLD ENTITIES//
-//		Random random = new Random();
+		Random random = new Random();
 		TexturedModel model = new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("lamp")), new ModelTexture(loader.loadTexture("tree")));
-//		for(int i = 0; i < 500; i++) {
-//
-//			float x = random.nextFloat() * 800 - 400;
-//			float z = random.nextFloat() * -600;
-//			float y = terrains.get(0).getHeightOfTerrain(x, z);
-//
-			entities.add(new Entity(model, new Vector3f(0,0,-100), 0, 0, 0, 1f));
-//
-//		}
+		for(int i = 0; i < 500; i++) {
+
+			float x = random.nextFloat() * 800 - 400;
+			float z = random.nextFloat() * -600;
+			float y = terrains.get(0).getHeightOfTerrain(x, z);
+
+			entities.add(new Entity(model, new Vector3f(x,y,z), 0, 0, 0, 1f));
+
+		}
 //		//////////////////////////////////
 
 		world.add(terrains, entities, normalMappedEntities, lights, waters);
 
 		while (!Display.isCloseRequested() && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
 			world.add(terrains, entities, normalMappedEntities, lights, waters);
-			//player.move(terrains, entities);
+			player.move(terrains, entities);
 			camera.update();
 			
 			lights.sort(new LightComparator(player));
 			picker.update();
+
+			if(picker.getCurrentTerrainPoint() != null) System.out.println(picker.getCurrentTerrainPoint());
 
 			//if(picker.getCurrentTerrainPoint() != null) crate.setPosition(picker.getCurrentTerrainPoint());
 

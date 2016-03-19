@@ -82,6 +82,9 @@ public class MasterRenderer
 	public void renderScene(List<Entity> entities, List<Entity> normalMapEntities, List<Terrain> terrains,
 			List<Light> lights, Camera camera, Vector4f clipPlane)
 	{
+
+		int numberOfEntitiesRendered = 0;
+
 		for (Terrain terrain : terrains)
 		{
 			processTerrain(terrain);
@@ -91,8 +94,8 @@ public class MasterRenderer
 		{
 			if (Camera.viewFrustum.Contains(entity.getBoundingSphere()))
 			{
-				// if(viewFrustum.isPointInside(entity.getPosition())) {
 				processEntity(entity);
+				numberOfEntitiesRendered++;
 			}
 		}
 
@@ -100,16 +103,13 @@ public class MasterRenderer
 		{
 			if (Camera.viewFrustum.Contains(entity.getBoundingSphere()))
 			{
-				// if(viewFrustum.isPointInside(entity.getPosition())) {
 				processNormalMapEntity(entity);
 			}
 		}
 
 		render(lights, camera, clipPlane);
-		// System.out.println("Number of rendered entities: " +
-		// numberOfEntitiesRendered +
-		// ", Not Normal Mapped: " + numberOfNonNormalMapped
-		// + ", Normal Mapped: " + numberOfNormalMapped);
+		 System.out.println("Number of rendered entities: " +
+		 numberOfEntitiesRendered);
 
 	}
 
