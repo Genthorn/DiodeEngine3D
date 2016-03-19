@@ -14,61 +14,49 @@ import org.lwjgl.util.vector.Vector3f;
 import models.RawModel;
 import renderEngine.Loader;
 
-public class NormalMappedOBJLoader
-{
+public class NormalMappedOBJLoader {
 
 	private static final String RES_LOC = "res/";
 
-	public static RawModel loadOBJ(String objFileName, Loader loader)
-	{
+	public static RawModel loadOBJ(String objFileName, Loader loader) {
 		FileReader isr = null;
 		File objFile = new File(RES_LOC + objFileName + ".obj");
-		try
-		{
+
+		try {
 			isr = new FileReader(objFile);
-		}
-		catch (FileNotFoundException e)
-		{
+		} catch (FileNotFoundException e) {
 			System.err.println("File not found in res; don't use any extention");
 		}
+
 		BufferedReader reader = new BufferedReader(isr);
 		String line;
 		List<VertexNM> vertices = new ArrayList<VertexNM>();
 		List<Vector2f> textures = new ArrayList<Vector2f>();
 		List<Vector3f> normals = new ArrayList<Vector3f>();
 		List<Integer> indices = new ArrayList<Integer>();
-		try
-		{
-			while (true)
-			{
+
+		try {
+			while (true) {
 				line = reader.readLine();
-				if (line.startsWith("v "))
-				{
+				if (line.startsWith("v ")) {
 					String[] currentLine = line.split(" ");
 					Vector3f vertex = new Vector3f((float) Float.valueOf(currentLine[1]), (float) Float.valueOf(currentLine[2]), (float) Float.valueOf(currentLine[3]));
 					VertexNM newVertex = new VertexNM(vertices.size(), vertex);
 					vertices.add(newVertex);
 
-				}
-				else if (line.startsWith("vt "))
-				{
+				} else if (line.startsWith("vt ")) {
 					String[] currentLine = line.split(" ");
 					Vector2f texture = new Vector2f((float) Float.valueOf(currentLine[1]), (float) Float.valueOf(currentLine[2]));
 					textures.add(texture);
-				}
-				else if (line.startsWith("vn "))
-				{
+				} else if (line.startsWith("vn ")) {
 					String[] currentLine = line.split(" ");
 					Vector3f normal = new Vector3f((float) Float.valueOf(currentLine[1]), (float) Float.valueOf(currentLine[2]), (float) Float.valueOf(currentLine[3]));
 					normals.add(normal);
-				}
-				else if (line.startsWith("f "))
-				{
+				} else if (line.startsWith("f ")) {
 					break;
 				}
 			}
-			while (line != null && line.startsWith("f "))
-			{
+			while (line != null && line.startsWith("f ")) {
 				String[] currentLine = line.split(" ");
 				String[] vertex1 = currentLine[1].split("/");
 				String[] vertex2 = currentLine[2].split("/");
@@ -79,12 +67,13 @@ public class NormalMappedOBJLoader
 				calculateTangents(v0, v1, v2, textures);// NEW
 				line = reader.readLine();
 			}
+
 			reader.close();
 		}
-		catch (IOException e)
-		{
-			System.err.println("Error reading the file");
+		catch (IOException e) {
+			System.err.println("Error reading the file: " + objFile);
 		}
+
 		removeUnusedVertices(vertices);
 		float[] verticesArray = new float[vertices.size() * 3];
 		float[] texturesArray = new float[vertices.size() * 2];
@@ -96,9 +85,7 @@ public class NormalMappedOBJLoader
 		return loader.loadToVAO(verticesArray, texturesArray, normalsArray, indicesArray, tangentsArray);
 	}
 
-	// NEW
-	private static void calculateTangents(VertexNM v0, VertexNM v1, VertexNM v2, List<Vector2f> textures)
-	{
+	private static void calculateTangents(VertexNM v0, VertexNM v1, VertexNM v2, List<Vector2f> textures) {
 		Vector3f delatPos1 = Vector3f.sub(v1.getPosition(), v0.getPosition(), null);
 		Vector3f delatPos2 = Vector3f.sub(v2.getPosition(), v0.getPosition(), null);
 		Vector2f uv0 = textures.get(v0.getTextureIndex());
@@ -117,32 +104,27 @@ public class NormalMappedOBJLoader
 		v2.addTangent(tangent);
 	}
 
-	private static VertexNM processVertex(String[] vertex, List<VertexNM> vertices, List<Integer> indices)
-	{
+	private static VertexNM processVertex(String[] vertex, List<VertexNM> vertices, List<Integer> indices) {
 		int index = Integer.parseInt(vertex[0]) - 1;
 		VertexNM currentVertex = vertices.get(index);
 		int textureIndex = Integer.parseInt(vertex[1]) - 1;
 		int normalIndex = Integer.parseInt(vertex[2]) - 1;
-		if (!currentVertex.isSet())
-		{
+		if (!currentVertex.isSet()) {
 			currentVertex.setTextureIndex(textureIndex);
 			currentVertex.setNormalIndex(normalIndex);
 			indices.add(index);
 			return currentVertex;
-		}
-		else
-		{
+		} else {
 			return dealWithAlreadyProcessedVertex(currentVertex, textureIndex, normalIndex, indices, vertices);
 		}
 	}
 
-	private static int[] convertIndicesListToArray(List<Integer> indices)
-	{
+	private static int[] convertIndicesListToArray(List<Integer> indices) {
 		int[] indicesArray = new int[indices.size()];
-		for (int i = 0; i < indicesArray.length; i++)
-		{
+		for (int i = 0; i < indicesArray.length; i++) {
 			indicesArray[i] = indices.get(i);
 		}
+
 		return indicesArray;
 	}
 
@@ -177,22 +159,15 @@ public class NormalMappedOBJLoader
 //		return furthestPoint;
 //	}
 
-	private static VertexNM dealWithAlreadyProcessedVertex(VertexNM previousVertex, int newTextureIndex, int newNormalIndex, List<Integer> indices, List<VertexNM> vertices)
-	{
-		if (previousVertex.hasSameTextureAndNormal(newTextureIndex, newNormalIndex))
-		{
+	private static VertexNM dealWithAlreadyProcessedVertex(VertexNM previousVertex, int newTextureIndex, int newNormalIndex, List<Integer> indices, List<VertexNM> vertices) {
+		if (previousVertex.hasSameTextureAndNormal(newTextureIndex, newNormalIndex)) {
 			indices.add(previousVertex.getIndex());
 			return previousVertex;
-		}
-		else
-		{
+		} else {
 			VertexNM anotherVertex = previousVertex.getDuplicateVertex();
-			if (anotherVertex != null)
-			{
+			if (anotherVertex != null) {
 				return dealWithAlreadyProcessedVertex(anotherVertex, newTextureIndex, newNormalIndex, indices, vertices);
-			}
-			else
-			{
+			} else {
 				VertexNM duplicateVertex = previousVertex.duplicate(vertices.size());// NEW
 				duplicateVertex.setTextureIndex(newTextureIndex);
 				duplicateVertex.setNormalIndex(newNormalIndex);
@@ -204,13 +179,10 @@ public class NormalMappedOBJLoader
 		}
 	}
 
-	private static void removeUnusedVertices(List<VertexNM> vertices)
-	{
-		for (VertexNM vertex : vertices)
-		{
+	private static void removeUnusedVertices(List<VertexNM> vertices) {
+		for (VertexNM vertex : vertices) {
 			vertex.averageTangents();
-			if (!vertex.isSet())
-			{
+			if (!vertex.isSet()) {
 				vertex.setTextureIndex(0);
 				vertex.setNormalIndex(0);
 			}

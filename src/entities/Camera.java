@@ -8,8 +8,7 @@ import org.lwjgl.util.vector.Vector4f;
 
 import toolbox.ViewFrustum;
 
-public class Camera
-{
+public class Camera {
 
 	public static final float FOV = 70;
 	public static final float NEAR_PLANE = 0.7f;
@@ -21,43 +20,26 @@ public class Camera
 	public static ViewFrustum viewFrustum = new ViewFrustum();
 	public static float aspectRatio;
 
-	// private float MIN_HEIGHT_ABOVE_TERRAIN = 2;
 	private float distanceFromPlayer = 20;
-	private Player m_player;
+	private float angleAroundPlayer = 0;
+	private Player player;
 
 	public static Vector3f position = new Vector3f(0, 0, 0);
 	private float pitch = 0;
 	private float yaw = 0;
 	private boolean hasRunOnce = false;
 
-	public Camera(Player player)
-	{
-		m_player = player;
+	public Camera(Player player) {
+		this.player = player;
 		updateProjection();
 	}
 
-	private void updateProjection()
-	{
-		aspectRatio = (float) Display.getWidth() / (float) Display.getHeight();
-		float nearHeight = 1.0f / (float) Math.tan(Math.toRadians(Camera.FOV / 2.0f));
-		float frustum_length = NEAR_PLANE - FAR_PLANE;
-
-		projectionMatrix.m00 = nearHeight / aspectRatio;
-		projectionMatrix.m11 = nearHeight;
-		projectionMatrix.m22 = (FAR_PLANE + NEAR_PLANE) / frustum_length;
-		projectionMatrix.m23 = -1;
-		projectionMatrix.m32 = (2.0f * NEAR_PLANE * FAR_PLANE) / frustum_length;
-		projectionMatrix.m33 = 0;
-	}
-	public void update()
-	{
+	public void update() {
 		calculateZoom();
-		if (hasRunOnce)
-			calculatePitch();
+		calculatePitch();
 		calculateAngleAroundPlayer();
 
-		float theta = m_player.getRotY();
-		theta += yaw;
+		float theta = player.getRotY() + yaw;
 		rotationMatrix.setIdentity();
 		rotationMatrix.rotate((float) Math.toRadians(theta), new Vector3f(0, 1, 0));
 		rotationMatrix.rotate((float) Math.toRadians(-pitch), new Vector3f(1, 0, 0));
@@ -67,12 +49,58 @@ public class Camera
 		position = new Vector3f(newPosition);
 
 		viewMatrix.setIdentity();
-		viewMatrix.translate(position);
+		viewMatrix.translate(new Vector3f(position.x, position.y, position.z));
 		Matrix4f.mul(viewMatrix, rotationMatrix, viewMatrix);
 		viewMatrix.invert();
 
 		viewFrustum.update();
 		hasRunOnce = true;
+	}
+
+	private void updateProjection() {
+		aspectRatio = (float) Display.getWidth() / (float) Display.getHeight();
+		float nearHeight = (float) (1.0f / Math.tan(Math.toRadians(Camera.FOV / 2.0f)));
+		float frustum_length = NEAR_PLANE - FAR_PLANE;
+
+		projectionMatrix.m00 = nearHeight / aspectRatio;
+		projectionMatrix.m11 = nearHeight;
+		projectionMatrix.m22 = ((FAR_PLANE + NEAR_PLANE) / frustum_length);
+		projectionMatrix.m23 = -1;
+		projectionMatrix.m32 = ((2.0f * NEAR_PLANE * FAR_PLANE) / frustum_length);
+		projectionMatrix.m33 = 0;
+	}
+
+	private void calculateZoom() {
+		float zoomLevel = Mouse.getDWheel() * 0.1f;
+		distanceFromPlayer -= zoomLevel;
+	}
+
+	private void calculatePitch() {
+		if(hasRunOnce) {
+			if (Mouse.isButtonDown(0)) {
+				float pitchChange = Mouse.getDY() * 0.28f;
+				pitch -= pitchChange;
+			}
+
+			if (Mouse.isButtonDown(1)) {
+				float pitchChange = Mouse.getDY() * 0.28f;
+				pitch -= pitchChange;
+			}
+		}
+
+	}
+
+	private void calculateAngleAroundPlayer() {
+		if (Mouse.isButtonDown(0)) {
+			float angleChange = Mouse.getDX() * 0.28f;
+			yaw -= angleChange;
+		}
+
+		if (Mouse.isButtonDown(1)) {
+			float angleChange = Mouse.getDX() * 0.28f;
+			player.increaseRotation(0, -angleChange, 0);
+			yaw = 0;
+		}
 	}
 
 	public void invertPitch()
@@ -90,49 +118,5 @@ public class Camera
 	public void setYaw(float yaw)
 	{
 		this.yaw = yaw;
-	}
-
-	private void calculateZoom()
-	{
-		float zoomLevel = Mouse.getDWheel() * 0.1f;
-		distanceFromPlayer -= zoomLevel;
-	}
-	private void calculatePitch()
-	{
-		// float terrainHeightAtCurPos =
-		// player.getCurrentTerrain().getHeightOfTerrain(position.x, position.z)
-		// + MIN_HEIGHT_ABOVE_TERRAIN;
-
-		if (Mouse.isButtonDown(0))
-		{
-			float pitchChange = Mouse.getDY() * 0.28f;
-			// if(!onGround)
-			pitch -= pitchChange;
-			// else pitch = terrainHeightAtCurPos;
-		}
-
-		if (Mouse.isButtonDown(1))
-		{
-			float pitchChange = Mouse.getDY() * 0.28f;
-			// if(!onGround)
-			pitch -= pitchChange;
-			// else pitch += terrainHeightAtCurPos;
-		}
-
-	}
-	private void calculateAngleAroundPlayer()
-	{
-		if (Mouse.isButtonDown(0))
-		{
-			float angleChange = Mouse.getDX() * 0.28f;
-			yaw -= angleChange;
-		}
-
-		if (Mouse.isButtonDown(1))
-		{
-			float angleChange = Mouse.getDX() * 0.28f;
-			m_player.increaseRotation(0, -angleChange, 0);
-			yaw = 0;
-		}
 	}
 }

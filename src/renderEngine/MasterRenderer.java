@@ -25,8 +25,7 @@ import entities.Light;
 import guis.GUIRenderer;
 import guis.GUITexture;
 
-public class MasterRenderer
-{
+public class MasterRenderer {
 	// SKYCOLOUR
 	public static final float RED = 0.80392156862f;
 	public static final float GREEN = 0.78823529411f;
@@ -49,8 +48,7 @@ public class MasterRenderer
 
 	private GUIRenderer guiRenderer;
 
-	public MasterRenderer(Loader loader)
-	{
+	public MasterRenderer(Loader loader) {
 		enableCulling();
 		entityRenderer = new EntityRenderer(shader);
 		terrainRenderer = new TerrainRenderer(terrainShader);
@@ -60,61 +58,45 @@ public class MasterRenderer
 		normalMappingRenderer = new NormalMappingRenderer();
 	}
 
-	public static void enableCulling()
-	{
+	public static void enableCulling() {
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glCullFace(GL11.GL_BACK_RIGHT);
 		GL11.glCullFace(GL11.GL_BACK_LEFT);
 		GL11.glCullFace(GL11.GL_BACK);
 	}
 
-	public static void disableCulling()
-	{
+	public static void disableCulling() {
 		GL11.glDisable(GL11.GL_CULL_FACE);
 	}
 
-	public void renderWorld(World world, Camera camera, Vector4f clipPlane)
-	{
+	public void renderWorld(World world, Camera camera, Vector4f clipPlane) {
 		renderScene(World.getEntities(), world.getNormalMappedEntities(), world.getTerrains(), world.getLights(),
 				camera, clipPlane);
 	}
 
 	public void renderScene(List<Entity> entities, List<Entity> normalMapEntities, List<Terrain> terrains,
-			List<Light> lights, Camera camera, Vector4f clipPlane)
-	{
+			List<Light> lights, Camera camera, Vector4f clipPlane) {
 
-		int numberOfEntitiesRendered = 0;
-
-		for (Terrain terrain : terrains)
-		{
+		for (Terrain terrain : terrains) {
 			processTerrain(terrain);
 		}
 
-		for (Entity entity : entities)
-		{
-			if (Camera.viewFrustum.Contains(entity.getBoundingSphere()))
-			{
+		for (Entity entity : entities) {
+			if (Camera.viewFrustum.isSphereInside(entity.getBoundingSphere())) {
 				processEntity(entity);
-				numberOfEntitiesRendered++;
 			}
 		}
 
-		for (Entity entity : normalMapEntities)
-		{
-			if (Camera.viewFrustum.Contains(entity.getBoundingSphere()))
-			{
+		for (Entity entity : normalMapEntities) {
+			if (Camera.viewFrustum.isSphereInside(entity.getBoundingSphere())) {
 				processNormalMapEntity(entity);
 			}
 		}
 
 		render(lights, camera, clipPlane);
-		 System.out.println("Number of rendered entities: " +
-		 numberOfEntitiesRendered);
-
 	}
 
-	public void render(List<Light> lights, Camera camera, Vector4f clipPlane)
-	{
+	public void render(List<Light> lights, Camera camera, Vector4f clipPlane) {
 		prepare();
 		shader.start();
 		shader.loadMapSize(shadowMapRenderer.getShadowMapSize());
@@ -146,8 +128,7 @@ public class MasterRenderer
 		guiRenderer.render(guis);
 	}
 
-	private void prepare()
-	{
+	private void prepare() {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		GL11.glClearColor(RED, GREEN, BLUE, 1);
@@ -155,28 +136,23 @@ public class MasterRenderer
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, getShadowMapTexture());
 	}
 
-	public void processTerrain(Terrain terrain)
-	{
+	public void processTerrain(Terrain terrain) {
 		terrains.add(terrain);
 	}
 
-	public void processTerrain(List<Terrain> terrain)
-	{
-		for (Terrain currentTerrain : terrain)
-		{
+	public void processTerrain(List<Terrain> terrain) {
+		for (Terrain currentTerrain : terrain) {
 			terrains.add(currentTerrain);
 		}
 
 	}
 
-	public void processEntity(Entity entity)
-	{
+	public void processEntity(Entity entity) {
 		TexturedModel entityModel = entity.getModel();
 		List<Entity> batch = entities.get(entityModel);
 		if (batch != null)
 			batch.add(entity);
-		else
-		{
+		else {
 			List<Entity> newBatch = new ArrayList<Entity>();
 			newBatch.add(entity);
 			entities.put(entityModel, newBatch);
@@ -184,14 +160,12 @@ public class MasterRenderer
 
 	}
 
-	public void processNormalMapEntity(Entity entity)
-	{
+	public void processNormalMapEntity(Entity entity) {
 		TexturedModel entityModel = entity.getModel();
 		List<Entity> batch = normalmapEntities.get(entityModel);
 		if (batch != null)
 			batch.add(entity);
-		else
-		{
+		else {
 			List<Entity> newBatch = new ArrayList<Entity>();
 			newBatch.add(entity);
 			normalmapEntities.put(entityModel, newBatch);
@@ -199,23 +173,19 @@ public class MasterRenderer
 
 	}
 
-	public void renderShadowMap(List<Entity> entityList, Light sun)
-	{
-		for (Entity entity : entityList)
-		{
+	public void renderShadowMap(List<Entity> entityList, Light sun) {
+		for (Entity entity : entityList) {
 			processEntity(entity);
 		}
 		shadowMapRenderer.render(entities, sun);
 		entities.clear();
 	}
 
-	public int getShadowMapTexture()
-	{
+	public int getShadowMapTexture() {
 		return shadowMapRenderer.getShadowMap();
 	}
 
-	public void cleanUp()
-	{
+	public void cleanUp() {
 		shader.cleanUp();
 		terrainShader.cleanUp();
 		shadowMapRenderer.cleanUp();

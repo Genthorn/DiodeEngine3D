@@ -18,7 +18,6 @@ public class ShadowShader extends ShaderProgram {
 	@Override
 	protected void getAllUniformLocations() {
 		location_mvpMatrix = super.getUniformLocation("mvpMatrix");
-		
 	}
 	
 	protected void loadMvpMatrix(Matrix4f mvpMatrix){

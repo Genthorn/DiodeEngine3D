@@ -27,8 +27,7 @@ public class VertexNM {
 	protected void addTangent(Vector3f tangent){
 		tangents.add(tangent);
 	}
-	
-	//NEW
+
 	protected VertexNM duplicate(int newIndex){
 		VertexNM vertex = new VertexNM(newIndex, position);
 		vertex.tangents = this.tangents;

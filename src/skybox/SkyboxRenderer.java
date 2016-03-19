@@ -8,8 +8,7 @@ import entities.Camera;
 import renderEngine.Loader;
 import models.RawModel;
 
-public class SkyboxRenderer
-{
+public class SkyboxRenderer {
 	private static final float SIZE = 500f;
 
 	private static final float[] VERTICES = { -SIZE, SIZE, -SIZE, -SIZE, -SIZE, -SIZE, SIZE, -SIZE, -SIZE, SIZE, -SIZE, -SIZE, SIZE, SIZE, -SIZE, -SIZE, SIZE, -SIZE,
@@ -30,15 +29,13 @@ public class SkyboxRenderer
 	private int texture;
 	private SkyboxShader shader;
 
-	public SkyboxRenderer(Loader loader)
-	{
+	public SkyboxRenderer(Loader loader) {
 		cube = loader.loadToVAO(VERTICES, 3);
 		texture = loader.loadCubeMap(TEXTURE_FILES);
 		shader = new SkyboxShader();
 	}
 
-	public void render(Camera camera, float r, float g, float b)
-	{
+	public void render(Camera camera, float r, float g, float b) {
 		shader.start();
 		shader.loadProjectionMatrix(Camera.projectionMatrix);
 		shader.loadViewMatrix(camera);

@@ -7,8 +7,7 @@ import org.lwjgl.util.vector.Vector4f;
 
 import entities.Camera;
 
-public class ShadowBox
-{
+public class ShadowBox {
 
 	private static final float OFFSET = 15;
 	private static final Vector4f UP = new Vector4f(0, 1, 0, 0);
@@ -22,14 +21,12 @@ public class ShadowBox
 	
 	private float farHeight, farWidth, nearHeight, nearWidth;
 
-	protected ShadowBox(Matrix4f lightViewMatrix)
-	{
+	protected ShadowBox(Matrix4f lightViewMatrix) {
 		this.lightViewMatrix = lightViewMatrix;
 		calculateWidthsAndHeights();
 	}
 
-	protected void update()
-	{
+	protected void update() {
 		Matrix4f rotation = Camera.rotationMatrix;
 		Vector3f forwardVector = new Vector3f(Matrix4f.transform(rotation, FORWARD, null));
 
@@ -43,10 +40,8 @@ public class ShadowBox
 		Vector4f[] points = calculateFrustumVertices(rotation, forwardVector, centerNear, centerFar);
 
 		boolean first = true;
-		for (Vector4f point : points)
-		{
-			if (first)
-			{
+		for (Vector4f point : points) {
+			if (first) {
 				minX = point.x;
 				maxX = point.x;
 				minY = point.y;
@@ -56,68 +51,30 @@ public class ShadowBox
 				first = false;
 				continue;
 			}
-			if (point.x > maxX)
-			{
+
+			if (point.x > maxX) {
 				maxX = point.x;
-			}
-			else if (point.x < minX)
-			{
+			} else if (point.x < minX) {
 				minX = point.x;
 			}
-			if (point.y > maxY)
-			{
+
+			if (point.y > maxY) {
 				maxY = point.y;
-			}
-			else if (point.y < minY)
-			{
+			} else if (point.y < minY) {
 				minY = point.y;
 			}
-			if (point.z > maxZ)
-			{
+
+			if (point.z > maxZ) {
 				maxZ = point.z;
-			}
-			else if (point.z < minZ)
-			{
+			} else if (point.z < minZ) {
 				minZ = point.z;
 			}
 		}
+
 		maxZ += OFFSET;
-
 	}
 
-	protected Vector3f getCenter()
-	{
-		float x = (minX + maxX) / 2f;
-		float y = (minY + maxY) / 2f;
-		float z = (minZ + maxZ) / 2f;
-		Vector4f cen = new Vector4f(x, y, z, 1);
-		Matrix4f invertedLight = new Matrix4f();
-		Matrix4f.invert(lightViewMatrix, invertedLight);
-		return new Vector3f(Matrix4f.transform(invertedLight, cen, null));
-	}
-
-	public static float getShadowDistance()
-	{
-		return SHADOW_DISTANCE;
-	}
-
-	protected float getWidth()
-	{
-		return maxX - minX;
-	}
-
-	protected float getHeight()
-	{
-		return maxY - minY;
-	}
-
-	protected float getLength()
-	{
-		return maxZ - minZ;
-	}
-
-	private Vector4f[] calculateFrustumVertices(Matrix4f rotation, Vector3f forwardVector, Vector3f centerNear, Vector3f centerFar)
-	{
+	private Vector4f[] calculateFrustumVertices(Matrix4f rotation, Vector3f forwardVector, Vector3f centerNear, Vector3f centerFar) {
 		Vector3f upVector = new Vector3f(Matrix4f.transform(rotation, UP, null));
 		Vector3f rightVector = Vector3f.cross(forwardVector, upVector, null);
 		Vector3f downVector = new Vector3f(-upVector.x, -upVector.y, -upVector.z);
@@ -138,25 +95,49 @@ public class ShadowBox
 		return points;
 	}
 
-	private Vector4f calculateLightSpaceFrustumCorner(Vector3f startPoint, Vector3f direction, float width)
-	{
+	private Vector4f calculateLightSpaceFrustumCorner(Vector3f startPoint, Vector3f direction, float width) {
 		Vector3f point = Vector3f.add(startPoint, new Vector3f(direction.x * width, direction.y * width, direction.z * width), null);
 		Vector4f point4f = new Vector4f(point.x, point.y, point.z, 1f);
 		Matrix4f.transform(lightViewMatrix, point4f, point4f);
 		return point4f;
 	}
 
-	private void calculateWidthsAndHeights()
-	{
+	private void calculateWidthsAndHeights() {
 		farWidth = (float) (SHADOW_DISTANCE * Math.tan(Math.toRadians(Camera.FOV)));
 		nearWidth = (float) (Camera.NEAR_PLANE * Math.tan(Math.toRadians(Camera.FOV)));
 		farHeight = farWidth / getAspectRatio();
 		nearHeight = nearWidth / getAspectRatio();
 	}
 
-	private float getAspectRatio()
-	{
+	protected Vector3f getCenter() {
+		float x = (minX + maxX) / 2f;
+		float y = (minY + maxY) / 2f;
+		float z = (minZ + maxZ) / 2f;
+		Vector4f cen = new Vector4f(x, y, z, 1);
+		Matrix4f invertedLight = new Matrix4f();
+		Matrix4f.invert(lightViewMatrix, invertedLight);
+		return new Vector3f(Matrix4f.transform(invertedLight, cen, null));
+	}
+
+	private float getAspectRatio() {
 		return (float) Display.getWidth() / (float) Display.getHeight();
+	}
+
+	public static float getShadowDistance() {
+		return SHADOW_DISTANCE;
+	}
+
+	protected float getWidth() {
+		return maxX - minX;
+	}
+
+	protected float getHeight() {
+		return maxY - minY;
+	}
+
+	protected float getLength()
+	{
+		return maxZ - minZ;
 	}
 
 }

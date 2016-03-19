@@ -11,8 +11,7 @@ import org.lwjgl.util.vector.Vector3f;
 import renderEngine.DisplayManager;
 import terrains.Terrain;
 
-public class Player extends Entity
-{
+public class Player extends Entity {
 
 	private float currentForwardSpeed = 0;
 	private float currentTurnSpeed = 0;
@@ -22,28 +21,16 @@ public class Player extends Entity
 
 	private Terrain curTerrain = null;
 
-	//private List<Entity> possibleCollisions = new ArrayList<Entity>();
-
-	public Player(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale)
-	{
+	public Player(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
 		super(model, position, rotX, rotY, rotZ, scale);
 	}
 
-	public void move(List<Terrain> terrains, List<Entity> entities)
-	{
-
-		checkCollision(entities);
-
-		for (Terrain terrain : terrains)
-		{
-			if (terrain.getX() <= getPosition().x)
-			{
-				if (terrain.getX() + Terrain.getSIZE() > getPosition().x)
-				{
-					if (terrain.getZ() <= getPosition().z)
-					{
-						if (terrain.getZ() + Terrain.getSIZE() > getPosition().z)
-						{
+	public void move(List<Terrain> terrains, List<Entity> entities) {
+		for (Terrain terrain : terrains) {
+			if (terrain.getX() <= getPosition().x) {
+				if (terrain.getX() + Terrain.getSIZE() > getPosition().x) {
+					if (terrain.getZ() <= getPosition().z) {
+						if (terrain.getZ() + Terrain.getSIZE() > getPosition().z) {
 							checkInputs(entities);
 							super.increaseRotation(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0);
 							float distance = currentForwardSpeed * DisplayManager.getFrameTimeSeconds();
@@ -51,11 +38,6 @@ public class Player extends Entity
 							float dz = 0;
 							dx += (float) (distance * Math.sin(Math.toRadians(super.getRotY())));
 							dz += (float) (distance * Math.cos(Math.toRadians(super.getRotY())));
-
-							// dx += (float)
-							// (distance*Math.cos(Math.toRadians(super.getRotY()+90)));
-							// dz += (float)
-							// (-distance*Math.sin(Math.toRadians(super.getRotY()+90)));
 
 							super.increasePosition(dx, 0, dz);
 
@@ -78,61 +60,38 @@ public class Player extends Entity
 		}
 	}
 
-	private void checkCollision(List<Entity> entities)
-	{
-		// for (Entity e : entities)
-		// {
-		// if(AABB.isColliding(collisionBox, e.collisionBox)) {
-		// System.out.println("oui");
-		// } else {
-		// System.out.println("non");
-		// }
-		// }
-	}
-
-	private void jump()
-	{
-		if (!isInAir)
-		{
+	private void jump() {
+		if (!isInAir) {
 			this.upwardsSpeed = JUMP_POWER;
 			isInAir = true;
 		}
 	}
 
-	private void checkInputs(List<Entity> entities)
-	{
-		if (Keyboard.isKeyDown(Keyboard.KEY_W))
-		{
+	private void checkInputs(List<Entity> entities) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
 			this.currentForwardSpeed = RUN_SPEED;
 		}
-		else if (Keyboard.isKeyDown(Keyboard.KEY_S))
-		{
+		else if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
 			this.currentForwardSpeed = -RUN_SPEED;
 		}
-		else
-		{
+		else {
 			this.currentForwardSpeed = 0;
 		}
 
 		// STRAFING CODE HERE
-		if (Keyboard.isKeyDown(Keyboard.KEY_D))
-		{
+		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
 			if (!Mouse.isButtonDown(1))
 				this.currentTurnSpeed = -TURN_SPEED;
-			if (Mouse.isButtonDown(1))
-			{
+			if (Mouse.isButtonDown(1)) {
 			}
 		}
-		else if (Keyboard.isKeyDown(Keyboard.KEY_A))
-		{
+		else if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
 			if (!Mouse.isButtonDown(1))
 				this.currentTurnSpeed = TURN_SPEED;
-			if (Mouse.isButtonDown(1))
-			{
+			if (Mouse.isButtonDown(1)) {
 			}
 		}
-		else
-		{
+		else {
 			this.currentTurnSpeed = 0;
 		}
 
@@ -140,8 +99,7 @@ public class Player extends Entity
 			jump();
 	}
 
-	public boolean isMoving()
-	{
+	public boolean isMoving() {
 		if (currentForwardSpeed != 0)
 			return true;
 		return false;

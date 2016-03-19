@@ -5,10 +5,8 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
-public class Maths
-{
-	public static float barryCentric(Vector3f p1, Vector3f p2, Vector3f p3, Vector2f pos)
-	{
+public class Maths {
+	public static float barryCentric(Vector3f p1, Vector3f p2, Vector3f p3, Vector2f pos) {
 		float det = (p2.z - p3.z) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.z - p3.z);
 		float l1 = ((p2.z - p3.z) * (pos.x - p3.x) + (p3.x - p2.x) * (pos.y - p3.z)) / det;
 		float l2 = ((p3.z - p1.z) * (pos.x - p3.x) + (p1.x - p3.x) * (pos.y - p3.z)) / det;
@@ -16,8 +14,7 @@ public class Maths
 		return l1 * p1.y + l2 * p2.y + l3 * p3.y;
 	}
 
-	public static Matrix4f createTransformationMatrix(Vector2f translation, Vector2f scale)
-	{
+	public static Matrix4f createTransformationMatrix(Vector2f translation, Vector2f scale) {
 		Matrix4f matrix = new Matrix4f();
 		matrix.setIdentity();
 		Matrix4f.translate(translation, matrix, matrix);
@@ -25,8 +22,7 @@ public class Maths
 		return matrix;
 	}
 
-	public static Matrix4f createTransformationMatrix(Vector3f translation, float rx, float ry, float rz, float scale)
-	{
+	public static Matrix4f createTransformationMatrix(Vector3f translation, float rx, float ry, float rz, float scale) {
 		Matrix4f matrix = new Matrix4f();
 		matrix.setIdentity();
 		Matrix4f.translate(translation, matrix, matrix);
@@ -37,8 +33,7 @@ public class Maths
 		return matrix;
 	}
 
-	public static Vector3f calculateNormal(Vector4f point0, Vector4f point1, Vector4f point2)
-	{
+	public static Vector3f calculateNormal(Vector4f point0, Vector4f point1, Vector4f point2) {
 		Vector3f crossProduct = new Vector3f();
 		Vector3f v0 = new Vector3f();
 		Vector3f v1 = new Vector3f();
@@ -59,8 +54,7 @@ public class Maths
 		return crossProduct;
 	}
 
-	public static float dotProduct(Vector3f vector1, Vector3f vector2)
-	{
+	public static float dotProduct(Vector3f vector1, Vector3f vector2) {
 		return vector1.x * vector2.x + vector1.y * vector2.y + vector1.z * vector2.z;
 	}
 }
