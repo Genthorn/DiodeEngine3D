@@ -1,17 +1,11 @@
 package toolbox;
 
-public class GameFile {
+public class GameFile
+{
+	//private String m_path = "";
 
-    private String path = "";
-
-
-
-    public GameFile(String path) {
-        this.path = path;
-
-
-    }
-
-
-
+	public GameFile(String path)
+	{
+		//m_path = path;
+	}
 }

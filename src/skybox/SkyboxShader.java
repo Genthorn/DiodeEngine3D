@@ -6,7 +6,6 @@ import org.lwjgl.util.vector.Vector3f;
 import entities.Camera;
 import renderEngine.DisplayManager;
 import shaders.ShaderProgram;
-import toolbox.Maths;
 
 public class SkyboxShader extends ShaderProgram {
 	private static final String VERTEX_FILE = "skybox/skyboxVertexShader.txt";
@@ -29,7 +28,7 @@ public class SkyboxShader extends ShaderProgram {
     }
  
     public void loadViewMatrix(Camera camera){
-        Matrix4f matrix = camera.viewMatrix;
+        Matrix4f matrix = Camera.viewMatrix;
         matrix.m30 = 0;
         matrix.m31 = 0;
         matrix.m32 = 0;

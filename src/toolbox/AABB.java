@@ -6,12 +6,10 @@ import org.lwjgl.util.vector.Vector3f;
 public class AABB {
 
     private Vector3f position;
-    private ModelData boundingBox;
-    private float width, height, depth;
+    private float width, height;
 
     public AABB(ModelData boundingBox, Vector3f position) {
         this.position = position;
-        this.boundingBox = boundingBox;
         calculateAABB();
     }
 

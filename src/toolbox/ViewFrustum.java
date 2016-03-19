@@ -1,199 +1,96 @@
 package toolbox;
 
 import entities.Camera;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
-public class ViewFrustum {
+public class ViewFrustum
+{
+	private static final Vector3f[] clipCube = { new Vector3f(-1, -1, -1), new Vector3f(1, -1, -1), new Vector3f(1, 1, -1), new Vector3f(-1, 1, -1), new Vector3f(-1, -1, 1), new Vector3f(1, -1, 1),
+			new Vector3f(1, 1, 1), new Vector3f(-1, 1, 1) };
+	// private static final Vector4f UP = new Vector4f(0, 1, 0, 0);
+	// private static final Vector4f FORWARD = new Vector4f(0, 0, -1, 0);
+	private Plane[] planes = new Plane[6];
 
-    private Camera camera;
+	public ViewFrustum()
+	{
+		for (int i = 0; i < 6; i++)
+			planes[i] = new Plane();
+	}
 
-    private static final float OFFSET = 10;
-    private static final Vector4f UP = new Vector4f(0, 1, 0, 0);
-    private static final Vector4f FORWARD = new Vector4f(0, 0, -1, 0);
+	public void update()
+	{
+		Vector3f[] points = calculateFrustumVertices();
+		planes[0].Set(points[1], points[0], points[2]);
+		planes[1].Set(points[4], points[5], points[7]);
+		planes[2].Set(points[0], points[4], points[3]);
+		planes[3].Set(points[5], points[1], points[6]);
+		planes[4].Set(points[2], points[3], points[6]);
+		planes[5].Set(points[4], points[0], points[1]);
 
-    private Matrix4f viewMatrix;
-
-    private float minX, maxX;
-    private float minY, maxY;
-    private float minZ, maxZ;
-
-    private float farHeight, farWidth, nearHeight, nearWidth;
-
-    private Plane[] planes;
-
-    public ViewFrustum(Camera camera) {
-        this.camera = camera;
-        setupPlanes();
-        viewMatrix = camera.viewMatrix;
-        calculateWidthsAndHeights();
-    }
-
-    private void setupPlanes() {
-        planes = new Plane[6];
-
-        for(int i = 0; i < planes.length; i++) {
-            planes[i] = new Plane(new Vector4f(0,0,0,0), new Vector4f(0,0,0,0), new Vector4f(0,0,0,0));
-        }
-    }
-
-    public void update() {
-        Matrix4f rotation = camera.rotation;
-        //Vector3f forwardVector = new Vector3f(Matrix4f.transform(rotation, FORWARD, null));
-        //Vector3f upVector = new Vector3f(Matrix4f.transform(rotation, UP, null));
-        Vector4f[] points = calculateFrustumVertices(rotation);
-        //Vector4f[] points = calculateFrustumVertices(rotation, forwardVector, toNear, toFar);
-
-        calculatePlanes(points);
-     }
-
-    private void calculatePlanes(Vector4f planePoints[]) {
-        planes[0].set(planePoints[4], planePoints[5], planePoints[7]); // front plane
-        planes[1].set(planePoints[0], planePoints[4], planePoints[6]); // right plane
-        planes[2].set(planePoints[1], planePoints[0], planePoints[2]); // back plane
-        planes[3].set(planePoints[5], planePoints[1], planePoints[3]); // left plane
-        planes[4].set(planePoints[0], planePoints[1], planePoints[5]); // top plane
-        planes[5].set(planePoints[6], planePoints[7], planePoints[3]); // bottom plane
-
-//        for(int i = 0; i < planes.length; i++) {
-//            System.out.println("Plane " + i + ": " + planes[i].getNormal());
-//        }
-    }
-
-    private Vector4f[] calculateFrustumVertices(Matrix4f rotation) {
-    	Vector3f forwardVector = new Vector3f(Matrix4f.transform(rotation, FORWARD, null));
-    	Vector3f toFar = new Vector3f(forwardVector);
-        toFar.scale(camera.FAR_PLANE);
-    	Vector3f toNear = new Vector3f(forwardVector);        
-        toNear.scale(camera.NEAR_PLANE);
-        Vector3f centerNear = Vector3f.add(toNear, camera.getPosition(), null);
-        Vector3f centerFar = Vector3f.add(toFar, camera.getPosition(), null);
-    	
-        Vector3f upVector = new Vector3f(Matrix4f.transform(rotation, UP, null));
-        Vector3f rightVector = Vector3f.cross(forwardVector, upVector, null);
-        Vector3f downVector = new Vector3f(-upVector.x, -upVector.y, -upVector.z);
-        Vector3f leftVector = new Vector3f(-rightVector.x, -rightVector.y, -rightVector.z);
-        Vector3f farTop = Vector3f.add(centerFar, new Vector3f(upVector.x * farHeight,
-                upVector.y * farHeight, upVector.z * farHeight), null);
-        Vector3f farBottom = Vector3f.add(centerFar, new Vector3f(downVector.x * farHeight,
-                downVector.y * farHeight, downVector.z * farHeight), null);
-        Vector3f nearTop = Vector3f.add(centerNear, new Vector3f(upVector.x * nearHeight,
-                upVector.y * nearHeight, upVector.z * nearHeight), null);
-        Vector3f nearBottom = Vector3f.add(centerNear, new Vector3f(downVector.x * nearHeight,
-                downVector.y * nearHeight, downVector.z * nearHeight), null);
-
-        Vector4f[] points = new Vector4f[8];
-        points[0] = calculateFrustumCorner(farTop, rightVector, farWidth);      // Far Top Right
-        points[1] = calculateFrustumCorner(farTop, leftVector, farWidth);       // Far Top Left
-        points[2] = calculateFrustumCorner(farBottom, rightVector, farWidth);   // Far Bottom Right
-        points[3] = calculateFrustumCorner(farBottom, leftVector, farWidth);    // Far Bottom Left
-        points[4] = calculateFrustumCorner(nearTop, rightVector, nearWidth);    // Near Top Right
-        points[5] = calculateFrustumCorner(nearTop, leftVector, nearWidth);     // Near Top Left
-        points[6] = calculateFrustumCorner(nearBottom, rightVector, nearWidth); // Near Bottom Right
-        points[7] = calculateFrustumCorner(nearBottom, leftVector, nearWidth);  // Near Bottom Left
-
-        return points;
-    }
-
-    private Vector4f calculateFrustumCorner(Vector3f startPoint, Vector3f direction, float width) {
-        Vector3f point = Vector3f.add(startPoint, new Vector3f(direction.x * width, direction.y * width, direction.z * width), null);
-        Vector4f point4f = new Vector4f(point.x, point.y, point.z, 1f);
-        return point4f;
-    }
-
-    public Vector3f getCenter() {
-        float x = (minX + maxX) / 2f;
-        float y = (minY + maxY) / 2f;
-        float z = (minZ + maxZ) / 2f;
-        Vector4f cen = new Vector4f(x, y, z, 1);
-        Matrix4f invertedLight = new Matrix4f();
-        Matrix4f.invert(viewMatrix, invertedLight);
-        return new Vector3f(Matrix4f.transform(invertedLight, cen, null));
-    }
-
-//    private Matrix4f calculateCameraRotationMatrix() {
-//        Matrix4f rotation = new Matrix4f();
-//        rotation.rotate((float) Math.toRadians(-camera.getYaw()), new Vector3f(0, 1, 0));
-//        rotation.rotate((float) Math.toRadians(-camera.getPitch()), new Vector3f(1, 0, 0));
-//        rotation.setIdentity();
-//        return rotation;
-//    }
-
-    private void calculateWidthsAndHeights() {
-    	farHeight = 2.0f * (float)(camera.FAR_PLANE * Math.tan(Math.toRadians(camera.FOV / 2)));
-    	nearHeight = 2.0f * (float)(camera.NEAR_PLANE * Math.tan(Math.toRadians(camera.FOV / 2)));
-    	farWidth = farHeight / getAspectRatio();
-    	nearWidth = nearHeight / getAspectRatio();
-    }
-
-    public boolean isSphereInside(Sphere sphere) {
-        for(int i = 0; i < planes.length; i++) {
-            Vector3f planeToSphere = new Vector3f(sphere.getCenter().x - planes[i].getPoints()[0].x,
-                                                  sphere.getCenter().y - planes[i].getPoints()[0].y,
-                                                  sphere.getCenter().z - planes[i].getPoints()[0].z);
-
-            float distance = Maths.dotProduct(planeToSphere, planes[i].getNormal());
-
-            if (distance < 0)
-                distance += sphere.getRadius();
-
-            if(distance < 0) {
-            	System.out.println(i + ": failed");
-                return false;
-            }
-
-            System.out.print(i + ": " + distance + "   ");
-
-        }
-        System.out.println(" ");
-
-        return true;
-    }
-
-//    public boolean isPointInside(Vector3f pos) {
-//        return isPointInside(pos.x, pos.y, pos.z);
-//    }
-//
-//    public boolean isPointInside(float x, float y, float z) {
-//        for (int i = 0; i < 6; i++) {
-//            boolean result = planes[i].testPoint(x, y, z);
-//            if (result == false) return false;
-//        }
-//
-//        return true;
-//    }
-
-    private float getAspectRatio() {
-        return (float) Display.getWidth() / (float) Display.getHeight();
-    }
-
-    public float getDistance() {
-        return camera.FAR_PLANE;
-    }
-
-    public float getWidth() {
-        return maxX - minX;
-    }
-
-    public float getHeight() {
-        return maxY - minY;
-    }
-
-    public float getLength() {
-        return maxZ - minZ;
-    }
-
-    public Vector3f getMinPositions() {
-        return new Vector3f(minX, minY, minZ);
-    }
-
-    public Vector3f getMaxPositions() {
-        return new Vector3f(maxX, maxY, maxZ);
-    }
-
-
+		// planes[0].Set(points[4], points[5], points[7]); // front plane
+		// planes[1].Set(points[0], points[4], points[6]); // right plane
+		// planes[2].Set(points[1], points[0], points[2]); // back plane
+		// planes[3].Set(points[5], points[1], points[3]); // left plane
+		// planes[4].Set(points[0], points[1], points[5]); // top plane
+		// planes[5].Set(points[6], points[7], points[3]); // bottom plane
+	}
+	private Vector3f[] calculateFrustumVertices()
+	{
+		Matrix4f inverseProjView = Matrix4f.mul(Camera.projectionMatrix, Camera.viewMatrix, null);
+		inverseProjView.invert();
+		Vector3f[] points = new Vector3f[8];
+		Vector4f vertex = new Vector4f();
+		vertex.w = 1;
+		for (int i = 0; i < 8; i++)
+		{
+			vertex.x = clipCube[i].x;
+			vertex.y = clipCube[i].y;
+			vertex.z = clipCube[i].z;
+			Matrix4f.transform(inverseProjView, vertex, vertex);
+			vertex.x /= vertex.w;
+			vertex.y /= vertex.w;
+			vertex.z /= vertex.w;
+			vertex.w /= vertex.w;
+			points[i] = new Vector3f(vertex);
+		}
+		return points;
+	}
+	// private Vector3f calculateFrustumCorner(Vector3f startPoint, Vector3f direction, float width)
+	// {
+	// return Vector3f.add(startPoint, new Vector3f(direction.x * width, direction.y * width, direction.z * width), null);
+	// }
+	public boolean Contains(Sphere sphere)
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			float dot = (planes[i].Normal.x * sphere.center.x + planes[i].Normal.y * sphere.center.y + planes[i].Normal.z * sphere.center.z);
+			if (dot < (-sphere.radius - planes[i].D))
+			// distance = (planes[i].Normal.x * sphere.center.x + planes[i].Normal.y * sphere.center.y + planes[i].Normal.z * sphere.center.z);
+			// distance -= sphere.radius;
+			// distance -= planes[i].D;
+			// if (distance < 0)
+			{
+				System.out.println(i + ": failed");
+				return false;
+			}
+			// System.out.print(i + ": " + distance + " ");
+			System.out.print(i + ": pass" + "   ");
+		}
+		System.out.println(" ");
+		return true;
+	}
+	// public boolean isPointInside(Vector3f pos) {
+	// return isPointInside(pos.x, pos.y, pos.z);
+	// }
+	//
+	// public boolean isPointInside(float x, float y, float z) {
+	// for (int i = 0; i < 6; i++) {
+	// boolean result = planes[i].testPoint(x, y, z);
+	// if (result == false) return false;
+	// }
+	//
+	// return true;
+	// }
 }

@@ -8,14 +8,14 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
-import entities.Camera;
 import entities.Entity;
 import entities.Light;
 import models.TexturedModel;
 
-public class ShadowMapMasterRenderer {
+public class ShadowMapMasterRenderer
+{
 
-	private static final int SHADOW_MAP_SIZE = 8192;//8192;
+	private static final int SHADOW_MAP_SIZE = 8192;// 8192;
 
 	private ShadowFrameBuffer shadowFbo;
 	private ShadowShader shader;
@@ -27,14 +27,16 @@ public class ShadowMapMasterRenderer {
 
 	private ShadowMapEntityRenderer entityRenderer;
 
-	public ShadowMapMasterRenderer(Camera camera) {
+	public ShadowMapMasterRenderer()
+	{
 		shader = new ShadowShader();
-		shadowBox = new ShadowBox(lightViewMatrix, camera);
+		shadowBox = new ShadowBox(lightViewMatrix);
 		shadowFbo = new ShadowFrameBuffer(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 		entityRenderer = new ShadowMapEntityRenderer(shader, projectionViewMatrix);
 	}
 
-	public void render(Map<TexturedModel, List<Entity>> entities, Light sun) {
+	public void render(Map<TexturedModel, List<Entity>> entities, Light sun)
+	{
 		shadowBox.update();
 		Vector3f sunPosition = sun.getPosition();
 		Vector3f lightDirection = new Vector3f(-sunPosition.x, -sunPosition.y, -sunPosition.z);
@@ -43,24 +45,29 @@ public class ShadowMapMasterRenderer {
 		finish();
 	}
 
-	public Matrix4f getToShadowMapSpaceMatrix() {
+	public Matrix4f getToShadowMapSpaceMatrix()
+	{
 		return Matrix4f.mul(offset, projectionViewMatrix, null);
 	}
 
-	public void cleanUp() {
+	public void cleanUp()
+	{
 		shader.cleanUp();
 		shadowFbo.cleanUp();
 	}
 
-	public int getShadowMap() {
+	public int getShadowMap()
+	{
 		return shadowFbo.getShadowMap();
 	}
 
-	protected Matrix4f getLightSpaceTransform() {
+	protected Matrix4f getLightSpaceTransform()
+	{
 		return lightViewMatrix;
 	}
 
-	private void prepare(Vector3f lightDirection, ShadowBox box) {
+	private void prepare(Vector3f lightDirection, ShadowBox box)
+	{
 		updateOrthoProjectionMatrix(box.getWidth(), box.getHeight(), box.getLength());
 		updateLightViewMatrix(lightDirection, box.getCenter());
 		Matrix4f.mul(projectionMatrix, lightViewMatrix, projectionViewMatrix);
@@ -70,12 +77,14 @@ public class ShadowMapMasterRenderer {
 		shader.start();
 	}
 
-	private void finish() {
+	private void finish()
+	{
 		shader.stop();
 		shadowFbo.unbindFrameBuffer();
 	}
 
-	private void updateLightViewMatrix(Vector3f direction, Vector3f center) {
+	private void updateLightViewMatrix(Vector3f direction, Vector3f center)
+	{
 		direction.normalise();
 		center.negate();
 		lightViewMatrix.setIdentity();
@@ -83,12 +92,12 @@ public class ShadowMapMasterRenderer {
 		Matrix4f.rotate(pitch, new Vector3f(1, 0, 0), lightViewMatrix, lightViewMatrix);
 		float yaw = (float) Math.toDegrees(((float) Math.atan(direction.x / direction.z)));
 		yaw = direction.z > 0 ? yaw - 180 : yaw;
-		Matrix4f.rotate((float) -Math.toRadians(yaw), new Vector3f(0, 1, 0), lightViewMatrix,
-				lightViewMatrix);
+		Matrix4f.rotate((float) -Math.toRadians(yaw), new Vector3f(0, 1, 0), lightViewMatrix, lightViewMatrix);
 		Matrix4f.translate(center, lightViewMatrix, lightViewMatrix);
 	}
 
-	private void updateOrthoProjectionMatrix(float width, float height, float length) {
+	private void updateOrthoProjectionMatrix(float width, float height, float length)
+	{
 		projectionMatrix.setIdentity();
 		projectionMatrix.m00 = 2f / width;
 		projectionMatrix.m11 = 2f / height;
@@ -96,18 +105,21 @@ public class ShadowMapMasterRenderer {
 		projectionMatrix.m33 = 1;
 	}
 
-	private static Matrix4f createOffset() {
+	private static Matrix4f createOffset()
+	{
 		Matrix4f offset = new Matrix4f();
 		offset.translate(new Vector3f(0.5f, 0.5f, 0.5f));
 		offset.scale(new Vector3f(0.5f, 0.5f, 0.5f));
 		return offset;
 	}
-	
-	public int getShadowMapSize() {
+
+	public int getShadowMapSize()
+	{
 		return SHADOW_MAP_SIZE;
 	}
-	
-	public float getShadowDistance() {
-		return shadowBox.getShadowDistance();
+
+	public float getShadowDistance()
+	{
+		return ShadowBox.getShadowDistance();
 	}
 }
