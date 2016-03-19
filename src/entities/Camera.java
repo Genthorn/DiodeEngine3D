@@ -102,8 +102,8 @@ public class Camera {
 	}
 
 	private void calculatePitch() {
-//		float terrainHeightAtCurPos = 
-//				player.getCurrentTerrain().getHeightOfTerrain(position.x, position.z) 
+//		float terrainHeightAtCurPos =
+//				player.getCurrentTerrain().getHeightOfTerrain(position.x, position.z)
 //				+ MIN_HEIGHT_ABOVE_TERRAIN;
 		
 		if (Mouse.isButtonDown(0)) {
