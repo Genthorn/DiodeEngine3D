@@ -1,9 +1,5 @@
 package OBJLoader;
 
-import org.lwjgl.util.vector.Vector3f;
-
-import java.util.List;
-
 public class ModelData {
 
 	private float[] vertices;

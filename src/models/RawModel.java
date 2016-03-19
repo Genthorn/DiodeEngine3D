@@ -1,10 +1,6 @@
 package models;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import OBJLoader.ModelData;
-import org.lwjgl.util.vector.Vector3f;
 
 public class RawModel {
 	private int vaoID;

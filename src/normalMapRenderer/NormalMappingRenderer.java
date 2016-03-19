@@ -23,15 +23,15 @@ public class NormalMappingRenderer {
 
 	private NormalMappingShader shader;
 
-	public NormalMappingRenderer(Matrix4f projectionMatrix) {
+	public NormalMappingRenderer() {
 		this.shader = new NormalMappingShader();
 		shader.start();
-		shader.loadProjectionMatrix(projectionMatrix);
 		shader.connectTextureUnits();
 		shader.stop();
 	}
 
 	public void render(Map<TexturedModel, List<Entity>> entities, Vector4f clipPlane, List<Light> lights, Camera camera) {
+		shader.loadProjectionMatrix(Camera.projectionMatrix);
 		shader.start();
 		prepare(clipPlane, lights, camera);
 		for (TexturedModel model : entities.keySet()) {
@@ -88,7 +88,7 @@ public class NormalMappingRenderer {
 	private void prepare(Vector4f clipPlane, List<Light> lights, Camera camera) {
 		shader.loadClipPlane(clipPlane);
 		shader.loadSkyColour(MasterRenderer.RED, MasterRenderer.GREEN, MasterRenderer.BLUE);
-		Matrix4f viewMatrix = camera.viewMatrix;
+		Matrix4f viewMatrix = Camera.viewMatrix;
 		
 		shader.loadLights(lights, viewMatrix);
 		shader.loadViewMatrix(viewMatrix);

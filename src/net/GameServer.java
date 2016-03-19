@@ -7,12 +7,9 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-import engineTester.MainGameLoop;
 import entities.PlayerMP;
-import models.TexturedModel;
 import net.packets.Packet;
 import net.packets.Packet00Login;
-import org.lwjgl.util.vector.Vector3f;
 
 public class GameServer extends Thread {
 

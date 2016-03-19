@@ -5,13 +5,10 @@ import engineTester.entities.Lamp;
 import entities.*;
 import models.TexturedModel;
 import net.GameClient;
-import net.GameServer;
 import net.packets.Packet00Login;
 import normalMapOBJLoader.NormalMappedOBJLoader;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 import particles.ParticleMaster;
@@ -26,16 +23,13 @@ import textures.ModelTexture;
 import textures.TerrainTexture;
 import textures.TerrainTexturePack;
 import toolbox.LightComparator;
-import toolbox.Maths;
 import toolbox.MousePicker;
 import water.WaterFrameBuffers;
 import water.WaterRenderer;
 import water.WaterTile;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class MainGameLoop {
 
@@ -90,7 +84,7 @@ public class MainGameLoop {
 		World world = new World();
 
 		//SERVER CLIENT CREATION//
-		GameServer server = new GameServer();
+		//GameServer server = new GameServer();
 		GameClient client = new GameClient(world, loader, "localhost");
 		//server.start();
 		//client.start();
@@ -100,7 +94,7 @@ public class MainGameLoop {
 
 		//PLAYER STUFF//
 		TexturedModel playerTex = new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("person")), new ModelTexture(loader.loadTexture("playerTexture")));
-		PlayerMP player = new PlayerMP(playerTex, new Vector3f(0, 0, 0), 0, 100, 0, 0.4f, "ted", null, -1);
+		PlayerMP player = new PlayerMP(playerTex, new Vector3f(0, 0, 0), 0, 0, 0, 0.4f, "ted", null, -1);
 		entities.add(player);
 		////////////////
 
@@ -110,12 +104,12 @@ public class MainGameLoop {
 
 		//RENDERERS//
 		//WATER RENDERER AND FBO TO BE ADDED TO MASTER RENDERER
-		MasterRenderer renderer = new MasterRenderer(loader, camera);
+		MasterRenderer renderer = new MasterRenderer(loader);
 		WaterFrameBuffers fbos = new WaterFrameBuffers();
-		WaterRenderer waterRenderer = new WaterRenderer(loader, renderer.getProjectionMatrix(), fbos);
+		WaterRenderer waterRenderer = new WaterRenderer(loader, fbos);
 		/////////////
 		
-		ParticleMaster.init(loader, renderer.getProjectionMatrix());
+		ParticleMaster.init(loader);
 
 		//TERRAIN STUFF//
 		TerrainTexturePack texturePack = new TerrainTexturePack(loader, "snow", "snow", "snow", "mud");
@@ -151,7 +145,7 @@ public class MainGameLoop {
 		/////////////
 
 		//MOUSE PICKER//
-		MousePicker picker = new MousePicker(camera, renderer.getProjectionMatrix(), terrains.get(0));
+		MousePicker picker = new MousePicker(terrains.get(0));
 		////////////////
 
 //		//NORMAL MAPPED BARREL//
@@ -201,7 +195,7 @@ public class MainGameLoop {
 		while (!Display.isCloseRequested() && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
 			world.add(terrains, entities, normalMappedEntities, lights, waters);
 			//player.move(terrains, entities);
-			camera.move();
+			camera.update();
 			
 			lights.sort(new LightComparator(player));
 			picker.update();

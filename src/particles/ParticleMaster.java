@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.lwjgl.util.vector.Matrix4f;
-
 import entities.Camera;
 import renderEngine.Loader;
 
@@ -17,8 +15,8 @@ public class ParticleMaster {
 
 	private static ParticleRenderer renderer;
 	
-	public static void init(Loader loader, Matrix4f projectionMatrix) {
-		renderer = new ParticleRenderer(loader, projectionMatrix);
+	public static void init(Loader loader) {
+		renderer = new ParticleRenderer(loader);
 	}
 	
 	public static void update(Camera camera) {

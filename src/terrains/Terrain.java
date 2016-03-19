@@ -3,9 +3,6 @@ package terrains;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.imageio.ImageIO;
 
 import org.lwjgl.util.vector.Vector2f;
@@ -115,7 +112,7 @@ public class Terrain {
 			}
 		}
 		
-		List<Vector3f> verticesList = new ArrayList<Vector3f>();
+		//List<Vector3f> verticesList = new ArrayList<Vector3f>();
 		return loader.loadToVAO(vertices, textureCoords, normals, indices);
 	}
 	

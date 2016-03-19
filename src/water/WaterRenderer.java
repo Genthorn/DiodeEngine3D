@@ -17,49 +17,51 @@ import toolbox.Maths;
 import entities.Camera;
 import entities.Light;
 
-public class WaterRenderer {
-	
+public class WaterRenderer
+{
+
 	private static final String DUDV_MAP = "waterDUDV";
 	private static final String NORMAL_MAP = "matchingNormalMap";
 	private static final float WAVE_SPEED = 0.03f;
-	
+
 	private RawModel quad;
 	private WaterFrameBuffers fbos;
 	private WaterShader shader = new WaterShader();
-	
+
 	private float moveFactor = 0;
-	
+
 	private int dudvTexture;
 	private int normalTexture;
 
-	public WaterRenderer(Loader loader, Matrix4f projectionMatrix,
-			WaterFrameBuffers fbos) {
+	public WaterRenderer(Loader loader, WaterFrameBuffers fbos)
+	{
 		this.fbos = fbos;
 		dudvTexture = loader.loadTexture(DUDV_MAP);
 		normalTexture = loader.loadTexture(NORMAL_MAP);
 		shader.start();
 		shader.connectTextureUnits();
-		shader.loadProjectionMatrix(projectionMatrix);
 		shader.stop();
 		setUpVAO(loader);
 	}
 
-	public void render(List<WaterTile> water, Camera camera, Light sun) {
-		prepareRender(camera, sun);	
-		for (WaterTile tile : water) {
-			Matrix4f modelMatrix = Maths.createTransformationMatrix(
-					new Vector3f(tile.getX(), tile.getHeight(), tile.getZ()), 0, 0, 0,
-					WaterTile.TILE_SIZE);
+	public void render(List<WaterTile> water, Camera camera, Light sun)
+	{
+		prepareRender(camera, sun);
+		for (WaterTile tile : water)
+		{
+			Matrix4f modelMatrix = Maths.createTransformationMatrix(new Vector3f(tile.getX(), tile.getHeight(), tile.getZ()), 0, 0, 0, WaterTile.TILE_SIZE);
 			shader.loadModelMatrix(modelMatrix);
 			GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, quad.getVertexCount());
 		}
 		unbind();
 	}
-	
-	private void prepareRender(Camera camera, Light sun){
+
+	private void prepareRender(Camera camera, Light sun)
+	{
 		shader.start();
 		shader.loadLight(sun);
-		shader.loadNearAndFar(camera.NEAR_PLANE, camera.FAR_PLANE);
+		shader.loadNearAndFar(Camera.NEAR_PLANE, Camera.FAR_PLANE);
+		shader.loadProjectionMatrix(Camera.projectionMatrix);
 		shader.loadViewMatrix(camera);
 		moveFactor += WAVE_SPEED * DisplayManager.getFrameTimeSeconds();
 		moveFactor %= 1;
@@ -76,25 +78,28 @@ public class WaterRenderer {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalTexture);
 		GL13.glActiveTexture(GL13.GL_TEXTURE4);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, fbos.getRefractionDepthTexture());
-	
+
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 	}
-	
-	private void unbind(){
+
+	private void unbind()
+	{
 		GL20.glDisableVertexAttribArray(GL11.GL_BLEND);
 		GL20.glDisableVertexAttribArray(0);
 		GL30.glBindVertexArray(0);
 		shader.stop();
 	}
 
-	private void setUpVAO(Loader loader) {
+	private void setUpVAO(Loader loader)
+	{
 		// Just x and z vectex positions here, y is set to 0 in v.shader
 		float[] vertices = { -1, -1, -1, 1, 1, -1, 1, -1, -1, 1, 1, 1 };
 		quad = loader.loadToVAO(vertices, 2);
 	}
-	
-	public void cleanUp() {
+
+	public void cleanUp()
+	{
 		shader.cleanUp();
 	}
 

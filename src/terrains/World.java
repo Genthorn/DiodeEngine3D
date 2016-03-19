@@ -3,71 +3,70 @@ package terrains;
 import java.util.ArrayList;
 import java.util.List;
 
-import renderEngine.Loader;
-import textures.TerrainTexture;
-import textures.TerrainTexturePack;
 import water.WaterTile;
 import entities.Entity;
 import entities.Light;
 
-public class World {
-	private List<Terrain> terrains = new ArrayList<Terrain>();
-	private List<Light> lights = new ArrayList<Light>();
-	private static List<Entity> entities = new ArrayList<Entity>();
-	private List<Entity> normalMappedEntities = new ArrayList<Entity>();
-	private List<WaterTile> waters = new ArrayList<WaterTile>();
-	
-	private String worldFilePath = "";
-	
-	public World() {
+public class World
+{
+	private List<Terrain> m_terrains = new ArrayList<Terrain>();
+	private List<Light> m_lights = new ArrayList<Light>();
+	private static List<Entity> m_entities = new ArrayList<Entity>();
+	private List<Entity> m_normalMappedEntities = new ArrayList<Entity>();
+	private List<WaterTile> m_waters = new ArrayList<WaterTile>();
+
+	//private String worldFilePath = "";
+
+	public World()
+	{
 	}
-	
-	public World(String worldFile) {
-		this.worldFilePath = worldFile;
-		loadFileWorld();
+	public World(String worldFile)
+	{
+		//worldFilePath = worldFile;
+		//loadFileWorld();
 	}
-	
-	private void loadFileWorld() {
-
+	public void addEntity(Entity entity)
+	{
+		m_entities.add(entity);
 	}
-
-	public void addEntity(Entity entity) {
-		this.entities.add(entity);
+	public void addNormalMappedEntity(Entity entity)
+	{
+		m_normalMappedEntities.add(entity);
 	}
-
-	public void addNormalMappedEntity(Entity entity) {
-		this.normalMappedEntities.add(entity);
+	public void addLight(Light light)
+	{
+		m_lights.add(light);
 	}
-
-	public void addLight(Light light) {
-		this.lights.add(light);
+	public void addWater(WaterTile tile)
+	{
+		m_waters.add(tile);
 	}
-
-	public void addWater(WaterTile tile) {
-		this.waters.add(tile);
+	public void add(List<Terrain> terrains, List<Entity> entities, List<Entity> normalMappedEntities, List<Light> lights, List<WaterTile> waters)
+	{
+		m_entities = entities;
+		m_normalMappedEntities = normalMappedEntities;
+		m_lights = lights;
+		m_waters = waters;
+		m_terrains = terrains;
 	}
-
-	public void add(List<Terrain> terrains, List<Entity> entities, List<Entity> normalMappedEntities, List<Light> lights, List<WaterTile> waters) {
-		this.entities = entities;
-		this.normalMappedEntities = normalMappedEntities;
-		this.lights = lights;
-		this.waters = waters;
-		this.terrains = terrains;
+	public static List<Entity> getEntities()
+	{
+		return m_entities;
 	}
-	
-	public static List<Entity> getEntities() { return entities; }
-
-	public List<Entity> getNormalMappedEntities() { return normalMappedEntities; }
-
-	public List<Light> getLights() {
-		return lights;
+	public List<Entity> getNormalMappedEntities()
+	{
+		return m_normalMappedEntities;
 	}
-
-	public List<Terrain> getTerrains() {
-		return terrains;
+	public List<Light> getLights()
+	{
+		return m_lights;
 	}
-
-	public List<WaterTile> getWaters() { return waters; }
-
-
+	public List<Terrain> getTerrains()
+	{
+		return m_terrains;
+	}
+	public List<WaterTile> getWaters()
+	{
+		return m_waters;
+	}
 }

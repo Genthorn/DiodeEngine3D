@@ -1,14 +1,11 @@
 package net;
 
 import entities.PlayerMP;
-import models.TexturedModel;
 import net.packets.Packet;
 import net.packets.Packet00Login;
 import org.lwjgl.util.vector.Vector3f;
 import renderEngine.Loader;
 import terrains.World;
-import textures.ModelTexture;
-
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;

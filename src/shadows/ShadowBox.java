@@ -6,47 +6,47 @@ import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import entities.Camera;
-import renderEngine.DisplayManager;
-import renderEngine.MasterRenderer;
 
-public class ShadowBox {
+public class ShadowBox
+{
 
 	private static final float OFFSET = 15;
 	private static final Vector4f UP = new Vector4f(0, 1, 0, 0);
 	private static final Vector4f FORWARD = new Vector4f(0, 0, -1, 0);
 	private static final float SHADOW_DISTANCE = 100;
-	
+
 	private float minX, maxX;
 	private float minY, maxY;
 	private float minZ, maxZ;
 	private Matrix4f lightViewMatrix;
-	private Camera camera;
-
+	
 	private float farHeight, farWidth, nearHeight, nearWidth;
 
-	protected ShadowBox(Matrix4f lightViewMatrix, Camera camera) {
+	protected ShadowBox(Matrix4f lightViewMatrix)
+	{
 		this.lightViewMatrix = lightViewMatrix;
-		this.camera = camera;
 		calculateWidthsAndHeights();
 	}
 
-	protected void update() {
-		Matrix4f rotation = camera.rotation;
+	protected void update()
+	{
+		Matrix4f rotation = Camera.rotationMatrix;
 		Vector3f forwardVector = new Vector3f(Matrix4f.transform(rotation, FORWARD, null));
 
 		Vector3f toFar = new Vector3f(forwardVector);
 		toFar.scale(SHADOW_DISTANCE);
 		Vector3f toNear = new Vector3f(forwardVector);
-		toNear.scale(camera.NEAR_PLANE);
-		Vector3f centerNear = Vector3f.add(toNear, camera.getPosition(), null);
-		Vector3f centerFar = Vector3f.add(toFar, camera.getPosition(), null);
+		toNear.scale(Camera.NEAR_PLANE);
+		Vector3f centerNear = Vector3f.add(toNear, Camera.position, null);
+		Vector3f centerFar = Vector3f.add(toFar, Camera.position, null);
 
-		Vector4f[] points = calculateFrustumVertices(rotation, forwardVector, centerNear,
-				centerFar);
+		Vector4f[] points = calculateFrustumVertices(rotation, forwardVector, centerNear, centerFar);
 
 		boolean first = true;
-		for (Vector4f point : points) {
-			if (first) {
+		for (Vector4f point : points)
+		{
+			if (first)
+			{
 				minX = point.x;
 				maxX = point.x;
 				minY = point.y;
@@ -56,19 +56,28 @@ public class ShadowBox {
 				first = false;
 				continue;
 			}
-			if (point.x > maxX) {
+			if (point.x > maxX)
+			{
 				maxX = point.x;
-			} else if (point.x < minX) {
+			}
+			else if (point.x < minX)
+			{
 				minX = point.x;
 			}
-			if (point.y > maxY) {
+			if (point.y > maxY)
+			{
 				maxY = point.y;
-			} else if (point.y < minY) {
+			}
+			else if (point.y < minY)
+			{
 				minY = point.y;
 			}
-			if (point.z > maxZ) {
+			if (point.z > maxZ)
+			{
 				maxZ = point.z;
-			} else if (point.z < minZ) {
+			}
+			else if (point.z < minZ)
+			{
 				minZ = point.z;
 			}
 		}
@@ -76,7 +85,8 @@ public class ShadowBox {
 
 	}
 
-	protected Vector3f getCenter() {
+	protected Vector3f getCenter()
+	{
 		float x = (minX + maxX) / 2f;
 		float y = (minY + maxY) / 2f;
 		float z = (minZ + maxZ) / 2f;
@@ -85,37 +95,37 @@ public class ShadowBox {
 		Matrix4f.invert(lightViewMatrix, invertedLight);
 		return new Vector3f(Matrix4f.transform(invertedLight, cen, null));
 	}
-	
-	public static float getShadowDistance() {
+
+	public static float getShadowDistance()
+	{
 		return SHADOW_DISTANCE;
 	}
 
-	protected float getWidth() {
+	protected float getWidth()
+	{
 		return maxX - minX;
 	}
-	
-	protected float getHeight() {
+
+	protected float getHeight()
+	{
 		return maxY - minY;
 	}
 
-	protected float getLength() {
+	protected float getLength()
+	{
 		return maxZ - minZ;
 	}
 
-	private Vector4f[] calculateFrustumVertices(Matrix4f rotation, Vector3f forwardVector,
-			Vector3f centerNear, Vector3f centerFar) {
+	private Vector4f[] calculateFrustumVertices(Matrix4f rotation, Vector3f forwardVector, Vector3f centerNear, Vector3f centerFar)
+	{
 		Vector3f upVector = new Vector3f(Matrix4f.transform(rotation, UP, null));
 		Vector3f rightVector = Vector3f.cross(forwardVector, upVector, null);
 		Vector3f downVector = new Vector3f(-upVector.x, -upVector.y, -upVector.z);
 		Vector3f leftVector = new Vector3f(-rightVector.x, -rightVector.y, -rightVector.z);
-		Vector3f farTop = Vector3f.add(centerFar, new Vector3f(upVector.x * farHeight,
-				upVector.y * farHeight, upVector.z * farHeight), null);
-		Vector3f farBottom = Vector3f.add(centerFar, new Vector3f(downVector.x * farHeight,
-				downVector.y * farHeight, downVector.z * farHeight), null);
-		Vector3f nearTop = Vector3f.add(centerNear, new Vector3f(upVector.x * nearHeight,
-				upVector.y * nearHeight, upVector.z * nearHeight), null);
-		Vector3f nearBottom = Vector3f.add(centerNear, new Vector3f(downVector.x * nearHeight,
-				downVector.y * nearHeight, downVector.z * nearHeight), null);
+		Vector3f farTop = Vector3f.add(centerFar, new Vector3f(upVector.x * farHeight, upVector.y * farHeight, upVector.z * farHeight), null);
+		Vector3f farBottom = Vector3f.add(centerFar, new Vector3f(downVector.x * farHeight, downVector.y * farHeight, downVector.z * farHeight), null);
+		Vector3f nearTop = Vector3f.add(centerNear, new Vector3f(upVector.x * nearHeight, upVector.y * nearHeight, upVector.z * nearHeight), null);
+		Vector3f nearBottom = Vector3f.add(centerNear, new Vector3f(downVector.x * nearHeight, downVector.y * nearHeight, downVector.z * nearHeight), null);
 		Vector4f[] points = new Vector4f[8];
 		points[0] = calculateLightSpaceFrustumCorner(farTop, rightVector, farWidth);
 		points[1] = calculateLightSpaceFrustumCorner(farTop, leftVector, farWidth);
@@ -128,24 +138,24 @@ public class ShadowBox {
 		return points;
 	}
 
-	private Vector4f calculateLightSpaceFrustumCorner(Vector3f startPoint, Vector3f direction,
-			float width) {
-		Vector3f point = Vector3f.add(startPoint,
-				new Vector3f(direction.x * width, direction.y * width, direction.z * width), null);
+	private Vector4f calculateLightSpaceFrustumCorner(Vector3f startPoint, Vector3f direction, float width)
+	{
+		Vector3f point = Vector3f.add(startPoint, new Vector3f(direction.x * width, direction.y * width, direction.z * width), null);
 		Vector4f point4f = new Vector4f(point.x, point.y, point.z, 1f);
 		Matrix4f.transform(lightViewMatrix, point4f, point4f);
 		return point4f;
 	}
 
-	private void calculateWidthsAndHeights() {
-		farWidth = (float) (SHADOW_DISTANCE * Math.tan(Math.toRadians(camera.FOV)));
-		nearWidth = (float) (camera.NEAR_PLANE
-				* Math.tan(Math.toRadians(camera.FOV)));
+	private void calculateWidthsAndHeights()
+	{
+		farWidth = (float) (SHADOW_DISTANCE * Math.tan(Math.toRadians(Camera.FOV)));
+		nearWidth = (float) (Camera.NEAR_PLANE * Math.tan(Math.toRadians(Camera.FOV)));
 		farHeight = farWidth / getAspectRatio();
 		nearHeight = nearWidth / getAspectRatio();
 	}
 
-	private float getAspectRatio() {
+	private float getAspectRatio()
+	{
 		return (float) Display.getWidth() / (float) Display.getHeight();
 	}
 
