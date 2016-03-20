@@ -94,12 +94,12 @@ public class MainGameLoop {
 
 		//PLAYER STUFF//
 		TexturedModel playerTex = new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("person")), new ModelTexture(loader.loadTexture("playerTexture")));
-		PlayerMP player = new PlayerMP(playerTex, new Vector3f(0, 0, 0), 0, 0, 0, 0.4f, "ted", null, -1);
-		entities.add(player);
+		Player.LocalPlayer = new PlayerMP(playerTex, new Vector3f(0, 0, 0), 0, 0, 0, 0.4f, "ted", null, -1); 
+		entities.add(Player.LocalPlayer);
 		////////////////
 
 		//CAMERA//
-		Camera camera = new Camera(player);
+		Camera camera = new Camera();
 		//////////
 
 		//RENDERERS//
@@ -119,7 +119,7 @@ public class MainGameLoop {
 		/////////////////
 
 		//LAMP//
-		Lamp lamp = new Lamp(loader, new Vector3f(player.getPosition().x, terrains.get(0).getHeightOfTerrain(player.getPosition().x, player.getPosition().z), player.getPosition().z), 1);
+		Lamp lamp = new Lamp(loader, new Vector3f(Player.LocalPlayer.getPosition().x, terrains.get(0).getHeightOfTerrain(Player.LocalPlayer.getPosition().x, Player.LocalPlayer.getPosition().z), Player.LocalPlayer.getPosition().z), 1);
 		//entities.add(lamp);
 		lights.add(lamp.getLight());
 		////////
@@ -194,10 +194,10 @@ public class MainGameLoop {
 
 		while (!Display.isCloseRequested() && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
 			world.add(terrains, entities, normalMappedEntities, lights, waters);
-			//player.move(terrains, entities);
+			Player.LocalPlayer.move(terrains, entities);
 			camera.update();
 			
-			lights.sort(new LightComparator(player));
+			lights.sort(new LightComparator(Player.LocalPlayer));
 			picker.update();
 
 			//if(picker.getCurrentTerrainPoint() != null) crate.setPosition(picker.getCurrentTerrainPoint());

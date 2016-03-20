@@ -22,6 +22,7 @@ public class Entity {
 
 	protected AABB boundingBox;
 	protected Sphere boundingSphere;
+    private float boundingSphereYOffset;
 	
 	public Entity(TexturedModel model, Vector3f position, float rotX,
 			float rotY, float rotZ, float scale) {
@@ -33,8 +34,9 @@ public class Entity {
 		this.scale = scale;
 		ModelData data = model.getRawModel().getModelData();
 		boundingBox = new AABB(data, position);
+		boundingSphereYOffset = data.getFurthestPoint() / 2;
 		boundingSphere = new Sphere(new Vector3f(position.getX(),
-				position.getY() + (data.getFurthestPoint() / 2), position.z),
+				position.getY() + boundingSphereYOffset, position.z),
 				data.getFurthestPoint());
 	}
 	
@@ -49,8 +51,9 @@ public class Entity {
 		this.scale = scale;
 		ModelData data = model.getRawModel().getModelData();
 		boundingBox = new AABB(data, position);
+		boundingSphereYOffset = data.getFurthestPoint() / 2;
 		boundingSphere = new Sphere(new Vector3f(position.getX(),
-				position.getY() + (data.getFurthestPoint() / 2), position.z),
+				position.getY() + boundingSphereYOffset, position.z),
 				data.getFurthestPoint());
 }
 	
@@ -68,6 +71,8 @@ public class Entity {
 		this.position.x += dx;
 		this.position.y += dy;
 		this.position.z += dz;
+		boundingSphere.center = new Vector3f(position);
+		boundingSphere.center.y += boundingSphereYOffset;
 	}
 	
 	public void increaseRotation(float dx, float dy, float dz) {

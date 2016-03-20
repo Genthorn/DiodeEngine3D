@@ -13,7 +13,7 @@ import terrains.Terrain;
 
 public class Player extends Entity
 {
-
+    public static Player LocalPlayer;
 	private float currentForwardSpeed = 0;
 	private float currentTurnSpeed = 0;
 	private float upwardsSpeed = 0;
@@ -36,13 +36,13 @@ public class Player extends Entity
 
 		for (Terrain terrain : terrains)
 		{
-			if (terrain.getX() <= getPosition().x)
+			//if (terrain.getX() <= getPosition().x)
 			{
-				if (terrain.getX() + Terrain.getSIZE() > getPosition().x)
+				//if (terrain.getX() + Terrain.getSIZE() > getPosition().x)
 				{
-					if (terrain.getZ() <= getPosition().z)
+					//if (terrain.getZ() <= getPosition().z)
 					{
-						if (terrain.getZ() + Terrain.getSIZE() > getPosition().z)
+						//if (terrain.getZ() + Terrain.getSIZE() > getPosition().z)
 						{
 							checkInputs(entities);
 							super.increaseRotation(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0);

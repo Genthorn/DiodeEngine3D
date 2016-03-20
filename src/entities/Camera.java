@@ -6,6 +6,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
+import entities.Player;
 import toolbox.ViewFrustum;
 
 public class Camera
@@ -23,16 +24,14 @@ public class Camera
 
 	// private float MIN_HEIGHT_ABOVE_TERRAIN = 2;
 	private float distanceFromPlayer = 20;
-	private Player m_player;
 
 	public static Vector3f position = new Vector3f(0, 0, 0);
 	private float pitch = 0;
 	private float yaw = 0;
 	private boolean hasRunOnce = false;
 
-	public Camera(Player player)
+	public Camera()
 	{
-		m_player = player;
 		updateProjection();
 	}
 
@@ -56,7 +55,7 @@ public class Camera
 			calculatePitch();
 		calculateAngleAroundPlayer();
 
-		float theta = m_player.getRotY();
+		float theta = Player.LocalPlayer.getRotY() + 180;
 		theta += yaw;
 		rotationMatrix.setIdentity();
 		rotationMatrix.rotate((float) Math.toRadians(theta), new Vector3f(0, 1, 0));
@@ -65,7 +64,8 @@ public class Camera
 		Vector4f newPosition = new Vector4f(0, 0, distanceFromPlayer, 1);
 		Matrix4f.transform(rotationMatrix, newPosition, newPosition);
 		position = new Vector3f(newPosition);
-
+		Vector3f.add(position, Player.LocalPlayer.position, position);
+		
 		viewMatrix.setIdentity();
 		viewMatrix.translate(position);
 		Matrix4f.mul(viewMatrix, rotationMatrix, viewMatrix);
@@ -145,7 +145,7 @@ public class Camera
 		if (Mouse.isButtonDown(1))
 		{
 			float angleChange = Mouse.getDX() * 0.28f;
-			m_player.increaseRotation(0, -angleChange, 0);
+			Player.LocalPlayer.increaseRotation(0, -angleChange, 0);
 			yaw = 0;
 		}
 	}
