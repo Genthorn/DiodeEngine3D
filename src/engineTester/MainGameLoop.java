@@ -47,9 +47,7 @@ public class MainGameLoop {
 		 	-When rendering everything to fbo, camera rotates
 		 	-Water renderer and Water FBO to be moved to MasterRenderer
 			-GUI coordinates messed up
-			-Projection matrix in camera: m22 and m32 are not negative?
-
-	 */
+	*/
 
 	public static void main(String[] args) {
 		DisplayManager.createDisplay("Diode Engine");

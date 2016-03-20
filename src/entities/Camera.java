@@ -39,7 +39,12 @@ public class Camera {
 		calculatePitch();
 		calculateAngleAroundPlayer();
 
-		float theta = player.getRotY() + yaw;
+		float horizontalDistance = calculateHorizontalDistance();
+		float verticalDistance = calculateVerticalDistance();
+		calculateCameraPosition(horizontalDistance, verticalDistance);
+
+		float theta = player.getRotY();
+		theta += angleAroundPlayer;
 		rotationMatrix.setIdentity();
 		rotationMatrix.rotate((float) Math.toRadians(theta), new Vector3f(0, 1, 0));
 		rotationMatrix.rotate((float) Math.toRadians(-pitch), new Vector3f(1, 0, 0));
@@ -54,7 +59,25 @@ public class Camera {
 		viewMatrix.invert();
 
 		viewFrustum.update();
+		this.yaw = 180 + (player.getRotY() + angleAroundPlayer);
 		hasRunOnce = true;
+	}
+
+	private void calculateCameraPosition(float horizDistance, float verticDistance) {
+		float theta = player.getRotY() + angleAroundPlayer;
+		float offsetX = (float) (horizDistance * Math.sin(Math.toRadians(theta)));
+		float offsetZ = (float) (horizDistance * Math.cos(Math.toRadians(theta)));
+		position.x = player.getPosition().x - offsetX;
+		position.z = player.getPosition().z - offsetZ;
+		position.y = player.getPosition().y + verticDistance;
+	}
+
+	private float calculateHorizontalDistance() {
+		return (float) (distanceFromPlayer * Math.cos(Math.toRadians(pitch)));
+	}
+
+	private float calculateVerticalDistance() {
+		return (float) (distanceFromPlayer * Math.sin(Math.toRadians(pitch)));
 	}
 
 	private void updateProjection() {
@@ -93,13 +116,13 @@ public class Camera {
 	private void calculateAngleAroundPlayer() {
 		if (Mouse.isButtonDown(0)) {
 			float angleChange = Mouse.getDX() * 0.28f;
-			yaw -= angleChange;
+			angleAroundPlayer -= angleChange;
 		}
 
 		if (Mouse.isButtonDown(1)) {
 			float angleChange = Mouse.getDX() * 0.28f;
 			player.increaseRotation(0, -angleChange, 0);
-			yaw = 0;
+			angleAroundPlayer = 0;
 		}
 	}
 
