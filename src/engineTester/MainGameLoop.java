@@ -3,15 +3,12 @@ package engineTester;
 import OBJLoader.OBJLoader;
 import engineTester.entities.Lamp;
 import entities.*;
-import guis.GUITexture;
 import models.TexturedModel;
 import net.GameClient;
-import net.GameServer;
 import net.packets.Packet00Login;
 import normalMapOBJLoader.NormalMappedOBJLoader;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 import particles.ParticleMaster;
@@ -33,27 +30,46 @@ import water.WaterTile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class MainGameLoop {
 
 	/*
-		ISSUES TO BE RESOLVED
-		-------------------------
-		 	-Can't seem to add player position to camera position
-		 	-Particles don't scale down
-		 	-Go through all class and make sure to set
-		 	 visibility as needed for all vars
-		 	-When rendering everything to fbo, camera rotates
-		 	-Water renderer and Water FBO to be moved to MasterRenderer
-			-GUI coordinates messed up
+		BUGS
+			-Lamps cast shadows on themselves
+			-Distant objects have full shadows on them
+			-Normal mapped entities rendered half way into the ground, looks like it's their model
+			 but the rock doesnt always stick to the ground
+
+		FIXES
+			BUG: Water flickers in distance
+				FIX: FIND A WAY TO INCREASE AND DECREASE CLIPPING PLANE
+					 VALUE FROM CAMERA ANGLE
+
+			BUG: When player walks into it's shadow it renders on top of the player
+				FIX: Moved shadows render order above rest of scene
+	*/
+
+	/*
+		OPTIMIZATIONS
+			-Only update lights that change
+			-Change rendering for particles
+			-Frustum Culling
+	*/
+
+	/*
+		To-Do (In order of importance)
+			-Collision Detection
+			-Colour picking
+			-Audio
+			-Optimizations
+			-Water edges improvements
+			-Order ParticleLists
 	*/
 
 	public static void main(String[] args) {
 		DisplayManager.createDisplay("Diode Engine");
 
 		//LIST OF GAME OBJECTS//
-		List<GUITexture> guis = new ArrayList<GUITexture>();
 		List<Terrain> terrains = new ArrayList<Terrain>();
 		List<Light> lights = new ArrayList<Light>();
 		List<Entity> entities = new ArrayList<Entity>();
@@ -65,30 +81,29 @@ public class MainGameLoop {
 		Loader loader = new Loader();
 		//////////
 
-		//guis.add(new GUITexture(loader.loadTexture("texture"), new Vector2f(0, 0), new Vector2f(0.1f, 0.1f)));
-
 		World world = new World();
 
 		//SERVER CLIENT CREATION//
-		GameServer server = new GameServer();
+		//GameServer server = new GameServer();
 		GameClient client = new GameClient(world, loader, "localhost");
 		//server.start();
 		//client.start();
 		Packet00Login loginPacket = new Packet00Login("ted1");
-		//loginPacket.writeData(client);
+		loginPacket.writeData(client);
 		//////////////////////////
 
 		//PLAYER STUFF//
 		TexturedModel playerTex = new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("person")), new ModelTexture(loader.loadTexture("playerTexture")));
-		PlayerMP player = new PlayerMP(playerTex, new Vector3f(15.282322f, 0.15686035f, -15.762215f), 0, 0, 0, 0.4f, "ted", null, -1);
-		entities.add(player);
+		Player.LocalPlayer = new PlayerMP(playerTex, new Vector3f(0, 0, 0), 0, 0, 0, 0.4f, "ted", null, -1); 
+		entities.add(Player.LocalPlayer);
 		////////////////
 
 		//CAMERA//
-		Camera camera = new Camera(player);
+		Camera camera = new Camera();
 		//////////
 
 		//RENDERERS//
+		//WATER RENDERER AND FBO TO BE ADDED TO MASTER RENDERER
 		MasterRenderer renderer = new MasterRenderer(loader);
 		WaterFrameBuffers fbos = new WaterFrameBuffers();
 		WaterRenderer waterRenderer = new WaterRenderer(loader, fbos);
@@ -99,13 +114,14 @@ public class MainGameLoop {
 		//TERRAIN STUFF//
 		TerrainTexturePack texturePack = new TerrainTexturePack(loader, "snow", "snow", "snow", "mud");
 		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
+
 		terrains.add(new Terrain(0, -1, loader, texturePack, blendMap, "heightMap"));
 		/////////////////
 
 		//LAMP//
-		Lamp lamp = new Lamp(loader, new Vector3f(player.getPosition().x, terrains.get(0).getHeightOfTerrain(player.getPosition().x, player.getPosition().z), player.getPosition().z), 1);
+		Lamp lamp = new Lamp(loader, new Vector3f(Player.LocalPlayer.getPosition().x, terrains.get(0).getHeightOfTerrain(Player.LocalPlayer.getPosition().x, Player.LocalPlayer.getPosition().z), Player.LocalPlayer.getPosition().z), 1);
 		//entities.add(lamp);
-		//lights.add(lamp.getLight());
+		lights.add(lamp.getLight());
 		////////
 
 		//SUN//
@@ -115,7 +131,7 @@ public class MainGameLoop {
 
 		//WATER TILE//
 		WaterTile water = new WaterTile(75,-75,0);
-		//waters.add(water);
+		waters.add(water);
 		//////////////
 
 		//PARTICLES//
@@ -132,76 +148,99 @@ public class MainGameLoop {
 		MousePicker picker = new MousePicker(terrains.get(0));
 		////////////////
 
-		//NORMAL MAPPED BARREL//
-		TexturedModel barrelModel = new TexturedModel(NormalMappedOBJLoader.loadOBJ("barrel", loader),
-      		new ModelTexture(loader.loadTexture("barrel")));
-		barrelModel.getTexture().setShineDamper(10);
-		barrelModel.getTexture().setReflectivity(0.5f);
-		barrelModel.getTexture().setNormalMap(loader.loadTexture("barrelNormal"));
-		Entity barrel = new Entity(barrelModel, new Vector3f(1,1,1), 0, 0, 0, 1f);
-		//normalMappedEntities.add(barrel);
-		////////////////////////
-
-		//RANDOM GENERATE WORLD ENTITIES//
-		Random random = new Random();
-		TexturedModel model = new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("tree")), new ModelTexture(loader.loadTexture("tree")));
-		for(int i = 0; i < 500; i++) {
-
-			float x = random.nextFloat() * 800 - 400;
-			float z = random.nextFloat() * -600;
-			float y = terrains.get(0).getHeightOfTerrain(x, z);
-
-			entities.add(new Entity(model, new Vector3f(x,y,z), 0, 0, 0, 1f));
-
-		}
-		//////////////////////////////////
+//		//NORMAL MAPPED BARREL//
+//		TexturedModel barrelModel = new TexturedModel(NormalMappedOBJLoader.loadOBJ("barrel", loader), new ModelTexture(loader.loadTexture("barrel")));
+//		barrelModel.getTexture().setShineDamper(10);
+//		barrelModel.getTexture().setReflectivity(0.5f);
+//		barrelModel.getTexture().setNormalMap(loader.loadTexture("barrelNormal"));
+//		Entity barrel = new Entity(barrelModel, new Vector3f(1,1,1), 0, 0, 0, 1f);
+//		normalMappedEntities.add(barrel);
+//		////////////////////////
+//
+//		//NORMAL MAPPED ROCK//
+//		TexturedModel boulderModel = new TexturedModel(NormalMappedOBJLoader.loadOBJ("boulder", loader),
+//				new ModelTexture(loader.loadTexture("boulder")));
+//		boulderModel.getTexture().setShineDamper(10);
+//		boulderModel.getTexture().setReflectivity(0.5f);
+//		boulderModel.getTexture().setNormalMap(loader.loadTexture("boulderNormal"));
+//		Entity boulder = new Entity(boulderModel, new Vector3f(1,1,1), 0, 0, 0, 1f);
+//		normalMappedEntities.add(boulder);
+//		////////////////////////
+//
+//		//NORMAL MAPPED CRATE//
+		TexturedModel crateModel = new TexturedModel(NormalMappedOBJLoader.loadOBJ("crate", loader),
+				new ModelTexture(loader.loadTexture("crate")));
+//		crateModel.getTexture().setShineDamper(10);
+//		crateModel.getTexture().setReflectivity(0.5f);
+//		crateModel.getTexture().setNormalMap(loader.loadTexture("crateNormal"));
+//		Entity crate = new Entity(crateModel, new Vector3f(1,1,1), 0, 0, 0, 0.05f);
+//		////////////////////////
+//
+//		//RANDOM GENERATE WORLD ENTITIES//
+//		Random random = new Random();
+		TexturedModel model = new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("lamp")), new ModelTexture(loader.loadTexture("tree")));
+//		for(int i = 0; i < 500; i++) {
+//
+//			float x = random.nextFloat() * 800 - 400;
+//			float z = random.nextFloat() * -600;
+//			float y = terrains.get(0).getHeightOfTerrain(x, z);
+//
+			entities.add(new Entity(model, new Vector3f(0,0,-100), 0, 0, 0, 1f));
+//
+//		}
+//		//////////////////////////////////
 
 		world.add(terrains, entities, normalMappedEntities, lights, waters);
 
 		while (!Display.isCloseRequested() && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
 			world.add(terrains, entities, normalMappedEntities, lights, waters);
-			player.move(terrains, entities);
+			Player.LocalPlayer.move(terrains, entities);
 			camera.update();
-			lights.sort(new LightComparator(player));
+			
+			lights.sort(new LightComparator(Player.LocalPlayer));
 			picker.update();
 
-			ParticleMaster.update(camera);
-			system.generateParticles(new Vector3f(10, 0, 10));
+			//if(picker.getCurrentTerrainPoint() != null) crate.setPosition(picker.getCurrentTerrainPoint());
 
+			for(Entity e : normalMappedEntities) {
+				if(e.getModel() == crateModel) System.out.println(e.getPosition().y);
+			}
+
+			ParticleMaster.update(camera);
 			
 			//WATER RENDERING SCENE STUFF//
 //			fbos.bindReflectionFrameBuffer();
-//			float distance = 2 * (Camera.position.y - water.getHeight());
-//			Camera.position.y -= distance;
+//			float distance = 2 * (camera.getPosition().y - water.getHeight());
+//			camera.getPosition().y -= distance;
 //			camera.invertPitch();
 //			renderer.renderWorld(world, camera, new Vector4f(0, 1, 0, -water.getHeight()+1.2f));
-//			Camera.position.y += distance;
+//			camera.getPosition().y += distance;
 //			camera.invertPitch();
 //
 //			fbos.bindRefractionFrameBuffer();
 //			renderer.renderWorld(world, camera, new Vector4f(0, -1, 0, water.getHeight()));
 //
-//			fbos.unbindCurrentFrameBuffer();
-			//////////////////////////////
+			fbos.unbindCurrentFrameBuffer();
+			////////////////////////////////
 			
 			//RENDER EVERYTHING ELSE//
 			renderer.renderShadowMap(entities, sun);
 			renderer.renderWorld(world, camera, new Vector4f(0, 1, 0, 10000000));
-			waterRenderer.render(waters, camera, sun);
-			renderer.renderGUIList(guis);
+			//waterRenderer.render(waters, camera, sun);
+			//renderer.renderGUIList(guis);
 			ParticleMaster.renderParticles(camera);
 			//////////////////////////
 
 			DisplayManager.updateDisplay();
 		}
-
+		
+		System.out.println("Game closed : Cleaned up!!");
 		renderer.cleanUp();
 		waterRenderer.cleanUp();
 		loader.cleanUp();
 		fbos.cleanUp();
 		ParticleMaster.cleanUp();
 		DisplayManager.closeDisplay();
-		System.out.println("Game closed : Cleaned up!!");
 
 	}
 
