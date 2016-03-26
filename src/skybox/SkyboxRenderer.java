@@ -7,11 +7,14 @@ import org.lwjgl.opengl.GL30;
 import entities.Camera;
 import renderEngine.Loader;
 import models.RawModel;
+import renderEngine.MasterRenderer;
 
 public class SkyboxRenderer {
 	private static final float SIZE = 500f;
 
-	private static final float[] VERTICES = { -SIZE, SIZE, -SIZE, -SIZE, -SIZE, -SIZE, SIZE, -SIZE, -SIZE, SIZE, -SIZE, -SIZE, SIZE, SIZE, -SIZE, -SIZE, SIZE, -SIZE,
+	private static final float[] VERTICES = {
+
+			-SIZE, SIZE, -SIZE, -SIZE, -SIZE, -SIZE, SIZE, -SIZE, -SIZE, SIZE, -SIZE, -SIZE, SIZE, SIZE, -SIZE, -SIZE, SIZE, -SIZE,
 
 			-SIZE, -SIZE, SIZE, -SIZE, -SIZE, -SIZE, -SIZE, SIZE, -SIZE, -SIZE, SIZE, -SIZE, -SIZE, SIZE, SIZE, -SIZE, -SIZE, SIZE,
 
@@ -21,7 +24,8 @@ public class SkyboxRenderer {
 
 			-SIZE, SIZE, -SIZE, SIZE, SIZE, -SIZE, SIZE, SIZE, SIZE, SIZE, SIZE, SIZE, -SIZE, SIZE, SIZE, -SIZE, SIZE, -SIZE,
 
-			-SIZE, -SIZE, -SIZE, -SIZE, -SIZE, SIZE, SIZE, -SIZE, -SIZE, SIZE, -SIZE, -SIZE, -SIZE, -SIZE, SIZE, SIZE, -SIZE, SIZE };
+			-SIZE, -SIZE, -SIZE, -SIZE, -SIZE, SIZE, SIZE, -SIZE, -SIZE, SIZE, -SIZE, -SIZE, -SIZE, -SIZE, SIZE, SIZE, -SIZE, SIZE
+	};
 
 	private static String[] TEXTURE_FILES = { "right", "left", "top", "bottom", "back", "front" };
 
@@ -29,17 +33,17 @@ public class SkyboxRenderer {
 	private int texture;
 	private SkyboxShader shader;
 
-	public SkyboxRenderer(Loader loader) {
+	public SkyboxRenderer(SkyboxShader shader, Loader loader) {
 		cube = loader.loadToVAO(VERTICES, 3);
 		texture = loader.loadCubeMap(TEXTURE_FILES);
-		shader = new SkyboxShader();
+		this.shader = shader;
 	}
 
-	public void render(Camera camera, float r, float g, float b) {
+	public void render() {
 		shader.start();
 		shader.loadProjectionMatrix(Camera.projectionMatrix);
-		shader.loadViewMatrix(camera);
-		shader.loadFogColour(r, g, b);
+		shader.loadViewMatrix();
+		shader.loadFogColour(MasterRenderer.SKY_RED, MasterRenderer.SKY_GREEN, MasterRenderer.SKY_BLUE);
 		GL30.glBindVertexArray(cube.getVaoID());
 		GL20.glEnableVertexAttribArray(0);
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);

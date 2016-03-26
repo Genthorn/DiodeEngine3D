@@ -12,7 +12,7 @@ import shaders.ShaderProgram;
 
 public class NormalMappingShader extends ShaderProgram{
 	
-	private static final int MAX_LIGHTS = 4;
+	private static final int MAX_LIGHTS = 11;
 	
 	private static final String VERTEX_FILE = "normalMapRenderer/normalMapVertexShader.txt";
 	private static final String FRAGMENT_FILE = "normalMapRenderer/normalMapFragmentShader.txt";

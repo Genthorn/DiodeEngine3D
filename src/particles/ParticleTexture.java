@@ -8,6 +8,11 @@ public class ParticleTexture {
 		this.textureID = textureID;
 		this.numberOfRows = numberOfRows;
 	}
+
+	public ParticleTexture(int textureID) {
+		this.textureID = textureID;
+		this.numberOfRows = 1;
+	}
 	
 	public int getTextureID() {
 		return textureID;

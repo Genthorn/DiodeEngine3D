@@ -12,13 +12,12 @@ public class Entity {
 	protected Vector3f position = new Vector3f(0,0,0);
 	protected float rotX, rotY, rotZ;
 	protected float scale;
-	
-	private int textureIndex = 0;
-	
-	public static final float GRAVITY = -100;
+
 	protected final float RUN_SPEED = 32;
 	protected final float TURN_SPEED = 160;
 	protected final float JUMP_POWER = 30;
+	
+	private int textureIndex = 0;
 
 	protected AABB boundingBox;
 	protected Sphere boundingSphere;
@@ -52,27 +51,16 @@ public class Entity {
 		ModelData data = model.getRawModel().getModelData();
 		boundingBox = new AABB(data, position);
 		boundingSphereYOffset = data.getFurthestPoint() / 2;
-		boundingSphere = new Sphere(new Vector3f(position.getX(),
-				position.getY() + boundingSphereYOffset, position.z),
+		boundingSphere = new Sphere(new Vector3f(position.x,
+				position.y + boundingSphereYOffset, position.z),
 				data.getFurthestPoint());
-}
-	
-	public float getTextureXOffset() {
-		int column = textureIndex%model.getTexture().getNumberOfRows();
-		return (float) column / (float) model.getTexture().getNumberOfRows();
-	}
-	
-	public float getTextureYOffset() {
-		int row = textureIndex/model.getTexture().getNumberOfRows();
-		return (float) row / (float) model.getTexture().getNumberOfRows();
 	}
 	
 	public void increasePosition(float dx, float dy, float dz) {
 		this.position.x += dx;
 		this.position.y += dy;
 		this.position.z += dz;
-		boundingSphere.center = new Vector3f(position);
-		boundingSphere.center.y += boundingSphereYOffset;
+		boundingSphere.setCenter(new Vector3f(position.x, position.y + boundingSphereYOffset, position.z));
 	}
 	
 	public void increaseRotation(float dx, float dy, float dz) {
@@ -89,7 +77,9 @@ public class Entity {
 		return position;
 	}
 
-	public Sphere getBoundingSphere() { return boundingSphere; }
+	public Sphere getBoundingSphere() {
+		return boundingSphere;
+	}
 
 	public float getRotX() {
 		return rotX;
@@ -105,6 +95,16 @@ public class Entity {
 
 	public float getScale() {
 		return scale;
+	}
+
+	public float getTextureXOffset() {
+		int column = textureIndex%model.getTexture().getNumberOfRows();
+		return (float) column / (float) model.getTexture().getNumberOfRows();
+	}
+
+	public float getTextureYOffset() {
+		int row = textureIndex/model.getTexture().getNumberOfRows();
+		return (float) row / (float) model.getTexture().getNumberOfRows();
 	}
 
 	public void setModel(TexturedModel model) {

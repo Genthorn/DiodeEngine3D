@@ -34,6 +34,7 @@ public class ViewFrustum {
 		Vector3f[] points = new Vector3f[8];
 		Vector4f vertex = new Vector4f();
 		vertex.w = 1;
+
 		for (int i = 0; i < 8; i++) {
 			vertex.x = clipCube[i].x;
 			vertex.y = clipCube[i].y;
@@ -51,9 +52,10 @@ public class ViewFrustum {
 
 	public boolean isSphereInside(Sphere sphere) {
 		for (int i = 0; i < 6; i++) {
-			float dot = (planes[i].getNormal().x * sphere.center.x + planes[i].getNormal().y *
-					sphere.center.y + planes[i].getNormal().z * sphere.center.z);
-			if (dot < (-sphere.radius - planes[i].getDistance())) {
+			float dot = (planes[i].getNormal().x * sphere.getCenter().x + planes[i].getNormal().y *
+					sphere.getCenter().y + planes[i].getNormal().z * sphere.getCenter().z);
+
+			if (dot < (-sphere.getRadius() - planes[i].getDistance())) {
 				return false;
 			}
 		}

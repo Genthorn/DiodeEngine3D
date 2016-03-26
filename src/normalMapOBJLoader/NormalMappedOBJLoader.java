@@ -128,36 +128,35 @@ public class NormalMappedOBJLoader {
 		return indicesArray;
 	}
 
-//	private static float convertDataToArrays(List<VertexNM> vertices, List<Vector2f> textures, List<Vector3f> normals, float[] verticesArray, float[] texturesArray, float[] normalsArray,
-//			float[] tangentsArray)
-//	{
-//		float furthestPoint = 0;
-//		for (int i = 0; i < vertices.size(); i++)
-//		{
-//			VertexNM currentVertex = vertices.get(i);
-//			if (currentVertex.getLength() > furthestPoint)
-//			{
-//				furthestPoint = currentVertex.getLength();
-//			}
-//			Vector3f position = currentVertex.getPosition();
-//			Vector2f textureCoord = textures.get(currentVertex.getTextureIndex());
-//			Vector3f normalVector = normals.get(currentVertex.getNormalIndex());
-//			Vector3f tangent = currentVertex.getAverageTangent();
-//			verticesArray[i * 3] = position.x;
-//			verticesArray[i * 3 + 1] = position.y;
-//			verticesArray[i * 3 + 2] = position.z;
-//			texturesArray[i * 2] = textureCoord.x;
-//			texturesArray[i * 2 + 1] = 1 - textureCoord.y;
-//			normalsArray[i * 3] = normalVector.x;
-//			normalsArray[i * 3 + 1] = normalVector.y;
-//			normalsArray[i * 3 + 2] = normalVector.z;
-//			tangentsArray[i * 3] = tangent.x;
-//			tangentsArray[i * 3 + 1] = tangent.y;
-//			tangentsArray[i * 3 + 2] = tangent.z;
-//
-//		}
-//		return furthestPoint;
-//	}
+	private static float convertDataToArrays(List<VertexNM> vertices, List<Vector2f> textures, List<Vector3f> normals, float[] verticesArray, float[] texturesArray, float[] normalsArray,
+			float[] tangentsArray) {
+		float furthestPoint = 0;
+		for (int i = 0; i < vertices.size(); i++) {
+			VertexNM currentVertex = vertices.get(i);
+
+			if (currentVertex.getLength() > furthestPoint) {
+				furthestPoint = currentVertex.getLength();
+			}
+
+			Vector3f position = currentVertex.getPosition();
+			Vector2f textureCoord = textures.get(currentVertex.getTextureIndex());
+			Vector3f normalVector = normals.get(currentVertex.getNormalIndex());
+			Vector3f tangent = currentVertex.getAverageTangent();
+			verticesArray[i * 3] = position.x;
+			verticesArray[i * 3 + 1] = position.y;
+			verticesArray[i * 3 + 2] = position.z;
+			texturesArray[i * 2] = textureCoord.x;
+			texturesArray[i * 2 + 1] = 1 - textureCoord.y;
+			normalsArray[i * 3] = normalVector.x;
+			normalsArray[i * 3 + 1] = normalVector.y;
+			normalsArray[i * 3 + 2] = normalVector.z;
+			tangentsArray[i * 3] = tangent.x;
+			tangentsArray[i * 3 + 1] = tangent.y;
+			tangentsArray[i * 3 + 2] = tangent.z;
+		}
+
+		return furthestPoint;
+	}
 
 	private static VertexNM dealWithAlreadyProcessedVertex(VertexNM previousVertex, int newTextureIndex, int newNormalIndex, List<Integer> indices, List<VertexNM> vertices) {
 		if (previousVertex.hasSameTextureAndNormal(newTextureIndex, newNormalIndex)) {
@@ -182,6 +181,7 @@ public class NormalMappedOBJLoader {
 	private static void removeUnusedVertices(List<VertexNM> vertices) {
 		for (VertexNM vertex : vertices) {
 			vertex.averageTangents();
+
 			if (!vertex.isSet()) {
 				vertex.setTextureIndex(0);
 				vertex.setNormalIndex(0);

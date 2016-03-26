@@ -30,7 +30,7 @@ public class ShadowMapEntityRenderer {
 			RawModel rawModel = model.getRawModel();
 			bindModel(rawModel);
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.getTexture().getID());
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.getTexture().getTextureID());
 			
 			if(model.getTexture().isHasTransparency()) MasterRenderer.disableCulling();
 			

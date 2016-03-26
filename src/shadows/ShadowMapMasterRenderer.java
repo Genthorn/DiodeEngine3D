@@ -3,6 +3,7 @@ package shadows;
 import java.util.List;
 import java.util.Map;
 
+import javafx.scene.effect.Shadow;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
@@ -26,8 +27,8 @@ public class ShadowMapMasterRenderer {
 
 	private ShadowMapEntityRenderer entityRenderer;
 
-	public ShadowMapMasterRenderer() {
-		shader = new ShadowShader();
+	public ShadowMapMasterRenderer(ShadowShader shader) {
+		this.shader = shader;
 		shadowBox = new ShadowBox(lightViewMatrix);
 		shadowFbo = new ShadowFrameBuffer(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 		entityRenderer = new ShadowMapEntityRenderer(shader, projectionViewMatrix);
@@ -85,7 +86,6 @@ public class ShadowMapMasterRenderer {
 	}
 
 	public void cleanUp() {
-		shader.cleanUp();
 		shadowFbo.cleanUp();
 	}
 
@@ -97,18 +97,15 @@ public class ShadowMapMasterRenderer {
 		return ShadowBox.getShadowDistance();
 	}
 
-	public int getShadowMap()
-	{
+	public int getShadowMap() {
 		return shadowFbo.getShadowMap();
 	}
 
-	protected Matrix4f getLightSpaceTransform()
-	{
+	protected Matrix4f getLightSpaceTransform() {
 		return lightViewMatrix;
 	}
 
-	public Matrix4f getToShadowMapSpaceMatrix()
-	{
+	public Matrix4f getToShadowMapSpaceMatrix() {
 		return Matrix4f.mul(offset, projectionViewMatrix, null);
 	}
 }

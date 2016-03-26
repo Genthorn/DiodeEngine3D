@@ -8,6 +8,8 @@ import entities.Entity;
 import entities.Light;
 
 public class World {
+	public static final float GRAVITY = -100;
+
 	private List<Terrain> m_terrains = new ArrayList<Terrain>();
 	private List<Light> m_lights = new ArrayList<Light>();
 	private static List<Entity> m_entities = new ArrayList<Entity>();

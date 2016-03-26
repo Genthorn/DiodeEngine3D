@@ -11,7 +11,7 @@ public class ShadowShader extends ShaderProgram {
 	
 	private int location_mvpMatrix;
 
-	protected ShadowShader() {
+	public ShadowShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
 	}
 

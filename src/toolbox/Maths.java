@@ -33,27 +33,6 @@ public class Maths {
 		return matrix;
 	}
 
-	public static Vector3f calculateNormal(Vector4f point0, Vector4f point1, Vector4f point2) {
-		Vector3f crossProduct = new Vector3f();
-		Vector3f v0 = new Vector3f();
-		Vector3f v1 = new Vector3f();
-
-		v0.x = point0.x - point1.x;
-		v0.y = point0.y - point1.y;
-		v0.z = point0.z - point1.z;
-
-		v1.x = point2.x - point1.x;
-		v1.y = point2.y - point1.y;
-		v1.z = point2.z - point1.z;
-
-		v0.normalise(v0);
-		v1.normalise(v1);
-
-		Vector3f.cross(v0, v1, crossProduct);
-
-		return crossProduct;
-	}
-
 	public static float dotProduct(Vector3f vector1, Vector3f vector2) {
 		return vector1.x * vector2.x + vector1.y * vector2.y + vector1.z * vector2.z;
 	}

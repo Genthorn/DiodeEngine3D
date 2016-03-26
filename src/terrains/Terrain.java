@@ -96,6 +96,7 @@ public class Terrain {
 				vertexPointer++;
 			}
 		}
+
 		int pointer = 0;
 		for(int gz=0;gz<VERTEX_COUNT-1;gz++){
 			for(int gx=0;gx<VERTEX_COUNT-1;gx++){
@@ -112,7 +113,6 @@ public class Terrain {
 			}
 		}
 		
-		//List<Vector3f> verticesList = new ArrayList<Vector3f>();
 		return loader.loadToVAO(vertices, textureCoords, normals, indices);
 	}
 	
