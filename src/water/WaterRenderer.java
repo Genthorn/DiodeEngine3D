@@ -32,18 +32,18 @@ public class WaterRenderer {
 	private int dudvTexture;
 	private int normalTexture;
 
-	public WaterRenderer(Loader loader, WaterFrameBuffers fbos) {
+	public WaterRenderer(WaterFrameBuffers fbos) {
 		this.fbos = fbos;
-		dudvTexture = loader.loadTexture(DUDV_MAP);
-		normalTexture = loader.loadTexture(NORMAL_MAP);
+		dudvTexture = Loader.loadTexture(DUDV_MAP);
+		normalTexture = Loader.loadTexture(NORMAL_MAP);
 		shader.start();
 		shader.connectTextureUnits();
 		shader.stop();
-		setUpVAO(loader);
+		setUpVAO();
 	}
 
 	public void render(List<WaterTile> water, Camera camera, Light sun) {
-		prepareRender(camera, sun);
+		prepareRender(sun);
 		for (WaterTile tile : water) {
 			Matrix4f modelMatrix = Maths.createTransformationMatrix(new Vector3f(tile.getX(), tile.getHeight(), tile.getZ()), 0, 0, 0, WaterTile.TILE_SIZE);
 			shader.loadModelMatrix(modelMatrix);
@@ -51,18 +51,18 @@ public class WaterRenderer {
 		}
 		unbind();
 	}
-	private void setUpVAO(Loader loader) {
+	private void setUpVAO() {
 		// Just x and z vectex positions here, y is set to 0 in v.shader
 		float[] vertices = { -1, -1, -1, 1, 1, -1, 1, -1, -1, 1, 1, 1 };
-		quad = loader.loadToVAO(vertices, 2);
+		quad = Loader.loadToVAO(vertices, 2);
 	}
 
-	private void prepareRender(Camera camera, Light sun) {
+	private void prepareRender(Light sun) {
 		shader.start();
 		shader.loadLight(sun);
 		shader.loadNearAndFar(Camera.NEAR_PLANE, Camera.FAR_PLANE);
 		shader.loadProjectionMatrix(Camera.projectionMatrix);
-		shader.loadViewMatrix(camera);
+		shader.loadViewMatrix();
 		moveFactor += WAVE_SPEED * DisplayManager.getFrameTimeSeconds();
 		moveFactor %= 1;
 		shader.loadMoveFactor(moveFactor);

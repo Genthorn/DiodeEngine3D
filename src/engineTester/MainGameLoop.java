@@ -48,14 +48,10 @@ public class MainGameLoop {
         List<WaterTile> waters = new ArrayList<WaterTile>();
         ////////////////////////
 
-        //LOADER//
-        Loader loader = new Loader();
-        //////////
-
         World world = new World();
 
         //PLAYER STUFF//
-        TexturedModel playerTex = new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("person")), new ModelTexture(loader.loadTexture("playerTexture")));
+        TexturedModel playerTex = new TexturedModel(Loader.loadToVAO(OBJLoader.loadOBJ("person")), new ModelTexture(Loader.loadTexture("playerTexture")));
         Player.LocalPlayer = new PlayerMP(playerTex, new Vector3f(86.26708f, -4.398244f, -109.75052f), 0, 0, 0, 0.4f, "ted", null, -1);
         entities.add(Player.LocalPlayer);
         ////////////////
@@ -65,21 +61,23 @@ public class MainGameLoop {
         //////////
 
         //RENDERERS//
-        MasterRenderer renderer = new MasterRenderer(loader);
+        MasterRenderer renderer = new MasterRenderer();
         /////////////
 
         //WATER//
         WaterTile waterTile = new WaterTile(75,-75,0);
         waters.add(waterTile);
         WaterFrameBuffers fbos = new WaterFrameBuffers();
-        WaterRenderer waterRenderer = new WaterRenderer(loader, fbos);
+        WaterRenderer waterRenderer = new WaterRenderer(fbos);
         /////////
 
         //TERRAIN STUFF//
-        TerrainTexturePack texturePack = new TerrainTexturePack(loader, "snow", "snow", "snow", "mud");
-        TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
+        TerrainTexturePack texturePack = new TerrainTexturePack("snow", "snow", "snow", "mud");
+        TerrainTexture blendMap = new TerrainTexture(Loader.loadTexture("blendMap"));
 
-        terrains.add(new Terrain(0, -1, loader, texturePack, blendMap, "heightMap"));
+        terrains.add(new Terrain(0, -1, texturePack, blendMap, "heightMap"));
+        terrains.add(new Terrain(-1, -1, texturePack, blendMap, "heightMap"));
+        terrains.add(new Terrain(-1, -2, texturePack, blendMap, "heightMap"));
         /////////////////
 
         //SUN//
@@ -87,10 +85,24 @@ public class MainGameLoop {
         lights.add(sun);
         ///////
 
+        ParticleMaster.init();
+
+        ParticleTexture particleTexture = new ParticleTexture(Loader.loadTexture("particleStar"), 1);
+        ParticleSystem system = new ParticleSystem(particleTexture, 50, 10, 0.3f, 4, 1);
+        system.randomizeRotation();
+        system.setDirection(new Vector3f(0, 1, 0), 0.1f);
+        system.setLifeError(0.1f);
+        system.setSpeedError(0.4f);
+        system.setScaleError(0.8f);
+
+
         while (!Display.isCloseRequested() && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
             world.add(terrains, entities, normalMappedEntities, lights, waters);
             Player.LocalPlayer.move(terrains, entities);
             camera.update();
+
+            system.generateParticles(Player.LocalPlayer.getPosition());
+            ParticleMaster.update(camera);
 
             //RENDER EVERYTHING ELSE//
             renderer.renderShadowMap(entities, sun);
@@ -99,13 +111,16 @@ public class MainGameLoop {
             renderer.renderGUIList(guis);
             //////////////////////////
 
+            //ParticleMaster.renderParticles();
+
             DisplayManager.updateDisplay();
         }
 
         System.out.println("Game closed : Cleaned up!!");
+        ParticleMaster.cleanUp();
         renderer.cleanUp();
         waterRenderer.cleanUp();
-        loader.cleanUp();
+        Loader.cleanUp();
         fbos.cleanUp();
         DisplayManager.closeDisplay();
 

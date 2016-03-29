@@ -33,9 +33,9 @@ public class SkyboxRenderer {
 	private int texture;
 	private SkyboxShader shader;
 
-	public SkyboxRenderer(SkyboxShader shader, Loader loader) {
-		cube = loader.loadToVAO(VERTICES, 3);
-		texture = loader.loadCubeMap(TEXTURE_FILES);
+	public SkyboxRenderer(SkyboxShader shader) {
+		cube = Loader.loadToVAO(VERTICES, 3);
+		texture = Loader.loadCubeMap(TEXTURE_FILES);
 		this.shader = shader;
 	}
 

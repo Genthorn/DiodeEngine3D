@@ -9,12 +9,12 @@ public class TerrainTexturePack {
 	private TerrainTexture gTexture;
 	private TerrainTexture bTexture;
 	
-	public TerrainTexturePack(Loader loader, String backgroundTexture, String rTexture, String gTexture, 
+	public TerrainTexturePack(String backgroundTexture, String rTexture, String gTexture,
 			String bTexture) {
-		this.backgroundTexture = new TerrainTexture(loader.loadTexture(backgroundTexture));
-		this.rTexture = new TerrainTexture(loader.loadTexture(rTexture));
-		this.gTexture = new TerrainTexture(loader.loadTexture(gTexture));
-		this.bTexture = new TerrainTexture(loader.loadTexture(bTexture));
+		this.backgroundTexture = new TerrainTexture(Loader.loadTexture(backgroundTexture));
+		this.rTexture = new TerrainTexture(Loader.loadTexture(rTexture));
+		this.gTexture = new TerrainTexture(Loader.loadTexture(gTexture));
+		this.bTexture = new TerrainTexture(Loader.loadTexture(bTexture));
 	}
 
 	public TerrainTexture getBackgroundTexture() {

@@ -22,8 +22,8 @@ public class ParticleRenderer {
 	private RawModel quad;
 	private ParticleShader shader;
 
-	protected ParticleRenderer(Loader loader) {
-		quad = loader.loadToVAO(VERTICES, 2);
+	protected ParticleRenderer() {
+		quad = Loader.loadToVAO(VERTICES, 2);
 		shader = new ParticleShader();
 		shader.start();
 		shader.loadProjectionMatrix(Camera.projectionMatrix);
@@ -31,7 +31,7 @@ public class ParticleRenderer {
 
 	}
 
-	protected void render(Map<ParticleTexture, List<Particle>> particles, Camera camera) {
+	protected void render(Map<ParticleTexture, List<Particle>> particles) {
 		Matrix4f viewMatrix = Camera.viewMatrix;
 		prepare();
 
@@ -62,7 +62,7 @@ public class ParticleRenderer {
 		modelMatrix.m20 = viewMatrix.m02;
 		modelMatrix.m21 = viewMatrix.m12;
 		modelMatrix.m22 = viewMatrix.m22;
-		Matrix4f.rotate((float) Math.toRadians(rotation), new Vector3f(0, 0, 1), modelMatrix, modelMatrix);
+		Matrix4f.rotate((float) Math.toRadians(rotation), new Vector3f(0, 0, 1), modelMatrix , modelMatrix);
 		Matrix4f.scale(new Vector3f(scale, scale, scale), modelMatrix, modelMatrix);
 		Matrix4f modelViewMatrix = Matrix4f.mul(viewMatrix, modelMatrix, null);
 		shader.loadModelViewMatrix(modelViewMatrix);

@@ -15,8 +15,8 @@ public class ParticleMaster {
 
 	private static ParticleRenderer renderer;
 	
-	public static void init(Loader loader) {
-		renderer = new ParticleRenderer(loader);
+	public static void init() {
+		renderer = new ParticleRenderer();
 	}
 	
 	public static void update(Camera camera) {
@@ -38,8 +38,8 @@ public class ParticleMaster {
 		}
 	}
 	
-	public static void renderParticles(Camera camera) {
-		renderer.render(particles, camera);
+	public static void renderParticles() {
+		renderer.render(particles);
 	}
 	
 	public static void addParticle(Particle particle) {

@@ -59,12 +59,12 @@ public class MasterRenderer {
     private Map<TexturedModel, List<Entity>> normalmapEntities = new HashMap<TexturedModel, List<Entity>>();
     private List<Terrain> terrains = new ArrayList<Terrain>();
 
-    public MasterRenderer(Loader loader) {
+    public MasterRenderer() {
         enableCulling();
         entityRenderer = new EntityRenderer(shader);
         terrainRenderer = new TerrainRenderer(terrainShader);
-        skyboxRenderer = new SkyboxRenderer(skyboxShader, loader);
-        guiRenderer = new GUIRenderer(guiShader, loader);
+        skyboxRenderer = new SkyboxRenderer(skyboxShader);
+        guiRenderer = new GUIRenderer(guiShader);
         shadowMapRenderer = new ShadowMapMasterRenderer(shadowShader);
         normalMappingRenderer = new NormalMappingRenderer(normalMappingShader);
     }

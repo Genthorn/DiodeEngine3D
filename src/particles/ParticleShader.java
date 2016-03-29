@@ -28,8 +28,7 @@ public class ParticleShader extends ShaderProgram {
 		location_texCoordInfo = super.getUniformLocation("texCoordInfo");
 	}
 
-	protected void loadTextureCoordsInfo(Vector2f offset1, Vector2f offset2, float numRows,
-										 float blend) {
+	protected void loadTextureCoordsInfo(Vector2f offset1, Vector2f offset2, float numRows, float blend) {
 		super.loadVector2f(location_texOffset1, offset1);
 		super.loadVector2f(location_texOffset2, offset2);
 		super.loadVector2f(location_texCoordInfo, new Vector2f(numRows, blend));

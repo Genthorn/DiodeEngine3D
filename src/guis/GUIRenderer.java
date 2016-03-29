@@ -17,9 +17,9 @@ public class GUIRenderer {
 	private final RawModel quad;
 	private GUIShader shader;
 	
-	public GUIRenderer(GUIShader shader, Loader loader) {
+	public GUIRenderer(GUIShader shader) {
 		float[] positions = {-1,1,-1,-1,1,1,1,-1};
-		quad = loader.loadToVAO(positions);
+		quad = Loader.loadToVAO(positions);
 		this.shader = shader;
 	}
 	
